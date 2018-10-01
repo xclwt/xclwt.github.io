@@ -138,19 +138,108 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-博客2-ATM机的模拟作业" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/30/hello-world/">Hello,world!</a>
+      <a class="article-title" href="/2018/10/01/博客2-ATM机的模拟作业/">ATM界面的模拟作业</a>
     </h1>
   
 
         
-        <a href="/2018/09/30/hello-world/" class="archive-article-date">
+        <a href="/2018/10/01/博客2-ATM机的模拟作业/" class="archive-article-date">
+  	<time datetime="2018-10-01T07:51:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考</p>
+</blockquote>
+<p><img src="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg" alt="作业要求"></p>
+<p>#<strong><em>初始方案</em></strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">'1.存款'</span>)</span><br><span class="line">print(<span class="string">'2.贷款'</span>)</span><br><span class="line">print(<span class="string">'3.开卡'</span>)</span><br><span class="line">print(<span class="string">'4.挂失'</span>)</span><br><span class="line">print(<span class="string">'请输入您要办理的业务'</span>)</span><br><span class="line">number=input(<span class="string">'请输入数字:'</span>) <span class="comment">#python3中默认input输出类型为str，python2中则有所区别。</span></span><br><span class="line">a=number <span class="comment">#将输出赋值给a，方便后续调用</span></span><br><span class="line"><span class="keyword">print</span> (a)</span><br><span class="line"><span class="keyword">if</span> int(a) <span class="keyword">in</span> range (<span class="number">1</span>,<span class="number">5</span>): <span class="comment">#用int()将字符串转化为整型</span></span><br><span class="line">    print(<span class="string">'welcome!'</span>,a)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">'sorry!'</span>,a) <span class="comment">#使用if判断语句判别用户输入数字是否在选项范围内</span></span><br></pre></td></tr></table></figure></p>
+<p>###<strong>输出结果</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.存款</span><br><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line">请输入您要办理的业务</span><br><span class="line"></span><br><span class="line">请输入数字:4</span><br><span class="line">4</span><br><span class="line">welcome! 4</span><br></pre></td></tr></table></figure></p>
+<p>#<strong><em>第一次与第二次优化方案整合</em></strong></p>
+<blockquote>
+<p><em>使用对供选择的选项的打印代码进行了缩减</em><br><em>将输出内容优化到数字对应的具体选项内容</em><br><em>考虑到ATM机上除数字键外还有“#”“</em>”“确认”，对可能出现的bug进行了排除*<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">business=&#123;1:&apos;存款&apos;,2:&apos;贷款&apos;,3:&apos;开卡&apos;,4:&apos;挂失&apos;&#125;</span><br><span class="line">for key in business:</span><br><span class="line">    print (str(key)+&apos;.&apos;+business[key])</span><br><span class="line">number=input(&apos;请输入您要办理的业务:&apos;)</span><br><span class="line">a=number</span><br><span class="line">print (a)</span><br><span class="line">if a==&apos;#&apos;or a==&apos;*&apos; or a==&apos;确认&apos;:</span><br><span class="line">    print(&apos;请重新输入!&apos;)</span><br><span class="line">else:</span><br><span class="line">    if int(a) in range (1,5):</span><br><span class="line">        print(&apos;欢迎&apos;+business[int(a)]+&apos;!&apos;)</span><br><span class="line">    else:</span><br><span class="line">        print(&apos;对不起，无此选项!&apos;)</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>###<strong>输出结果</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.存款</span><br><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line"></span><br><span class="line">请输入您要办理的业务:4</span><br><span class="line">4</span><br><span class="line">欢迎挂失!</span><br></pre></td></tr></table></figure></p>
+<p>#<strong><em>第三次与第四次优化方案整合</em></strong></p>
+<blockquote>
+<p><em>考虑到实际操作中“确认”=“enter”以及用户不输入内容直接确认的情况，取消了代码中“确认”的情况</em><br><em>使用while break语句优化了代码，使程序识别到用户操作不规范后自动重运行</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">business=&#123;1:&apos;存款&apos;,2:&apos;贷款&apos;,3:&apos;开卡&apos;,4:&apos;挂失&apos;&#125;</span><br><span class="line">for key in business:</span><br><span class="line">    print (str(key)+&apos;.&apos;+business[key])</span><br><span class="line">while True:      #在用户输入不符合要求后重新执行程序</span><br><span class="line">    number=input(&apos;请输入您要办理的业务:&apos;)</span><br><span class="line">    a=number</span><br><span class="line">    print (a)</span><br><span class="line">    if a==&apos;#&apos;or a==&apos;*&apos; or a==&apos;&apos;:      #考虑到atm机上还有“#”和“*”以及用户不输入内容直接确认的情况，确认键等同于“enter”操作</span><br><span class="line">        print(&apos;请重新输入!&apos;)</span><br><span class="line">    elif int(a) in range (1,5):</span><br><span class="line">        print(&apos;欢迎&apos;+business[int(a)]+&apos;!&apos;)</span><br><span class="line">        break        #用户选择正确选项时结束循环</span><br><span class="line">    else:</span><br><span class="line">        print(&apos;对不起，无此选项!&apos;)     #用户输入不在范围内数字时的反馈</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>###<strong>输出结果</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line"></span><br><span class="line">请输入您要办理的业务:#</span><br><span class="line">#</span><br><span class="line">请重新输入!</span><br><span class="line"></span><br><span class="line">请输入您要办理的业务:</span><br></pre></td></tr></table></figure></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">python，作业</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/01/博客2-ATM机的模拟作业/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-博客1-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/30/博客1-hello-world/">Hello,world!</a>
+    </h1>
+  
+
+        
+        <a href="/2018/09/30/博客1-hello-world/" class="archive-article-date">
   	<time datetime="2018-09-29T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-30</time>
 </a>
         
@@ -182,7 +271,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/09/30/hello-world/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/09/30/博客1-hello-world/">展开全文 >></a>
         </p>
       
 
@@ -303,6 +392,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">start</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">python，作业</a>
               </li>
             
             <div class="clearfix"></div>
