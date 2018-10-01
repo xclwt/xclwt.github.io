@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="http://xclwt.github.io">
   <title>ATM界面的模拟作业 | 咸鱼白的窝</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考   #初始方案123456789101112print(&apos;1.存款&apos;)print(&apos;2.贷款&apos;)print(&apos;3.开卡&apos;)print(&apos;4.挂失&apos;)print(&apos;请输入您要办理的业务&apos;)number=input(&apos;请输入数字:&apos;) #python3中默认input输出类型为str，python2中则有所区别。a=number #将输出赋值">
+  <meta name="description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考">
 <meta name="keywords" content="作业,python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ATM界面的模拟作业">
 <meta property="og:url" content="http://xclwt.github.io/2018/10/01/博客2-ATM机的模拟作业/index.html">
 <meta property="og:site_name" content="咸鱼白的窝">
-<meta property="og:description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考   #初始方案123456789101112print(&apos;1.存款&apos;)print(&apos;2.贷款&apos;)print(&apos;3.开卡&apos;)print(&apos;4.挂失&apos;)print(&apos;请输入您要办理的业务&apos;)number=input(&apos;请输入数字:&apos;) #python3中默认input输出类型为str，python2中则有所区别。a=number #将输出赋值">
+<meta property="og:description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg">
-<meta property="og:updated_time" content="2018-10-01T08:44:05.099Z">
+<meta property="og:updated_time" content="2018-10-01T08:56:49.379Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ATM界面的模拟作业">
-<meta name="twitter:description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考   #初始方案123456789101112print(&apos;1.存款&apos;)print(&apos;2.贷款&apos;)print(&apos;3.开卡&apos;)print(&apos;4.挂失&apos;)print(&apos;请输入您要办理的业务&apos;)number=input(&apos;请输入数字:&apos;) #python3中默认input输出类型为str，python2中则有所区别。a=number #将输出赋值">
+<meta name="twitter:description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考">
 <meta name="twitter:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg">
   
     <link rel="alternative" href="/atom.xml" title="咸鱼白的窝" type="application/atom+xml">
@@ -167,6 +167,7 @@
 <p>关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考</p>
 </blockquote>
 <p><img src="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg" alt="作业要求"></p>
+  <a id="more"></a>
 <p>#<strong><em>初始方案</em></strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">'1.存款'</span>)</span><br><span class="line">print(<span class="string">'2.贷款'</span>)</span><br><span class="line">print(<span class="string">'3.开卡'</span>)</span><br><span class="line">print(<span class="string">'4.挂失'</span>)</span><br><span class="line">print(<span class="string">'请输入您要办理的业务'</span>)</span><br><span class="line">number=input(<span class="string">'请输入数字:'</span>) <span class="comment">#python3中默认input输出类型为str，python2中则有所区别。</span></span><br><span class="line">a=number <span class="comment">#将输出赋值给a，方便后续调用</span></span><br><span class="line"><span class="keyword">print</span> (a)</span><br><span class="line"><span class="keyword">if</span> int(a) <span class="keyword">in</span> range (<span class="number">1</span>,<span class="number">5</span>): <span class="comment">#用int()将字符串转化为整型</span></span><br><span class="line">    print(<span class="string">'welcome!'</span>,a)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">'sorry!'</span>,a) <span class="comment">#使用if判断语句判别用户输入数字是否在选项范围内</span></span><br></pre></td></tr></table></figure></p>
 <p>###<strong>输出结果</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.存款</span><br><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line">请输入您要办理的业务</span><br><span class="line"></span><br><span class="line">请输入数字:4</span><br><span class="line">4</span><br><span class="line">welcome! 4</span><br></pre></td></tr></table></figure></p>
 <p>#<strong><em>第一次与第二次优化方案整合</em></strong></p>
@@ -313,6 +314,19 @@
             </div>
         </div>
         
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    这是一片荒原。。。
+                    </div>
+                </span>
+            </div>
+        </div>
         
     </div>
 </aside>
