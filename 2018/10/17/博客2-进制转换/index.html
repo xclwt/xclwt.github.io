@@ -6,23 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://xclwt.github.io">
-  <title>ATM界面的模拟作业 | 咸鱼白的窝</title>
+  <title>使用python编写进制转换函数（非直接调用内置函数） | 咸鱼白的窝</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考">
+  <meta name="description" content="进制转换函数:">
 <meta name="keywords" content="作业,python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ATM界面的模拟作业">
-<meta property="og:url" content="http://xclwt.github.io/2018/10/01/博客2-ATM机的模拟作业/index.html">
+<meta property="og:title" content="使用python编写进制转换函数（非直接调用内置函数）">
+<meta property="og:url" content="http://xclwt.github.io/2018/10/17/博客2-进制转换/index.html">
 <meta property="og:site_name" content="咸鱼白的窝">
-<meta property="og:description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考">
+<meta property="og:description" content="进制转换函数:">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg">
 <meta property="og:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg">
-<meta property="og:updated_time" content="2019-03-09T07:11:55.748Z">
+<meta property="og:updated_time" content="2019-03-09T07:12:15.837Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ATM界面的模拟作业">
-<meta name="twitter:description" content="关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考">
-<meta name="twitter:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg">
+<meta name="twitter:title" content="使用python编写进制转换函数（非直接调用内置函数）">
+<meta name="twitter:description" content="进制转换函数:">
+<meta name="twitter:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg">
   
     <link rel="alternative" href="/atom.xml" title="咸鱼白的窝" type="application/atom+xml">
   
@@ -152,44 +151,39 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-博客2-ATM机的模拟作业" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-博客2-进制转换" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      ATM界面的模拟作业
+      使用python编写进制转换函数（非直接调用内置函数）
     </h1>
   
 
 
         
-        <a href="/2018/10/01/博客2-ATM机的模拟作业/" class="archive-article-date">
-  	<time datetime="2018-10-01T07:51:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-01</time>
+        <a href="/2018/10/17/博客2-进制转换/" class="archive-article-date">
+  	<time datetime="2018-10-16T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-17</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>关于“ATM机界面的模拟作业”一些优化改进思路，仅供参考</p>
+        <h1 id="进制转换函数"><a href="#进制转换函数" class="headerlink" title="进制转换函数:"></a>进制转换函数:</h1>  <a id="more"></a>
+<p>这是一个基本思路，从十进制转换到其他进制部分的代码可以简化为一种情况，此处不赘述。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tran</span><span class="params">(origin_base,origin_num,present_base)</span>:</span>    <span class="comment">#第二个参数必须以字符串形式输入，否则会在输入十进制以上数字时出现错误</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">origin_to_ten</span><span class="params">(base,num)</span>:</span>  <span class="comment">#在函数内将原始进制数转化为十进制数的函数</span></span><br><span class="line">        <span class="keyword">if</span> base==<span class="number">10</span>:</span><br><span class="line">            <span class="keyword">return</span> num</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> int(str(num),base)</span><br><span class="line">    new_num=origin_to_ten(origin_base,origin_num)  <span class="comment">#将输入数据转换为十进制数</span></span><br><span class="line">    present_num=<span class="string">''</span>            </span><br><span class="line">    <span class="keyword">if</span> present_base==<span class="number">10</span>:       <span class="comment">#转换后为十进制的情况</span></span><br><span class="line">        <span class="keyword">return</span> new_num</span><br><span class="line">    <span class="keyword">elif</span> present_base&lt;<span class="number">10</span>:      <span class="comment">#转换后为2，8进制等低于十进制的情况</span></span><br><span class="line">        <span class="keyword">while</span> new_num//present_base!=<span class="number">0</span>:  <span class="comment">#此循环无法将首位数字计入</span></span><br><span class="line">            present_num=present_num+str(new_num%present_base)</span><br><span class="line">            new_num=new_num//present_base</span><br><span class="line">        present_num=present_num+str(new_num%present_base)  <span class="comment">#在循环外加上首位数字</span></span><br><span class="line">        <span class="keyword">return</span> present_num[::<span class="number">-1</span>]  <span class="comment">#将倒序的数字再次倒序排列转换为正序</span></span><br><span class="line">    <span class="keyword">else</span>:     <span class="comment">#转换后为十一到16进制的情况</span></span><br><span class="line">        dict=&#123;<span class="number">0</span>:<span class="string">'0'</span><span class="number">1</span>:<span class="string">'1'</span>,<span class="number">2</span>:<span class="string">'2'</span>,<span class="number">3</span>:<span class="string">'3'</span>,<span class="number">4</span>:<span class="string">'4'</span>,</span><br><span class="line">              <span class="number">5</span>:<span class="string">'5'</span>,<span class="number">6</span>:<span class="string">'6'</span>,<span class="number">7</span>:<span class="string">'7'</span>,<span class="number">8</span>:<span class="string">'8'</span>,</span><br><span class="line">              <span class="number">9</span>:<span class="string">'9'</span>,<span class="number">10</span>:<span class="string">'a'</span>,<span class="number">11</span>:<span class="string">'b'</span>,<span class="number">12</span>:<span class="string">'c'</span>,</span><br><span class="line">              <span class="number">13</span>:<span class="string">'d'</span>,<span class="number">14</span>:<span class="string">'e'</span>,<span class="number">15</span>:<span class="string">'f'</span>&#125;</span><br><span class="line">        <span class="keyword">while</span> new_num//present_base!=<span class="number">0</span>: <span class="comment">#此循环原理同上一个循环</span></span><br><span class="line">                present_num=present_num+dict[new_num%present_base]</span><br><span class="line">                new_num=new_num//present_base</span><br><span class="line">        present_num=present_num+dict[new_num%present_base]</span><br><span class="line">        <span class="keyword">return</span> present_num[::<span class="number">-1</span>]</span><br><span class="line">```   </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我还是把优化后的写一下吧。。。</span><br><span class="line">```python</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tran</span><span class="params">(origin_base,origin_num,present_base)</span>:</span>    <span class="comment">#第二个参数必须以字符串形式输入，否则会在输入十进制以上数字时出现错误</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">origin_to_ten</span><span class="params">(base,num)</span>:</span>  <span class="comment">#在函数内将原始进制数转化为十进制数的函数</span></span><br><span class="line">        <span class="keyword">if</span> base==<span class="number">10</span>:</span><br><span class="line">            <span class="keyword">return</span> num</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> int(str(num),base)</span><br><span class="line">    new_num=origin_to_ten(origin_base,origin_num)  <span class="comment">#将输入数据转换为十进制数</span></span><br><span class="line">    present_num=<span class="string">''</span>            </span><br><span class="line">    dict=&#123;<span class="number">0</span>:<span class="string">'0'</span>,<span class="number">1</span>:<span class="string">'1'</span>,<span class="number">2</span>:<span class="string">'2'</span>,<span class="number">3</span>:<span class="string">'3'</span>,<span class="number">4</span>:<span class="string">'4'</span>,    </span><br><span class="line">          <span class="number">5</span>:<span class="string">'5'</span>,<span class="number">6</span>:<span class="string">'6'</span>,<span class="number">7</span>:<span class="string">'7'</span>,<span class="number">8</span>:<span class="string">'8'</span>,</span><br><span class="line">          <span class="number">9</span>:<span class="string">'9'</span>,<span class="number">10</span>:<span class="string">'a'</span>,<span class="number">11</span>:<span class="string">'b'</span>,<span class="number">12</span>:<span class="string">'c'</span>,</span><br><span class="line">          <span class="number">13</span>:<span class="string">'d'</span>,<span class="number">14</span>:<span class="string">'e'</span>,<span class="number">15</span>:<span class="string">'f'</span>&#125;</span><br><span class="line">    <span class="keyword">while</span> new_num!=<span class="number">0</span>:    <span class="comment">#将上一版代码中的各种转换情况合并了，优化了循环语句</span></span><br><span class="line">        present_num=present_num+dict[new_num%present_base]</span><br><span class="line">        new_num=new_num//present_base</span><br><span class="line">    <span class="keyword">return</span> present_num[::<span class="number">-1</span>]</span><br><span class="line"><span class="keyword">print</span> (tran(<span class="number">10</span>,<span class="number">35</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure></p>
+<h1 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h1><h2 id="输入"><a href="#输入" class="headerlink" title="输入:"></a>输入:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print (tran(10,35,8))</span><br><span class="line">print (tran(2,10000011,16))</span><br><span class="line">print (tran(10,126,16))</span><br></pre></td></tr></table></figure>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出:"></a>输出:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">43</span><br><span class="line">83</span><br><span class="line">7e</span><br></pre></td></tr></table></figure>
+<h1 id="一个反例："><a href="#一个反例：" class="headerlink" title="一个反例："></a>一个反例：</h1><h2 id="输入："><a href="#输入：" class="headerlink" title="输入："></a>输入：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print (tran(16,7e,10))</span><br></pre></td></tr></table></figure>
+<h2 id="输出："><a href="#输出：" class="headerlink" title="输出："></a>输出：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>我们可以看到这里出现了一个bug，为什么在交互窗口用int函数转换十六进制数时没有问题而这里有问题了？其实错误并不在<br>调用int（）函数时，而是在我们输入第二个参数时，输入第二个参数时7e用了数字加字母的组合，e被系统自动判定为一个变量<br>名，而非十六进制数的一部分，而e是未被定义的，所以便会报错，所以我们要以字符串形式输入’7e’，这样就避免了系统误判的问题。</p>
 </blockquote>
-<p><img src="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/71985279.jpg" alt="作业要求"></p>
-  <a id="more"></a>
-<h1 id="初始方案"><a href="#初始方案" class="headerlink" title="初始方案"></a><strong><em>初始方案</em></strong></h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">'1.存款'</span>)</span><br><span class="line">print(<span class="string">'2.贷款'</span>)</span><br><span class="line">print(<span class="string">'3.开卡'</span>)</span><br><span class="line">print(<span class="string">'4.挂失'</span>)</span><br><span class="line">print(<span class="string">'请输入您要办理的业务'</span>)</span><br><span class="line">number=input(<span class="string">'请输入数字:'</span>) <span class="comment">#python3中默认input输出类型为str，python2中则有所区别。</span></span><br><span class="line">a=number <span class="comment">#将输出赋值给a，方便后续调用</span></span><br><span class="line"><span class="keyword">print</span> (a)</span><br><span class="line"><span class="keyword">if</span> int(a) <span class="keyword">in</span> range (<span class="number">1</span>,<span class="number">5</span>): <span class="comment">#用int()将字符串转化为整型</span></span><br><span class="line">    print(<span class="string">'welcome!'</span>,a)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">'sorry!'</span>,a) <span class="comment">#使用if判断语句判别用户输入数字是否在选项范围内</span></span><br></pre></td></tr></table></figure>
-<h3 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a><strong>输出结果</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.存款</span><br><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line">请输入您要办理的业务</span><br><span class="line"></span><br><span class="line">请输入数字:4</span><br><span class="line">4</span><br><span class="line">welcome! 4</span><br></pre></td></tr></table></figure>
-<h1 id="第一次与第二次优化方案整合"><a href="#第一次与第二次优化方案整合" class="headerlink" title="第一次与第二次优化方案整合"></a><strong><em>第一次与第二次优化方案整合</em></strong></h1><blockquote>
-<p><em>使用对供选择的选项的打印代码进行了缩减</em><br><em>将输出内容优化到数字对应的具体选项内容</em><br><em>考虑到ATM机上除数字键外还有“#”“</em>”“确认”，对可能出现的bug进行了排除*<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">business=&#123;<span class="number">1</span>:<span class="string">'存款'</span>,<span class="number">2</span>:<span class="string">'贷款'</span>,<span class="number">3</span>:<span class="string">'开卡'</span>,<span class="number">4</span>:<span class="string">'挂失'</span>&#125;</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> business:</span><br><span class="line">    <span class="keyword">print</span> (str(key)+<span class="string">'.'</span>+business[key])</span><br><span class="line">number=input(<span class="string">'请输入您要办理的业务:'</span>)</span><br><span class="line">a=number</span><br><span class="line"><span class="keyword">print</span> (a)</span><br><span class="line"><span class="keyword">if</span> a==<span class="string">'#'</span><span class="keyword">or</span> a==<span class="string">'*'</span> <span class="keyword">or</span> a==<span class="string">'确认'</span>:</span><br><span class="line">    print(<span class="string">'请重新输入!'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">if</span> int(a) <span class="keyword">in</span> range (<span class="number">1</span>,<span class="number">5</span>):</span><br><span class="line">        print(<span class="string">'欢迎'</span>+business[int(a)]+<span class="string">'!'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">'对不起，无此选项!'</span>)</span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<h3 id="输出结果-1"><a href="#输出结果-1" class="headerlink" title="输出结果"></a><strong>输出结果</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.存款</span><br><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line"></span><br><span class="line">请输入您要办理的业务:4</span><br><span class="line">4</span><br><span class="line">欢迎挂失!</span><br></pre></td></tr></table></figure>
-<h1 id="第三次与第四次优化方案整合"><a href="#第三次与第四次优化方案整合" class="headerlink" title="第三次与第四次优化方案整合"></a><strong><em>第三次与第四次优化方案整合</em></strong></h1><blockquote>
-<p><em>考虑到实际操作中“确认”=“enter”以及用户不输入内容直接确认的情况，取消了代码中“确认”的情况</em><br><em>使用while break语句优化了代码，使程序识别到用户操作不规范后自动重运行</em><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">business=&#123;<span class="number">1</span>:<span class="string">'存款'</span>,<span class="number">2</span>:<span class="string">'贷款'</span>,<span class="number">3</span>:<span class="string">'开卡'</span>,<span class="number">4</span>:<span class="string">'挂失'</span>&#125;</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> business:</span><br><span class="line">    <span class="keyword">print</span> (str(key)+<span class="string">'.'</span>+business[key])</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">True</span>:      <span class="comment">#在用户输入不符合要求后重新执行程序</span></span><br><span class="line">    number=input(<span class="string">'请输入您要办理的业务:'</span>)</span><br><span class="line">    a=number</span><br><span class="line">    <span class="keyword">print</span> (a)</span><br><span class="line">    <span class="keyword">if</span> a==<span class="string">'#'</span><span class="keyword">or</span> a==<span class="string">'*'</span> <span class="keyword">or</span> a==<span class="string">''</span>:      <span class="comment">#考虑到atm机上还有“#”和“*”以及用户不输入内容直接确认的情况，确认键等同于“enter”操作</span></span><br><span class="line">        print(<span class="string">'请重新输入!'</span>)</span><br><span class="line">    <span class="keyword">elif</span> int(a) <span class="keyword">in</span> range (<span class="number">1</span>,<span class="number">5</span>):</span><br><span class="line">        print(<span class="string">'欢迎'</span>+business[int(a)]+<span class="string">'!'</span>)</span><br><span class="line">        <span class="keyword">break</span>        <span class="comment">#用户选择正确选项时结束循环</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">'对不起，无此选项!'</span>)     <span class="comment">#用户输入不在范围内数字时的反馈</span></span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<h3 id="输出结果-2"><a href="#输出结果-2" class="headerlink" title="输出结果"></a><strong>输出结果</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1.存款</span><br><span class="line">2.贷款</span><br><span class="line">3.开卡</span><br><span class="line">4.挂失</span><br><span class="line"></span><br><span class="line">请输入您要办理的业务:#</span><br><span class="line">#</span><br><span class="line">请重新输入!</span><br><span class="line"></span><br><span class="line">请输入您要办理的业务:</span><br></pre></td></tr></table></figure>
-<hr>
-<p><em>作者：爱好小姐姐的咸鱼白</em></p>
+<p>##修改后的输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print (tran(16,&apos;7e&apos;,10))</span><br></pre></td></tr></table></figure></p>
+<p>##修改后的输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">126</span><br></pre></td></tr></table></figure></p>
+<h2 id="大功告成！！！"><a href="#大功告成！！！" class="headerlink" title="大功告成！！！"></a>大功告成！！！</h2><p><em>作者：爱好小姐姐的咸鱼白</em></p>
 <p><em>欢迎小姐姐们扫码加我微信</em><br><img src="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg" alt="此处输入图片的描述"></p>
 
       
@@ -295,7 +289,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://xclwt.github.io/2018/10/01/博客2-ATM机的模拟作业/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://xclwt.github.io/2018/10/17/博客2-进制转换/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -309,18 +303,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/10/06/博客3-咸鱼白的书单/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/03/09/博客4最近的一些情况总结/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          咸鱼白的书单
+          最近的一些情况总结
         
       </div>
     </a>
   
   
-    <a href="/2018/09/30/博客1-hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello,world!</div>
+    <a href="/2018/10/06/博客3-咸鱼白的书单/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">咸鱼白的书单</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -347,7 +341,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#初始方案"><span class="toc-number">1.</span> <span class="toc-text">初始方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#输出结果"><span class="toc-number">1.0.1.</span> <span class="toc-text">输出结果</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第一次与第二次优化方案整合"><span class="toc-number">2.</span> <span class="toc-text">第一次与第二次优化方案整合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#输出结果-1"><span class="toc-number">2.0.1.</span> <span class="toc-text">输出结果</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第三次与第四次优化方案整合"><span class="toc-number">3.</span> <span class="toc-text">第三次与第四次优化方案整合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#输出结果-2"><span class="toc-number">3.0.1.</span> <span class="toc-text">输出结果</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#进制转换函数"><span class="toc-number">1.</span> <span class="toc-text">进制转换函数:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#示例："><span class="toc-number">2.</span> <span class="toc-text">示例：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#输入"><span class="toc-number">2.1.</span> <span class="toc-text">输入:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输出"><span class="toc-number">2.2.</span> <span class="toc-text">输出:</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一个反例："><span class="toc-number">3.</span> <span class="toc-text">一个反例：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#输入："><span class="toc-number">3.1.</span> <span class="toc-text">输入：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输出："><span class="toc-number">3.2.</span> <span class="toc-text">输出：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#大功告成！！！"><span class="toc-number">3.3.</span> <span class="toc-text">大功告成！！！</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -361,7 +355,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="博客2-ATM机的模拟作业" data-title="ATM界面的模拟作业" data-url="http://xclwt.github.io/2018/10/01/博客2-ATM机的模拟作业/"></div>
+	<div class="ds-thread" data-thread-key="博客2-进制转换" data-title="使用python编写进制转换函数（非直接调用内置函数）" data-url="http://xclwt.github.io/2018/10/17/博客2-进制转换/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -384,8 +378,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://xclwt.github.io/2018/10/01/博客2-ATM机的模拟作业/", 
-    sourceId: "博客2-ATM机的模拟作业",
+    url: "http://xclwt.github.io/2018/10/17/博客2-进制转换/", 
+    sourceId: "博客2-进制转换",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };
@@ -394,7 +388,7 @@
   
 
   
-  <div id="SOHUCS" sid="博客2-ATM机的模拟作业" ></div> 
+  <div id="SOHUCS" sid="博客2-进制转换" ></div> 
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js" ></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -413,7 +407,7 @@
 <script src="https://jjeejj.github.io/js/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-  id: "http://xclwt.github.io/2018/10/01/博客2-ATM机的模拟作业/",
+  id: "http://xclwt.github.io/2018/10/17/博客2-进制转换/",
   owner: 'xclwt',
   repo: 'xclwt.github.io',
   oauth: {
@@ -439,7 +433,7 @@ gitment.render('gitment-ctn')
     </div>
   </div>
 </footer>
-<span id="busuanzi_container_site_pv">    本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+ 
 
     </div>
     <script>
@@ -516,11 +510,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">书单</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color1">start</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -532,7 +522,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">start</a>
+                <a href="javascript:void(0)" class="js-tag color3">书单</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
             
             <div class="clearfix"></div>
@@ -595,7 +589,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">一只梦想成为数据科学家的咸鱼/爱好小姐姐</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">一只梦想成为数据科学家的咸鱼\爱好小姐姐（现在只爱一个小姐姐了，怕被打死（逃））</div>
   	  	
     	</section>
     
