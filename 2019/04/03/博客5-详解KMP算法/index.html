@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new4.png">
 <meta property="og:image" content="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png">
 <meta property="og:image" content="http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg">
-<meta property="og:updated_time" content="2019-04-03T15:55:36.935Z">
+<meta property="og:updated_time" content="2019-04-03T16:38:16.954Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="详解KMP算法">
 <meta name="twitter:description" content="详解KMP算法引子这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。">
@@ -193,7 +193,7 @@
 <p>然而此时我们一眼可以看出第二次匹配也是必然失败的，但计算机并不知道，它只会按照BF算法一位一位的比较下去（在很多情况下要比较很多位才能发现不匹配），这种暴力求解的算法效率是极低的，所以我们有没有办法让计算机根据已经匹配过的部分知道自己从头匹配的时候应该忽略哪些部分，省去不必要的匹配？（在此例中即为从头跳过第二位的b从第三位开始新的匹配，例子不够极端，可能并不是很好理解跳过的必要性，请耐心看后续讲解）为了解决这个问题，KMP算法便诞生了。</p>
 <h3 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法"></a><strong>KMP算法</strong></h3><h4 id="1、前缀与后缀"><a href="#1、前缀与后缀" class="headerlink" title="1、前缀与后缀"></a><strong>1、前缀与后缀</strong></h4><p>首先我们要了解几个概念：前缀、后缀、相同前缀后缀的最大长度（为表述方便，下文均用公共最大长指代），为了直观一点，我们直接举例：</p>
 <blockquote>
-<p>abcdef的前缀：a、ab、abc、abcd、abcde（注意：abcdef不是前缀）<br>abcdef的后缀：f、ef、def、cdef、bcdef（注意：abcdef不是后缀）<br>abcdef的公共最大长：0（因为其前缀与后缀没有相同的）<br>ababa的前缀：a、ab、aba、abab<br>ababa的后缀：a：ba、aba、baba<br>ababa的公共最大长：3（因为他们的公共前缀后缀中最长的为aba，长度3）</p>
+<p>abcdef的前缀：a、ab、abc、abcd、abcde（注意：abcdef不是前缀）<br>abcdef的后缀：f、ef、def、cdef、bcdef（注意：abcdef不是后缀）<br>abcdef的公共最大长：0（因为其前缀与后缀没有相同的）<br>ababa的前缀：a、ab、aba、abab<br>ababa的后缀：a、ba、aba、baba<br>ababa的公共最大长：3（因为他们的公共前缀后缀中最长的为aba，长度3）</p>
 </blockquote>
 <h4 id="2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化"><a href="#2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化" class="headerlink" title="2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化"></a><strong>2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化</strong></h4><p>如图4：</p>
 <p><img src="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new7.png" alt=""></p>
@@ -204,7 +204,7 @@
 <p> <img src="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png" alt="">   </p>
 <p>很明显，已匹配成功的子串的公共最大长为2，这说明了什么？想一想，<strong>B串的这部分子串和A串失配处之前的一小部分是相同的</strong>，这个子串的公共最大长为2，最前面的两个字符和最后面的两个字符是相同的，这就意味着我们重新进行匹配的时候可以将<strong>子串的头部2个字符和A串匹配成功的部分的最后两个字符</strong>对齐。</p>
 <p><img src="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E6%96%B0%E5%8C%B9%E9%85%8D.png" alt=""></p>
-<p>如图6所示，蓝色的部分即使通过公共最大长直接匹配的位置，红色部分是重新开始匹配的位置，相较于BF算法，我们在这一步直接跳过了A串的第二个字符“b”，第三个字符“a”，直接将B串头部对齐了第四个字符，并从B串的第三个字符开始重新与此前失配的字符进行新一轮的匹配。<br>也许有人会疑问，凭什么就应该跳过A串的第三个字符“a”去直接和第四个字符“a”进行匹配呢？难道从第三个开始匹配就不能成功吗？请回忆一下什么是公共最大长吧？是相同前缀后缀的最大长度。请对照着图6看完我下面的解释：我在前面有加粗这么一句话“B串的这部分子串和A串失配处之前的一小部分是相同的”，现在我们假设是从第三个字符“a”开始重新匹配的，如果要与B一直匹配成功到第五个字符“b”，也就是匹配成功了三个字符，这意味着什么？意味着第五个字符位对应的公共最大长应该是3，这显然是和事实的公共最大长为2是不符合的，以此类推，重新开始匹配时参考公共最大长是合理的最优解。再梳理一下其中的逻辑，现在你应该能理解公共最大长度的意义了。<br>计算机运行时是怎么做的？我们在匹配时分别用指针i和j指向字符串当前匹配的位置，失配之后指针i不变，继续指向A串的失配处，指针i则指向B串第三个位置（公共最大长的后一位，索引为公共最大长）。实现就是如此简单，重新匹配的过程省去了一大堆不必要的匹配，为我们节省了很多时间，现在你应该能理解KMP算法的原理了吧？<br>等一等，我们好像忘了什么？原理懂是懂了，可上帝在哪？我们之前假设上帝告诉了我们next行（next数组中记录的值），可事实上上帝并不存在，还是得靠我们自己求值鸭！所以，怎么求next数组呢？</p>
+<p>如图6所示，蓝色的部分即是通过公共最大长直接匹配的位置，红色部分是重新开始匹配的位置，相较于BF算法，我们在这一步直接跳过了A串的第二个字符“b”，第三个字符“a”，直接将B串头部对齐了第四个字符，并从B串的第三个字符开始重新与此前失配的字符进行新一轮的匹配。<br>也许有人会疑问，凭什么就应该跳过A串的第三个字符“a”去直接和第四个字符“a”进行匹配呢？难道从第三个开始匹配就不能成功吗？请回忆一下什么是公共最大长吧？是相同前缀后缀的最大长度。请对照着图6看完我下面的解释：我在前面有加粗这么一句话“B串的这部分子串和A串失配处之前的一小部分是相同的”，现在我们假设是从第三个字符“a”开始重新匹配的，如果要与B一直匹配成功到第五个字符“b”，也就是匹配成功了三个字符，这意味着什么？意味着第五个字符位对应的公共最大长应该是3，这显然是和事实的公共最大长为2是不符合的，以此类推，重新开始匹配时参考公共最大长是合理的最优解。再梳理一下其中的逻辑，现在你应该能理解公共最大长度的意义了。<br>计算机运行时是怎么做的？我们在匹配时分别用指针i和j指向字符串当前匹配的位置，失配之后指针i不变，继续指向A串的失配处，指针i则指向B串第三个位置（公共最大长的后一位，索引为公共最大长）。实现就是如此简单，重新匹配的过程省去了一大堆不必要的匹配，为我们节省了很多时间，现在你应该能理解KMP算法的原理了吧？<br>等一等，我们好像忘了什么？原理懂是懂了，可上帝在哪？我们之前假设上帝告诉了我们next行（next数组中记录的值），可事实上上帝并不存在，还是得靠我们自己求值鸭！所以，怎么求next数组呢？</p>
 <h4 id="3、next（new）数组的求解"><a href="#3、next（new）数组的求解" class="headerlink" title="3、next（new）数组的求解"></a><strong>3、next（new）数组的求解</strong></h4><p>在此我要先解释一下new数组中值的意义，正如表示公共最大长的next的数组的值同时表示了对应的最大前缀（<strong>为方便表示，我们将相同前缀后缀中的前缀称为最大前缀，相同前缀后缀中的后缀称为最大后缀</strong>）的后面一位的索引，new数组中的值等于next数组中的值减去1，我们同时用其表示了对应的最大前缀的最后一位的索引，这是为了后续的程序表达的便利，所以我们此处讲解对new数组的求解，因为求出了new数组等于求出来next数组。</p>
 <p>先把求解new数组的类c伪代码贴在这里(B即为B字符串，new即为new数组，不要急于看懂代码，先看明白我的解释):<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span>[<span class="number">0</span>] = <span class="number">-1</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;m;i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">int</span> j=<span class="keyword">new</span>[i<span class="number">-1</span>];   <span class="comment">//j为待计算位置前一位对应的new值，也就是最大前缀最后一位对应的索引</span></span><br><span class="line">    <span class="keyword">while</span> ((B[j+<span class="number">1</span>]!=B[i])&amp;&amp;(j&gt;=<span class="number">0</span>)) <span class="comment">//任何一个最大前缀后一位与当前求值字符相同时或者向前继续寻找的索引为-1时停止循环</span></span><br><span class="line">        j=<span class="keyword">new</span>[j];</span><br><span class="line">    <span class="keyword">if</span> (B[j+<span class="number">1</span>]==B[i])  <span class="comment">//字符相同，公共最大长+1，new值+1</span></span><br><span class="line">        <span class="keyword">new</span>[i]=j+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">else</span>               <span class="comment">//最终寻找到的索引为-1，公共最大长归零</span></span><br><span class="line">        <span class="keyword">new</span>[i]=<span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>首先，我们可以知道B串的第一个字符对应的公共最大长一定是0，在new数组中则为-1，所以new[0] = -1,我们不从第二个字符开始类推，我们选取一个位置靠后的具有普适性的例子以便更好的理解代码：</p>
@@ -499,7 +499,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">start</a>
+                <a href="javascript:void(0)" class="js-tag color3">作业</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -507,15 +511,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">start</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">作业</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
