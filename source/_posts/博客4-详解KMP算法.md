@@ -1,9 +1,9 @@
-﻿---
+---
 title: '详解KMP算法'
 date: 2019-04-03
 tags: [算法]
 ---
-# **详解KMP算法**
+
 
 ### **引子**
 这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。
@@ -52,7 +52,7 @@ new行记录的值则是相应的公共最大长减去1。
 好的，我们现在可以再次进行匹配了，还是开头的例子，B串在第6个字符处（索引5）失配，此时我们可以确认的是B串的前五个字符已经匹配成功了，让我们根据上面那个表格查找一下已经匹配成功的子串的公共最大长吧**（请注意是已经匹配成功的，我们在第6个字符处失配，所以应当去查找第五个字符或者说索引4的位置记录的公共最大长）**。
 
  ![图5][5]   
- 
+
 很明显，已匹配成功的子串（我们称之为C串吧）的公共最大长为2，这说明了什么？想一想，**B串匹配成功的部分和A串失配处之前的一小部分子串都是C串**，C串的公共最大长为2，C串最前面的两个字符（也就是B串的开头两个字符）和C串最后面的两个字符（也就是A串失配位前面两个字符）是相同的，这就意味着我们重新进行匹配的时候可以直接将**B串的头部2个字符和A串匹配成功的部分的最后两个字符**对齐。然后开始对比B串的第三个字符与A串的失配字符，进行新一轮的匹配
        
 关于对齐，计算机运行时是怎么做的？我们在匹配时分别用指针i和j指向字符串当前匹配的位置，失配之后**指针i不变**，继续指向A串的失配处，**指针j则指向B串第三个位置**（公共最大长的后面一位，索引为公共最大长）。
@@ -117,11 +117,10 @@ for (int i=1;i<n;i++) /* n为B串长度 */
 很明显，按之前的推理，在当前情况下，B[10]='a'和B[4]='b'是不等的，所以公共最大长不可能增加了，我们只能考虑其与前一位相等甚至减少的情况了，此时该怎么求呢？我们现在要找的是**最大前缀的前缀，与“最大后缀加‘a’字符”这一组合的后缀的公共最大长**了，我们暂且**将索引10前一位对应的子串的最大前缀与最大后缀称为C串**吧（因为二者是相同的字符串），此时我们要求解的问题其实**转化为了C串后面添加一个字符'a'对应的公共最大长**，于是我们先利用索引10前面一位索引9对应的new值找到C串（从头数起）的最后一位，并重复上面的过程来推测此时公共最大长应该朝什么方向变化（这就是代码中循环的意义），如果向前找到的最后一位的索引是-1，即公共最大长已经减到0的时候，循环终止。现在回头再看看代码和注释，就应当能够理解了。
        
 ### **小结**
-       
-       
+
+​       
 
 > 第一次写技术博客，写得比较啰嗦，可能表述也并不到位，如有不能理解的地方或者修改建议请加我微信或在评论区留言。
-
 
 ------
 *作者：爱好小姐姐的咸鱼白*
@@ -131,12 +130,12 @@ for (int i=1;i<n;i++) /* n为B串长度 */
 
   
 
-  [1]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E4%B8%B2.png
-  [2]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png
-  [3]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B.png
-  [11]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new7.png
-  [5]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png
-  [6]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E6%96%B0%E5%8C%B9%E9%85%8D.png
-  [7]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new4.png
-  [8]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png
-  [12]: http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg
+[1]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E4%B8%B2.png
+[2]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png
+[3]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B.png
+[11]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new7.png
+[5]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png
+[6]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E6%96%B0%E5%8C%B9%E9%85%8D.png
+[7]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new4.png
+[8]: https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png
+[12]: http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg
