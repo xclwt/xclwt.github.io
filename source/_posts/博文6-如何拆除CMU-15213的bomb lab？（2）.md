@@ -23,7 +23,9 @@ stepi 				# 单步执行，进入phase_3函数
 进入phase_3函数后，我们可以看到程序在栈上分配了24字节空间，我们把现在的栈顶称为s1：
 
 ```c
-0x400f43 <phase_3>      sub    $0x18,%rsp                             0x400f47 <phase_3+4>    lea    0xc(%rsp),%rcx        # %rcx值设为s1+12 0x400f4c <phase_3+9>    lea    0x8(%rsp),%rdx		# %rdx值设为s1+8
+0x400f43 <phase_3>      sub    $0x18,%rsp
+0x400f47 <phase_3+4>    lea    0xc(%rsp),%rcx        # %rcx值设为s1+12 
+0x400f4c <phase_3+9>    lea    0x8(%rsp),%rdx		# %rdx值设为s1+8
 ```
 
 接下来又出现了包含即时数的操作：
@@ -222,3 +224,5 @@ int func4(int num, int x, int y){				# num为我们输入的第一个整数
 这段程序将第二个整数与0比较，若不想等就会触发炸弹，所以，第二个整数应该为0。
 
 至此，phase 4通过。
+
+(在写5，6关的解法时和人怼了起来导致最后半途而废，抱歉)
