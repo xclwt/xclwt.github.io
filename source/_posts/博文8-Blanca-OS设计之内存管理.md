@@ -45,3 +45,4 @@ static list_node free_list[MAX_ORDER + 1];
 ### 页管理算法
 
 选用了伙伴算法：
+（updating...）
