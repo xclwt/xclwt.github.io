@@ -56,7 +56,7 @@ footer:
   # Hexo link (Powered by Hexo).
   powered: true
 
-  theme: 
+  theme:
     # Theme & scheme info link (Theme - NexT.scheme).
     enable: true
     # Version info of NexT after scheme info (vX.X.X).
@@ -113,15 +113,15 @@ neat_js:
 # Value before `||` delimeter is the target link.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, question icon will be loaded.
 menu:
-  home: / || home
+  home: /|| home
   #about: /about/ || user
-  tags: /tags/ || tags
-  archives: /archives/ || archive
-  Resume: /resume ||user
-  #categories: /categories/ || th
-  #schedule: /schedule/ || calendar
-  #sitemap: /sitemap.xml || sitemap
-  #commonweal: /404/ || heartbeat
+  tags: /tags/|| tags
+  archives: /archives/|| archive
+  Resume: /resume||user
+  #categories: /categories/|| th
+  #schedule: /schedule/|| calendar
+  #sitemap: /sitemap.xml|| sitemap
+  #commonweal: /404/|| heartbeat
 
 # Enable/Disable menu icons.
 menu_icons:
