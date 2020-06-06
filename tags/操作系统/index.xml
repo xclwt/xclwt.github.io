@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>操作系统 on 咸鱼白的窝</title>
+    <link>http://example.org/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 操作系统 on 咸鱼白的窝</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>咸鱼白</copyright>
+    <lastBuildDate>Tue, 28 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://example.org/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Blanca-OS设计之中断</title>
+      <link>http://example.org/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</link>
+      <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</guid>
+      <description>中断 中断，即CPU接收到一定的信号，打断了当前的程序控制流以处理其他事务的机制。 中断主要可分为两类：同步中断与异步中断。 其中，同步中断又称异常，可分为故障（fault），陷阱（trap），终止（abort）三类。异步中断则简称为中断。
+   类别       中断     故障     陷阱     终止      中断例程 Blanca-OS中的所有中断处理程序都要经过一段汇编实现的例程asm_isr_stub（见kernel/idt_asm.asm），该例程将中断将中断发生时的程序信息（主要是寄存器）快照压栈并调用中断号对应的中断处理程序，该快照在C语言中以如下结构体表示（见inc/idt.h）：
+typedef struct{ /*段寄存器,16bit*/ uint32_t fs; uint32_t gs; uint32_t es; uint32_t ds; /*pusha保存的寄存器*/ uint32_t edi; uint32_t esi; uint32_t ebp; uint32_t esp; uint32_t ebx; uint32_t edx; uint32_t ecx; uint32_t eax; /*中断号*/ uint32_t intr_num; /*错误代码*/ uint32_t err_code; uint32_t eip; uint32_t cs; //16bit 	uint32_t eflags; /*特权级切换时才会压入ss及esp*/ uint32_t u_esp; uint32_t ss; //16bit }regs_t; 需要注意的是，并非所有的中断都会压入error code（错误代码），故中断发生时的程序快照结构体本应有两种，但此处为了方便后续程序的编写进行了统一，即在汇编macro生成的不压入错误代码的相关中断的处理程序中(见kernel/idt_s.</description>
+    </item>
+    
+    <item>
+      <title>Blanca-OS设计之线程，进程与锁</title>
+      <link>http://example.org/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</link>
+      <pubDate>Wed, 22 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</guid>
+      <description>线程与进程 线程与进程都是程序执行流，其区别在于进程拥有独立的地址空间与一些资源，而线程则需与其所属进程中的其他的线程共享地址空间与一些资源。Blanca-OS中参考了linux中的实现，采用了”伪“线程的概念，将所有程序执行流（每一个线程/进程都分配一个PCB）统一归为任务（Task）进行调度。
+程序控制块（PCB） Blanca-OS管理线程与线程时统一使用了程序控制块（PCB），程序控制块结构体task_struct设计如下（见inc/thread.h）：
+typedef struct{ uint8_t* kstack; uint8_t status; uint8_t priority; uint32_t run_time; list_node ready_list_node; list_node all_list_node; char name[16]; uint32_t* pgdir; uint32_t stack_boundary; }task_struct; （待完善）
+严格来说，PCB并不仅限于这个结构体，还包含了kstack所指向的内核线程栈，整个PCB的内存结构如下图：
+（待添加）
+程序调度 程序切换 程序切换的操作由汇编实现（见thread/switch.asm），该操作保存了当前程序的上下文并切换到下一个程序去。
+switch_to: mov eax,[esp + 4] mov [eax],esp mov eax,[esp + 8] push esi push edi push ebx push ebp mov esp,[eax] pop ebp pop ebx pop edi pop esi ret switch_to函数按照ABI将上下文（esi，edi，ebx，ebp寄存器的内容，esp寄存器值由调用约定保存）保存在当前程序的内核栈中，并切换出下一个程序的上下文，最后通过ret切换到下一个程序。
+调度算法 锁 现阶段，Blanca-OS仅支持单处理器，故目前对于共享资源只提供了互斥锁（mutex）这一种机制以避免竞争。互斥锁的原理即将抢锁失败的任务阻塞并等待锁的释放。其实现主要采用了semaphore与mutex_lock两种数据结构（见inc/sync.h），锁的获取与释放代码如下:
+void acquire_mutex(mutex_lock* mutex){ if(mutex-&amp;gt;holder != cur_thread()){ sema_busy(&amp;amp;(mutex-&amp;gt;sig));	//信号量设为忙碌 	mutex-&amp;gt;holder = cur_thread();	//将互斥锁持有者设为当前任务 	mutex-&amp;gt;request_num = 1;	//初始化互斥锁申请次数为1 	}else{ ++mutex-&amp;gt;request_num;	//互斥锁申请次数加1 	} } void release_mutex(mutex_lock* mutex){ if(mutex-&amp;gt;request_num &amp;gt; 1){ --mutex-&amp;gt;request_num;	//互斥锁申请次数减1 	return; }else{ --mutex-&amp;gt;reqauest_num;	mutex-&amp;gt;holder = NULL;	//清空持有者 	sema_free(&amp;amp;(mutex-&amp;gt;sig));	//信号量设为空闲 	} } </description>
+    </item>
+    
+    <item>
+      <title>Blanca-OS设计之内存管理</title>
+      <link>http://example.org/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
+      <description>内存分布 Blanca-OS假定使用者的内存大于1G，并将1G的内核空间永远映射于地址的3/4高位之上（3GB-4GB），而超出1G内存的部分则被分配为用户空间并映射于地址的低位（0-3GB）。内核空间参考linux的设计分为了3个zone：DMA ZONE（0-1MB），NORMAL ZONE（1-896MB），HIGHMEM ZONE（896MB+）。Blanca-OS目前的内存管理模块主要聚焦于对NORMAL ZONE的管理，其他zone的管理与使用需等待后期的开发。
+页管理结构 Blanca-OS对页的管理主要使用了以下的结构：
+typedef struct{ list_node list; atomic_t count; uint32_t order; uint32_t flag; }page_t; 页管理结构体page_t（见inc/pmm.h）：
+每一个页管理结构体存储了对应的一个或多个页的信息，包括：list（用于添加至空闲页表以标记每一个或一组空闲页），count（当前页引用计数），order（当前页管理结构体管理的页数为2的order次幂），flag（当前页状态）。
+static page_t* p_pages = (page_t*)(uint32_t)KERNEL_END + KERNEL_BASE; 指向页管理结构体数组的指针p_pages（见mm/pmm.c）:该页管理结构体数组中记录了NORMAL ZONE中所有页对应的页管理结构体。
+static list_node free_list[MAX_ORDER + 1]; 空闲页表free_list（见mm/buddy.c）：空闲页表记录了每一个order的空闲页集合所对应的链表头，可根据表头查找出一组所需大小空闲页对应的list值并反向确定该组起始空闲页的位置。
+页管理算法 选用了伙伴算法： （updating&amp;hellip;）</description>
+    </item>
+    
+    <item>
+      <title>自制系统Blanca-OS记录（持续更新）</title>
+      <link>http://example.org/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</link>
+      <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</guid>
+      <description>&lt;h4 id=&#34;20200225&#34;&gt;2020.02.25&lt;/h4&gt;
+&lt;p&gt;loader在加载内核文件到内存的时候出现莫名错误，表现为无法对某部分内存进行操作。起初排查认为是640KB以上至4GB的内存都无法写入，复查gdt表以及ds寄存器确认所选择的数据段覆盖了0-4GB范围，可读可写，经过十几小时的苦恼之后，终于尝试出1MB以上的内存可写入，而之前无法写入主要是因为我采用了640KB出头的内存区域及0xc0001500进行尝试,前者属于BIOS扩展区，无法写入，后者超出了我所设置的虚拟机的总内存32MB，属于不存在的区域，其实至今出现的很多莫名错误本质上都是小问题，但总会因为自己的粗心失误造成大量的时间损失。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

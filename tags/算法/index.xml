@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on 咸鱼白的窝</title>
+    <link>http://example.org/tags/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on 咸鱼白的窝</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>咸鱼白</copyright>
+    <lastBuildDate>Wed, 03 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://example.org/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>详解KMP算法</title>
+      <link>http://example.org/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Wed, 03 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</guid>
+      <description>&lt;h3 id=&#34;引子&#34;&gt;&lt;strong&gt;引子&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

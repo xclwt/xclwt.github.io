@@ -1,0 +1,27 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>咸鱼白的窝</title>
+    <link>http://example.org/</link>
+    <description>Recent content on 咸鱼白的窝</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>咸鱼白</copyright>
+    <lastBuildDate>Tue, 28 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>Hello,world!</title>
+        <link>http://example.org/archives/%E5%8D%9A%E5%AE%A21-hello-world/</link>
+        <pubDate>Sun, 30 Sep 2018 00:00:00 +0000</pubDate>
+        
+        <guid>http://example.org/archives/%E5%8D%9A%E5%AE%A21-hello-world/</guid>
+        <description>咸鱼白的窝 http://example.org/archives/%E5%8D%9A%E5%AE%A21-hello-world/ -&lt;p&gt;一只咸鱼踏出了翻身的第一步。&lt;/p&gt;
+- http://example.org/archives/%E5%8D%9A%E5%AE%A21-hello-world/ - 咸鱼白</description>
+        </item>
+    
+    
+  </channel>
+</rss> 

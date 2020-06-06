@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>./Images/Favicon-16x16.png on 咸鱼白的窝</title>
+    <link>http://example.org/images/favicon-16x16.png/</link>
+    <description>Recent content in ./Images/Favicon-16x16.png on 咸鱼白的窝</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>咸鱼白</copyright>
+    
+	<atom:link href="http://example.org/images/favicon-16x16.png/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编 on 咸鱼白的窝</title>
+    <link>http://example.org/tags/%E6%B1%87%E7%BC%96/</link>
+    <description>Recent content in 汇编 on 咸鱼白的窝</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>咸鱼白</copyright>
+    <lastBuildDate>Tue, 17 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://example.org/tags/%E6%B1%87%E7%BC%96/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>如何拆除CMU-15213的bomb lab？（2）</title>
+      <link>http://example.org/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</link>
+      <pubDate>Tue, 17 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</guid>
+      <description>&lt;h3 id=&#34;phase-3&#34;&gt;phase 3：&lt;/h3&gt;
+&lt;p&gt;执行以下操作：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e72&lt;/span&gt;		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_3函数调用处设置断点
+......
+&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;（输入任意字符串）&lt;/span&gt;
+stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_3函数
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>如何拆除CMU-15213的bomb lab？（1）</title>
+      <link>http://example.org/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</link>
+      <pubDate>Sun, 15 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</guid>
+      <description>&lt;h3 id=&#34;phase-1&#34;&gt;phase 1：&lt;/h3&gt;
+&lt;p&gt;用gdb调试器打开bomb程序：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;gdb bomb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
