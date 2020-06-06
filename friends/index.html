@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<title></title>
+<title>咸鱼白的朋友们</title>
 
 <meta charset="utf-8">
 <meta name="X-UA-Compatible" content="IE=edge">
@@ -75,11 +75,9 @@
             
             
             
-                
             
             
-            
-            <a class="a-block nav-link-item active" href="/archives">
+            <a class="a-block nav-link-item false" href="/archives">
                 Archives
             </a>
             
@@ -97,9 +95,11 @@
             
             
             
+                
             
             
-            <a class="a-block nav-link-item false" href="/friends">
+            
+            <a class="a-block nav-link-item active" href="/friends">
                 Friends
             </a>
             
@@ -178,11 +178,9 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                 
                 
-                    
                 
                 
-                
-                <a class="a-block drawer-menu-item active" href="/archives">
+                <a class="a-block drawer-menu-item false" href="/archives">
                     Archives
                 </a>
                 
@@ -200,9 +198,11 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                 
                 
+                    
                 
                 
-                <a class="a-block drawer-menu-item false" href="/friends">
+                
+                <a class="a-block drawer-menu-item active" href="/friends">
                     Friends
                 </a>
                 
@@ -284,7 +284,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
             >
                 <div class="post-title">
-                    
+                    咸鱼白的朋友们
                     
                     <div class="post-meta">
                         
@@ -301,18 +301,69 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                 <div class="post-body" v-pre>
                 
-                    <p>咸鱼白的朋友们</p>
-
+                    
                     
                 </div>
             </div>
             
-            
+                     <div class="post-body-wrapper">
+                <div class="post-body">
+                    <div class="container">
+    <div id="friend-list" class="row">
+        <friend
+            description="Rise"
+            url="https://amazingrise.net"
+            avator="https://avatars2.githubusercontent.com/u/29428546?s=460&v=4"
+            github="AmazingRise">
+            Rise
+        </friend>
+        <br>
+        <friend
+            description="存在感消失的地方"
+            url="https://akarin.dev/"
+            avator="https://avatars1.githubusercontent.com/u/47057319?s=460&v=4"
+            github="TransparentLC">
+            Akarin
+        </friend>
+    </div>
+</div>
+
+<script type="text/javascript">
+    Vue.component('friend',{
+        props:['avator','github','url','description'],
+        template: `
+        <div class="card-container col-xs-6" style="margin:1rem;width:20rem;">
+            <div class="card" style="background:none !important;">
+                <div class="row no-gutters" >
+                    <div class="col-auto">
+                        <img v-bind:src="avator"  style="width: 6rem;" class="img-fluid">
+                    </div>
+                    <div class="col">
+                        <div class="card-block px-2" style="margin: 0.5rem;">
+                            <p class="card-title"><slot></slot></p>
+                            <p class="card-text small"> {{description}} <br> <a v-bind:href="url">{{url}}</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer w-100 text-muted">
+                    <p class="card-text small"><a v-bind:href="'https://github.com/' + github" class="card-subtitle mb-2 text-muted">{{github}}@GitHub</a></p>
+                    
+                </div>
+            </div>
+        </div>
+        `
+    });
+ 
+</script>
+                    
+                </div>
+            </div>
+         
             <nav class="post-pagination">
 
                 
-                <a class="newer-posts" href="https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A21-hello-world/">
-			Next<br>Hello,world!
+                <a class="newer-posts" href="https://xclwt.github.io/resume/">
+			Next<br>resume
                 </a>
                 
                 
