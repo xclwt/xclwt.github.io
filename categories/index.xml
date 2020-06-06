@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on 咸鱼白的窝</title>
-    <link>http://example.org/categories/</link>
+    <link>https://xclwt.github.io/categories/</link>
     <description>Recent content in Categories on 咸鱼白的窝</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
     
-	<atom:link href="http://example.org/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xclwt.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

@@ -2,41 +2,41 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>随笔 on 咸鱼白的窝</title>
-    <link>http://example.org/tags/%E9%9A%8F%E7%AC%94/</link>
+    <link>https://xclwt.github.io/tags/%E9%9A%8F%E7%AC%94/</link>
     <description>Recent content in 随笔 on 咸鱼白的窝</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
     <lastBuildDate>Sat, 29 Feb 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://example.org/tags/%E9%9A%8F%E7%AC%94/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xclwt.github.io/tags/%E9%9A%8F%E7%AC%94/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>自制系统Blanca-OS记录（持续更新）</title>
-      <link>http://example.org/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</link>
+      <link>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</link>
       <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</guid>
+      <guid>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</guid>
       <description>&lt;h4 id=&#34;20200225&#34;&gt;2020.02.25&lt;/h4&gt;
 &lt;p&gt;loader在加载内核文件到内存的时候出现莫名错误，表现为无法对某部分内存进行操作。起初排查认为是640KB以上至4GB的内存都无法写入，复查gdt表以及ds寄存器确认所选择的数据段覆盖了0-4GB范围，可读可写，经过十几小时的苦恼之后，终于尝试出1MB以上的内存可写入，而之前无法写入主要是因为我采用了640KB出头的内存区域及0xc0001500进行尝试,前者属于BIOS扩展区，无法写入，后者超出了我所设置的虚拟机的总内存32MB，属于不存在的区域，其实至今出现的很多莫名错误本质上都是小问题，但总会因为自己的粗心失误造成大量的时间损失。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>2019年终总结</title>
-      <link>http://example.org/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
+      <link>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
       <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;已经步入2020年的第十天了，才想起来写一篇2019年的总结（其实是看到某非著名网友🍞说：“大佬都是不写年终总结的。”看看自己这么菜，还是写点总结反省反省比较好。）&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>最近的一些情况总结</title>
-      <link>http://example.org/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</link>
+      <link>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;博客搭了好几个月了，因为个人能力不足，很少更新。
 上学期搞了搞Python,一个人做了个大作业，到头来发现自己其实也就是个调包侠，内心比较迷茫。
