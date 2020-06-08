@@ -6,9 +6,49 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Tue, 28 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Jun 2020 20:25:11 +0800</lastBuildDate>
     
         <atom:link href="https://xclwt.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>干掉wine-qqmusic的黑框</title>
+        <link>https://xclwt.github.io/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/</link>
+        <pubDate>Mon, 08 Jun 2020 20:25:11 +0800</pubDate>
+        
+        <guid>https://xclwt.github.io/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/</guid>
+        <description>咸鱼白的窝 https://xclwt.github.io/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/ -&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
+&lt;p&gt;manjaro最新的版本更新之后，界面更美观了，然鹅使用wine安装的QQ音乐四周出现了大面积黑框，强迫症感觉有被冒犯到。&lt;/p&gt;
+&lt;h3 id=&#34;解决办法&#34;&gt;解决办法&lt;/h3&gt;
+&lt;p&gt;安装wmctrl：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;sudo pacman -S wmctrl&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;安装xdotool：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;sudo pacman -S xdotool&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;查看当前窗口：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;wmctrl -l -G -p -x&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;可以看到：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;0x02600013 -1 2898   0    0    1920 1080 plasmashell.plasmashell  xclwt-pc 桌面 — Plasma
+0x03c00006  0 3096   130  157  1187 754  dolphin.dolphin       xclwt-pc 下载 — Dolphin
+0x0260003a -1 2898   0    1035 1920 45   plasmashell.plasmashell  xclwt-pc Plasma
+0x05a00007  0 3370184 0    29   960  488  konsole.konsole       xclwt-pc commands : zsh — Konsole
+0x05000077  0 2082025 535  215  850  605  wechat.exe.wechat.exe  xclwt-pc 微信
+0x06800006  0 4024859 379  101  1200 800  qqmusic.exe.qqmusic.exe  xclwt-pc QQ音乐
+0x06800014  0 4024859 319  51   1320 920  qqmusic.exe.qqmusic.exe  xclwt-pc 
+0x01c00007  0 2923   0    0    1920 1035 yakuake.yakuake       xclwt-pc ~ : sh — Yakuake
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;出现了两个qqmusic.exe,其中一个就是出现错误的黑框，使用xdotool将该窗口关闭：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;xdotool windowclose 0x06800014&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;至此，问题暂时解决，但下次重新启动QQ音乐时仍需按同样步骤处理掉黑框。&lt;/p&gt;
+- https://xclwt.github.io/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/ - 咸鱼白</description>
+        </item>
     
     
     
@@ -655,18 +695,6 @@ new行记录的值则是相应的公共最大长减去1。&lt;/p&gt;
 &lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
 &lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;此处输入图片的描述&#34;&gt;&lt;/p&gt;- https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>Hello,world!</title>
-        <link>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A21-hello-world/</link>
-        <pubDate>Sun, 30 Sep 2018 00:00:00 +0000</pubDate>
-        
-        <guid>https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A21-hello-world/</guid>
-        <description>咸鱼白的窝 https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A21-hello-world/ -&lt;p&gt;一只咸鱼踏出了翻身的第一步。&lt;/p&gt;
-- https://xclwt.github.io/archives/%E5%8D%9A%E5%AE%A21-hello-world/ - 咸鱼白</description>
         </item>
     
     
