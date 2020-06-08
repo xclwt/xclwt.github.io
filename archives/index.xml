@@ -26,7 +26,7 @@
  查看当前窗口：
  wmctrl -l -G -p -x
  可以看到：
- 0x02600013 -1 2898 0 0 1920 1080 plasmashell.plasmashell xclwt-pc 桌面 — Plasma 0x03c00006 0 3096 130 157 1187 754 dolphin.dolphin xclwt-pc 下载 — Dolphin 0x0260003a -1 2898 0 1035 1920 45 plasmashell.plasmashell xclwt-pc Plasma 0x05a00007 0 3370184 0 29 960 488 konsole.konsole xclwt-pc commands : zsh — Konsole 0x05000077 0 2082025 535 215 850 605 wechat.</description>
+0x02600013 -1 2898 0 0 1920 1080 plasmashell.plasmashell xclwt-pc 桌面 — Plasma 0x03c00006 0 3096 130 157 1187 754 dolphin.dolphin xclwt-pc 下载 — Dolphin 0x0260003a -1 2898 0 1035 1920 45 plasmashell.plasmashell xclwt-pc Plasma 0x05a00007 0 3370184 0 29 960 488 konsole.konsole xclwt-pc commands : zsh — Konsole 0x05000077 0 2082025 535 215 850 605 wechat.</description>
     </item>
     
     <item>

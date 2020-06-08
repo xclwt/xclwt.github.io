@@ -443,17 +443,15 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 <p>wmctrl -l -G -p -x</p>
 </blockquote>
 <p>可以看到：</p>
-<blockquote>
-<p>0x02600013 -1 2898  0   0   1920 1080 plasmashell.plasmashell  xclwt-pc 桌面 — Plasma
-0x03c00006  0 3096  130  157  1187 754  dolphin.dolphin    xclwt-pc 下载 — Dolphin
-0x0260003a -1 2898  0   1035 1920 45  plasmashell.plasmashell  xclwt-pc Plasma
-0x05a00007  0 3370184 0   29  960  488  konsole.konsole    xclwt-pc commands : zsh — Konsole
+<pre><code>0x02600013 -1 2898   0    0    1920 1080 plasmashell.plasmashell  xclwt-pc 桌面 — Plasma
+0x03c00006  0 3096   130  157  1187 754  dolphin.dolphin       xclwt-pc 下载 — Dolphin
+0x0260003a -1 2898   0    1035 1920 45   plasmashell.plasmashell  xclwt-pc Plasma
+0x05a00007  0 3370184 0    29   960  488  konsole.konsole       xclwt-pc commands : zsh — Konsole
 0x05000077  0 2082025 535  215  850  605  wechat.exe.wechat.exe  xclwt-pc 微信
 0x06800006  0 4024859 379  101  1200 800  qqmusic.exe.qqmusic.exe  xclwt-pc QQ音乐
-0x06800014  0 4024859 319  51  1320 920  qqmusic.exe.qqmusic.exe  xclwt-pc<br>
-0x01c00007  0 2923  0   0   1920 1035 yakuake.yakuake    xclwt-pc ~ : sh — Yakuake</p>
-</blockquote>
-<p>出现了两个qqmusic.exe,其中一个就是出现错误的黑框，使用xdotool将该窗口关闭：</p>
+0x06800014  0 4024859 319  51   1320 920  qqmusic.exe.qqmusic.exe  xclwt-pc 
+0x01c00007  0 2923   0    0    1920 1035 yakuake.yakuake       xclwt-pc ~ : sh — Yakuake
+</code></pre><p>出现了两个qqmusic.exe,其中一个就是出现错误的黑框，使用xdotool将该窗口关闭：</p>
 <blockquote>
 <p>xdotool windowclose 0x06800014</p>
 </blockquote>
