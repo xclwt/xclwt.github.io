@@ -867,8 +867,15 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
             
             
             
+                
+            
 
-            <div class="post-head-wrapper-text-only"
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://blanca.world/images/record.jpg')"
+                    
                 
             >
                 <div class="post-title">
@@ -935,30 +942,33 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 <hr>
 <h4 id="20200328">2020.03.28</h4>
 <p>最近上课都在研究内核，课程落下不少，感觉这学期期末绩点，危！这两天结合了hurlex的源码以及linux2.6.11的源码（linux2.6.11的源码也太复杂了叭！一行行扒函数功能理依赖关系给我整哭辽也不过借鉴了个皮毛）整了下物理页结构体数组的初始化功能。附上目前的内存分布图（纯手打的图，丑哭了，以后可能补上真图）：</p>
-<p>—————————————
-|                                              |
-|	ZONE_HIGHMEM           |
-|                                              |
-—————————————  &lt;&ndash;3GB+896MB
-|	                                           |
-|	内核可用物理页                |
-|                                               |
-—————————————  &lt;&ndash;pmm_addr_start
-|                                               |
-|	物理页数组                        |
-|                                               |
-—————————————  &lt;&ndash;p_pages
-|	                                           |
-|	内核镜像                            |
-|                                               |
-—————————————  &lt;&ndash;3GB+1MB
-|                                               |
-—————————————  &lt;&ndash;3GB
-|                                               |
-|	用户空间                            |
-|                                               |
-—————————————</p>
-<hr>
+<pre><code>
+
+——————————————
+|            |
+|ZONE_HIGHMEM|
+|            |
+——————————————  &lt;--3GB+896MB
+|	     |
+|内核可用物理页|
+|            |
+——————————————  &lt;--pmm_addr_start
+|            |
+|  物理页数组  |
+|            |
+—————————————  &lt;--p_pages
+|	     |
+|  内核镜像   |
+|            |
+——————————————  &lt;--3GB+1MB
+|            |
+——————————————  &lt;--3GB
+|            |
+|   用户空间  | 
+|            |
+——————————————
+
+</code></pre><hr>
 <h4 id="20200402">2020.04.02</h4>
 <p>基本搞定了物理内存管理的部分，阅读hurlex前辈的源码时发现了free函数中似乎有bug（还是很怀疑自我的，毕竟hurlex前辈的源码中写了测试功能，应该不会出这种问题的啊。。），纠结了一晚上，自己又写了将近一百行测试代码模拟了一下那段free函数的内存切割释放过程，最终基本肯定自己的想法是对的，fork，commit，push，pull request，一顿操作猛如虎，一看战力只有5,233,在线卑微，不过认真读读别人源码还是很爽的。</p>
 <hr>
