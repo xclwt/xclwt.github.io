@@ -2,6 +2,9 @@
 <html><head>
 <title>咸鱼白的自我介绍</title>
 
+
+
+
 <meta charset="utf-8">
 <meta name="X-UA-Compatible" content="IE=edge">
 <meta name="google-site-verification" content="">
@@ -14,6 +17,13 @@
 
 
 
+
+
+
+
+
+
+
 <script src="/vendor/js/jquery.min.js" ></script>
 <script src="/vendor/js/popper.min.js" ></script>
 <script src="/vendor/js/bootstrap.min.js" ></script>
@@ -22,16 +32,18 @@
 <script src="/vendor/js/vue.min.js" ></script>
 
 
+
+
 <link rel="icon" href="https://blanca.world/images/favicon.jpg">
 
 
 
 
-<link rel="stylesheet" href="https://blanca.world/scss/journal.min.47aa1ffb60880ad8c72feecd6962a14331eca7a7a30e08354a1ca91009b8bc5b.css" integrity="sha256-R6of&#43;2CICtjHL&#43;7NaWKhQzHsp6ejDgg1ShypEAm4vFs=" media="screen">
+<link rel="stylesheet" href="https://blanca.world/scss/journal.min.c116bc90d171283f099f173854157ec8f183f9073b93443b2c8ad82899ee9025.css" integrity="sha256-wRa8kNFxKD8Jnxc4VBV&#43;yPGD&#43;Qc7k0Q7LIrYKJnukCU=" media="screen">
 
 
 
-<link rel="stylesheet" href="https://blanca.world/scss/dark-mode.min.b13808e7c98cd5aa981a3822fd3421e26f1015876bb15a3fbf8ed5991c382367.css" integrity="sha256-sTgI58mM1aqYGjgi/TQh4m8QFYdrsVo/v47VmRw4I2c=" media="screen">
+<link rel="stylesheet" href="https://blanca.world/scss/dark-mode.min.552aae4638a84aa57cf0b195750a49ea9131d3bb621d1ed3ebc9b14b18166536.css" integrity="sha256-VSquRjioSqV88LGVdQpJ6pEx07tiHR7T68mxSxgWZTY=" media="screen">
 
 
 <script src="https://blanca.world//js/loadCSS.js"></script>
@@ -179,7 +191,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%85%b3%e4%ba%8e%e6%88%91" onclick="collapseOthers(`#关于我-nav`)" id="关于我-nav">
+								<a href="#%e5%85%b3%e4%ba%8e%e6%88%91" onclick="onNavClick(`#关于我-nav`)" id="关于我-nav">
 									关于我
 								</a>
 							</li>
@@ -197,7 +209,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%85%b3%e4%ba%8e%e6%9c%ac%e7%ab%99" onclick="collapseOthers(`#关于本站-nav`)" id="关于本站-nav">
+								<a href="#%e5%85%b3%e4%ba%8e%e6%9c%ac%e7%ab%99" onclick="onNavClick(`#关于本站-nav`)" id="关于本站-nav">
 									关于本站
 								</a>
 							</li>
@@ -215,7 +227,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e8%81%94%e7%b3%bb%e6%88%91" onclick="collapseOthers(`#联系我-nav`)" id="联系我-nav">
+								<a href="#%e8%81%94%e7%b3%bb%e6%88%91" onclick="onNavClick(`#联系我-nav`)" id="联系我-nav">
 									联系我
 								</a>
 							</li>
@@ -336,7 +348,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%85%b3%e4%ba%8e%e6%88%91" onclick="collapseOthers(`#关于我-nav`)" id="关于我-nav">
+								<a href="#%e5%85%b3%e4%ba%8e%e6%88%91" onclick="onNavClick(`#关于我-nav`)" id="关于我-nav">
 									关于我
 								</a>
 							</li>
@@ -354,7 +366,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%85%b3%e4%ba%8e%e6%9c%ac%e7%ab%99" onclick="collapseOthers(`#关于本站-nav`)" id="关于本站-nav">
+								<a href="#%e5%85%b3%e4%ba%8e%e6%9c%ac%e7%ab%99" onclick="onNavClick(`#关于本站-nav`)" id="关于本站-nav">
 									关于本站
 								</a>
 							</li>
@@ -372,7 +384,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e8%81%94%e7%b3%bb%e6%88%91" onclick="collapseOthers(`#联系我-nav`)" id="联系我-nav">
+								<a href="#%e8%81%94%e7%b3%bb%e6%88%91" onclick="onNavClick(`#联系我-nav`)" id="联系我-nav">
 									联系我
 								</a>
 							</li>
@@ -425,6 +437,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 
     </a>
 </div>
+
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">

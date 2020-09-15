@@ -2,6 +2,9 @@
 <html><head>
 <title>Blanca-OS设计之线程，进程与锁</title>
 
+
+
+
 <meta charset="utf-8">
 <meta name="X-UA-Compatible" content="IE=edge">
 <meta name="google-site-verification" content="">
@@ -14,6 +17,13 @@
 
 
 
+
+
+
+
+
+
+
 <script src="/vendor/js/jquery.min.js" ></script>
 <script src="/vendor/js/popper.min.js" ></script>
 <script src="/vendor/js/bootstrap.min.js" ></script>
@@ -22,16 +32,18 @@
 <script src="/vendor/js/vue.min.js" ></script>
 
 
+
+
 <link rel="icon" href="https://blanca.world/images/favicon.jpg">
 
 
 
 
-<link rel="stylesheet" href="https://blanca.world/scss/journal.min.47aa1ffb60880ad8c72feecd6962a14331eca7a7a30e08354a1ca91009b8bc5b.css" integrity="sha256-R6of&#43;2CICtjHL&#43;7NaWKhQzHsp6ejDgg1ShypEAm4vFs=" media="screen">
+<link rel="stylesheet" href="https://blanca.world/scss/journal.min.c116bc90d171283f099f173854157ec8f183f9073b93443b2c8ad82899ee9025.css" integrity="sha256-wRa8kNFxKD8Jnxc4VBV&#43;yPGD&#43;Qc7k0Q7LIrYKJnukCU=" media="screen">
 
 
 
-<link rel="stylesheet" href="https://blanca.world/scss/dark-mode.min.b13808e7c98cd5aa981a3822fd3421e26f1015876bb15a3fbf8ed5991c382367.css" integrity="sha256-sTgI58mM1aqYGjgi/TQh4m8QFYdrsVo/v47VmRw4I2c=" media="screen">
+<link rel="stylesheet" href="https://blanca.world/scss/dark-mode.min.552aae4638a84aa57cf0b195750a49ea9131d3bb621d1ed3ebc9b14b18166536.css" integrity="sha256-VSquRjioSqV88LGVdQpJ6pEx07tiHR7T68mxSxgWZTY=" media="screen">
 
 
 <script src="https://blanca.world//js/loadCSS.js"></script>
@@ -177,7 +189,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%ba%bf%e7%a8%8b%e4%b8%8e%e8%bf%9b%e7%a8%8b" onclick="collapseOthers(`#线程与进程-nav`)" id="线程与进程-nav">
+								<a href="#%e7%ba%bf%e7%a8%8b%e4%b8%8e%e8%bf%9b%e7%a8%8b" onclick="onNavClick(`#线程与进程-nav`)" id="线程与进程-nav">
 									线程与进程
 								</a>
 							</li>
@@ -195,7 +207,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%a8%8b%e5%ba%8f%e6%8e%a7%e5%88%b6%e5%9d%97pcb" onclick="collapseOthers(`#程序控制块pcb-nav`)" id="程序控制块pcb-nav">
+								<a href="#%e7%a8%8b%e5%ba%8f%e6%8e%a7%e5%88%b6%e5%9d%97pcb" onclick="onNavClick(`#程序控制块pcb-nav`)" id="程序控制块pcb-nav">
 									程序控制块（PCB）
 								</a>
 							</li>
@@ -213,7 +225,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%a8%8b%e5%ba%8f%e8%b0%83%e5%ba%a6" onclick="collapseOthers(`#程序调度-nav`)" id="程序调度-nav">
+								<a href="#%e7%a8%8b%e5%ba%8f%e8%b0%83%e5%ba%a6" onclick="onNavClick(`#程序调度-nav`)" id="程序调度-nav">
 									程序调度
 								</a>
 							</li>
@@ -237,7 +249,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%a8%8b%e5%ba%8f%e5%88%87%e6%8d%a2" onclick="collapseOthers(`#程序切换-nav`)" id="程序切换-nav">
+								<a href="#%e7%a8%8b%e5%ba%8f%e5%88%87%e6%8d%a2" onclick="onNavClick(`#程序切换-nav`)" id="程序切换-nav">
 									程序切换
 								</a>
 							</li>
@@ -255,7 +267,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" onclick="collapseOthers(`#调度算法-nav`)" id="调度算法-nav">
+								<a href="#%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" onclick="onNavClick(`#调度算法-nav`)" id="调度算法-nav">
 									调度算法
 								</a>
 							</li>
@@ -279,7 +291,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e9%94%81" onclick="collapseOthers(`#锁-nav`)" id="锁-nav">
+								<a href="#%e9%94%81" onclick="onNavClick(`#锁-nav`)" id="锁-nav">
 									锁
 								</a>
 							</li>
@@ -398,7 +410,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%ba%bf%e7%a8%8b%e4%b8%8e%e8%bf%9b%e7%a8%8b" onclick="collapseOthers(`#线程与进程-nav`)" id="线程与进程-nav">
+								<a href="#%e7%ba%bf%e7%a8%8b%e4%b8%8e%e8%bf%9b%e7%a8%8b" onclick="onNavClick(`#线程与进程-nav`)" id="线程与进程-nav">
 									线程与进程
 								</a>
 							</li>
@@ -416,7 +428,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%a8%8b%e5%ba%8f%e6%8e%a7%e5%88%b6%e5%9d%97pcb" onclick="collapseOthers(`#程序控制块pcb-nav`)" id="程序控制块pcb-nav">
+								<a href="#%e7%a8%8b%e5%ba%8f%e6%8e%a7%e5%88%b6%e5%9d%97pcb" onclick="onNavClick(`#程序控制块pcb-nav`)" id="程序控制块pcb-nav">
 									程序控制块（PCB）
 								</a>
 							</li>
@@ -434,7 +446,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%a8%8b%e5%ba%8f%e8%b0%83%e5%ba%a6" onclick="collapseOthers(`#程序调度-nav`)" id="程序调度-nav">
+								<a href="#%e7%a8%8b%e5%ba%8f%e8%b0%83%e5%ba%a6" onclick="onNavClick(`#程序调度-nav`)" id="程序调度-nav">
 									程序调度
 								</a>
 							</li>
@@ -458,7 +470,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%a8%8b%e5%ba%8f%e5%88%87%e6%8d%a2" onclick="collapseOthers(`#程序切换-nav`)" id="程序切换-nav">
+								<a href="#%e7%a8%8b%e5%ba%8f%e5%88%87%e6%8d%a2" onclick="onNavClick(`#程序切换-nav`)" id="程序切换-nav">
 									程序切换
 								</a>
 							</li>
@@ -476,7 +488,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" onclick="collapseOthers(`#调度算法-nav`)" id="调度算法-nav">
+								<a href="#%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" onclick="onNavClick(`#调度算法-nav`)" id="调度算法-nav">
 									调度算法
 								</a>
 							</li>
@@ -500,7 +512,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e9%94%81" onclick="collapseOthers(`#锁-nav`)" id="锁-nav">
+								<a href="#%e9%94%81" onclick="onNavClick(`#锁-nav`)" id="锁-nav">
 									锁
 								</a>
 							</li>
@@ -553,6 +565,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 
     </a>
 </div>
+
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">

@@ -2,6 +2,9 @@
 <html><head>
 <title>详解KMP算法</title>
 
+
+
+
 <meta charset="utf-8">
 <meta name="X-UA-Compatible" content="IE=edge">
 <meta name="google-site-verification" content="">
@@ -14,6 +17,13 @@
 
 
 
+
+
+
+
+
+
+
 <script src="/vendor/js/jquery.min.js" ></script>
 <script src="/vendor/js/popper.min.js" ></script>
 <script src="/vendor/js/bootstrap.min.js" ></script>
@@ -22,16 +32,18 @@
 <script src="/vendor/js/vue.min.js" ></script>
 
 
+
+
 <link rel="icon" href="https://blanca.world/images/favicon.jpg">
 
 
 
 
-<link rel="stylesheet" href="https://blanca.world/scss/journal.min.47aa1ffb60880ad8c72feecd6962a14331eca7a7a30e08354a1ca91009b8bc5b.css" integrity="sha256-R6of&#43;2CICtjHL&#43;7NaWKhQzHsp6ejDgg1ShypEAm4vFs=" media="screen">
+<link rel="stylesheet" href="https://blanca.world/scss/journal.min.c116bc90d171283f099f173854157ec8f183f9073b93443b2c8ad82899ee9025.css" integrity="sha256-wRa8kNFxKD8Jnxc4VBV&#43;yPGD&#43;Qc7k0Q7LIrYKJnukCU=" media="screen">
 
 
 
-<link rel="stylesheet" href="https://blanca.world/scss/dark-mode.min.b13808e7c98cd5aa981a3822fd3421e26f1015876bb15a3fbf8ed5991c382367.css" integrity="sha256-sTgI58mM1aqYGjgi/TQh4m8QFYdrsVo/v47VmRw4I2c=" media="screen">
+<link rel="stylesheet" href="https://blanca.world/scss/dark-mode.min.552aae4638a84aa57cf0b195750a49ea9131d3bb621d1ed3ebc9b14b18166536.css" integrity="sha256-VSquRjioSqV88LGVdQpJ6pEx07tiHR7T68mxSxgWZTY=" media="screen">
 
 
 <script src="https://blanca.world//js/loadCSS.js"></script>
@@ -179,7 +191,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%bc%95%e5%ad%90" onclick="collapseOthers(`#引子-nav`)" id="引子-nav">
+								<a href="#%e5%bc%95%e5%ad%90" onclick="onNavClick(`#引子-nav`)" id="引子-nav">
 									引子
 								</a>
 							</li>
@@ -197,7 +209,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%ae%80%e8%bf%b0bf%e7%ae%97%e6%b3%95" onclick="collapseOthers(`#简述bf算法-nav`)" id="简述bf算法-nav">
+								<a href="#%e7%ae%80%e8%bf%b0bf%e7%ae%97%e6%b3%95" onclick="onNavClick(`#简述bf算法-nav`)" id="简述bf算法-nav">
 									简述BF算法
 								</a>
 							</li>
@@ -215,7 +227,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#kmp%e7%ae%97%e6%b3%95" onclick="collapseOthers(`#kmp算法-nav`)" id="kmp算法-nav">
+								<a href="#kmp%e7%ae%97%e6%b3%95" onclick="onNavClick(`#kmp算法-nav`)" id="kmp算法-nav">
 									KMP算法
 								</a>
 							</li>
@@ -237,7 +249,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#1%e5%89%8d%e7%bc%80%e4%b8%8e%e5%90%8e%e7%bc%80" onclick="collapseOthers(`#1前缀与后缀-nav`)" id="1前缀与后缀-nav">
+								<a href="#1%e5%89%8d%e7%bc%80%e4%b8%8e%e5%90%8e%e7%bc%80" onclick="onNavClick(`#1前缀与后缀-nav`)" id="1前缀与后缀-nav">
 									1、前缀与后缀
 								</a>
 							</li>
@@ -255,7 +267,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#2%e5%88%a9%e7%94%a8%e7%9b%b8%e5%90%8c%e5%89%8d%e7%bc%80%e5%90%8e%e7%bc%80%e7%9a%84%e6%9c%80%e5%a4%a7%e9%95%bf%e5%ba%a6%e5%85%ac%e5%85%b1%e6%9c%80%e5%a4%a7%e9%95%bf%e5%af%b9%e5%8c%b9%e9%85%8d%e8%bf%87%e7%a8%8b%e8%bf%9b%e8%a1%8c%e4%bc%98%e5%8c%96" onclick="collapseOthers(`#2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav`)" id="2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav">
+								<a href="#2%e5%88%a9%e7%94%a8%e7%9b%b8%e5%90%8c%e5%89%8d%e7%bc%80%e5%90%8e%e7%bc%80%e7%9a%84%e6%9c%80%e5%a4%a7%e9%95%bf%e5%ba%a6%e5%85%ac%e5%85%b1%e6%9c%80%e5%a4%a7%e9%95%bf%e5%af%b9%e5%8c%b9%e9%85%8d%e8%bf%87%e7%a8%8b%e8%bf%9b%e8%a1%8c%e4%bc%98%e5%8c%96" onclick="onNavClick(`#2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav`)" id="2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav">
 									2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化
 								</a>
 							</li>
@@ -273,7 +285,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#3nextnew%e6%95%b0%e7%bb%84%e7%9a%84%e6%b1%82%e8%a7%a3" onclick="collapseOthers(`#3nextnew数组的求解-nav`)" id="3nextnew数组的求解-nav">
+								<a href="#3nextnew%e6%95%b0%e7%bb%84%e7%9a%84%e6%b1%82%e8%a7%a3" onclick="onNavClick(`#3nextnew数组的求解-nav`)" id="3nextnew数组的求解-nav">
 									3、next（new）数组的求解
 								</a>
 							</li>
@@ -295,7 +307,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%b0%8f%e7%bb%93" onclick="collapseOthers(`#小结-nav`)" id="小结-nav">
+								<a href="#%e5%b0%8f%e7%bb%93" onclick="onNavClick(`#小结-nav`)" id="小结-nav">
 									小结
 								</a>
 							</li>
@@ -416,7 +428,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%bc%95%e5%ad%90" onclick="collapseOthers(`#引子-nav`)" id="引子-nav">
+								<a href="#%e5%bc%95%e5%ad%90" onclick="onNavClick(`#引子-nav`)" id="引子-nav">
 									引子
 								</a>
 							</li>
@@ -434,7 +446,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e7%ae%80%e8%bf%b0bf%e7%ae%97%e6%b3%95" onclick="collapseOthers(`#简述bf算法-nav`)" id="简述bf算法-nav">
+								<a href="#%e7%ae%80%e8%bf%b0bf%e7%ae%97%e6%b3%95" onclick="onNavClick(`#简述bf算法-nav`)" id="简述bf算法-nav">
 									简述BF算法
 								</a>
 							</li>
@@ -452,7 +464,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#kmp%e7%ae%97%e6%b3%95" onclick="collapseOthers(`#kmp算法-nav`)" id="kmp算法-nav">
+								<a href="#kmp%e7%ae%97%e6%b3%95" onclick="onNavClick(`#kmp算法-nav`)" id="kmp算法-nav">
 									KMP算法
 								</a>
 							</li>
@@ -474,7 +486,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#1%e5%89%8d%e7%bc%80%e4%b8%8e%e5%90%8e%e7%bc%80" onclick="collapseOthers(`#1前缀与后缀-nav`)" id="1前缀与后缀-nav">
+								<a href="#1%e5%89%8d%e7%bc%80%e4%b8%8e%e5%90%8e%e7%bc%80" onclick="onNavClick(`#1前缀与后缀-nav`)" id="1前缀与后缀-nav">
 									1、前缀与后缀
 								</a>
 							</li>
@@ -492,7 +504,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#2%e5%88%a9%e7%94%a8%e7%9b%b8%e5%90%8c%e5%89%8d%e7%bc%80%e5%90%8e%e7%bc%80%e7%9a%84%e6%9c%80%e5%a4%a7%e9%95%bf%e5%ba%a6%e5%85%ac%e5%85%b1%e6%9c%80%e5%a4%a7%e9%95%bf%e5%af%b9%e5%8c%b9%e9%85%8d%e8%bf%87%e7%a8%8b%e8%bf%9b%e8%a1%8c%e4%bc%98%e5%8c%96" onclick="collapseOthers(`#2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav`)" id="2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav">
+								<a href="#2%e5%88%a9%e7%94%a8%e7%9b%b8%e5%90%8c%e5%89%8d%e7%bc%80%e5%90%8e%e7%bc%80%e7%9a%84%e6%9c%80%e5%a4%a7%e9%95%bf%e5%ba%a6%e5%85%ac%e5%85%b1%e6%9c%80%e5%a4%a7%e9%95%bf%e5%af%b9%e5%8c%b9%e9%85%8d%e8%bf%87%e7%a8%8b%e8%bf%9b%e8%a1%8c%e4%bc%98%e5%8c%96" onclick="onNavClick(`#2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav`)" id="2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化-nav">
 									2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化
 								</a>
 							</li>
@@ -510,7 +522,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#3nextnew%e6%95%b0%e7%bb%84%e7%9a%84%e6%b1%82%e8%a7%a3" onclick="collapseOthers(`#3nextnew数组的求解-nav`)" id="3nextnew数组的求解-nav">
+								<a href="#3nextnew%e6%95%b0%e7%bb%84%e7%9a%84%e6%b1%82%e8%a7%a3" onclick="onNavClick(`#3nextnew数组的求解-nav`)" id="3nextnew数组的求解-nav">
 									3、next（new）数组的求解
 								</a>
 							</li>
@@ -532,7 +544,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e5%b0%8f%e7%bb%93" onclick="collapseOthers(`#小结-nav`)" id="小结-nav">
+								<a href="#%e5%b0%8f%e7%bb%93" onclick="onNavClick(`#小结-nav`)" id="小结-nav">
 									小结
 								</a>
 							</li>
@@ -585,6 +597,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 
     </a>
 </div>
+
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">
