@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>咸鱼白的窝</title>
@@ -8,698 +9,167 @@
     <copyright>咸鱼白</copyright>
     <lastBuildDate>Mon, 08 Jun 2020 20:25:11 +0800</lastBuildDate>
     
-        <atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>干掉wine-qqmusic的黑框</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/</link>
+      <pubDate>Mon, 08 Jun 2020 20:25:11 +0800</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/</guid>
+      <description>问题 manjaro最新的版本更新之后，界面更美观了，然鹅使用wine安装的QQ音乐四周出现了大面积黑框，强迫症感觉有被冒犯到。
+解决办法 安装wmctrl：
+ sudo pacman -S wmctrl
+ 安装xdotool：
+ sudo pacman -S xdotool
+ 查看当前窗口：
+ wmctrl -l -G -p -x
+ 可以看到：
+0x02600013 -1 2898 0 0 1920 1080 plasmashell.plasmashell xclwt-pc 桌面 — Plasma 0x03c00006 0 3096 130 157 1187 754 dolphin.dolphin xclwt-pc 下载 — Dolphin 0x0260003a -1 2898 0 1035 1920 45 plasmashell.plasmashell xclwt-pc Plasma 0x05a00007 0 3370184 0 29 960 488 konsole.konsole xclwt-pc commands : zsh — Konsole 0x05000077 0 2082025 535 215 850 605 wechat.</description>
+    </item>
     
-        <item>
-        <title>干掉wine-qqmusic的黑框</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/</link>
-        <pubDate>Mon, 08 Jun 2020 20:25:11 +0800</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/ -&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
-&lt;p&gt;manjaro最新的版本更新之后，界面更美观了，然鹅使用wine安装的QQ音乐四周出现了大面积黑框，强迫症感觉有被冒犯到。&lt;/p&gt;
-&lt;h3 id=&#34;解决办法&#34;&gt;解决办法&lt;/h3&gt;
-&lt;p&gt;安装wmctrl：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;sudo pacman -S wmctrl&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;安装xdotool：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;sudo pacman -S xdotool&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;查看当前窗口：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;wmctrl -l -G -p -x&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;可以看到：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;0x02600013 -1 2898   0    0    1920 1080 plasmashell.plasmashell  xclwt-pc 桌面 — Plasma
-0x03c00006  0 3096   130  157  1187 754  dolphin.dolphin       xclwt-pc 下载 — Dolphin
-0x0260003a -1 2898   0    1035 1920 45   plasmashell.plasmashell  xclwt-pc Plasma
-0x05a00007  0 3370184 0    29   960  488  konsole.konsole       xclwt-pc commands : zsh — Konsole
-0x05000077  0 2082025 535  215  850  605  wechat.exe.wechat.exe  xclwt-pc 微信
-0x06800006  0 4024859 379  101  1200 800  qqmusic.exe.qqmusic.exe  xclwt-pc QQ音乐
-0x06800014  0 4024859 319  51   1320 920  qqmusic.exe.qqmusic.exe  xclwt-pc 
-0x01c00007  0 2923   0    0    1920 1035 yakuake.yakuake       xclwt-pc ~ : sh — Yakuake
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;出现了两个qqmusic.exe,其中一个就是出现错误的黑框，使用xdotool将该窗口关闭：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;xdotool windowclose 0x06800014&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;至此，问题暂时解决，但下次重新启动QQ音乐时仍需按同样步骤处理掉黑框。&lt;/p&gt;
-- https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/ - 咸鱼白</description>
-        </item>
+    <item>
+      <title>Blanca-OS设计之中断</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</link>
+      <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</guid>
+      <description>中断 中断，即CPU接收到一定的信号，打断了当前的程序控制流以处理其他事务的机制。 中断主要可分为两类：同步中断与异步中断。 其中，同步中断又称异常，可分为故障（fault），陷阱（trap），终止（abort）三类。异步中断则简称为中断。
+   类别       中断     故障     陷阱     终止      中断例程 Blanca-OS中的所有中断处理程序都要经过一段汇编实现的例程asm_isr_stub（见kernel/idt_asm.asm），该例程将中断将中断发生时的程序信息（主要是寄存器）快照压栈并调用中断号对应的中断处理程序，该快照在C语言中以如下结构体表示（见inc/idt.h）：
+typedef struct{ /*段寄存器,16bit*/ uint32_t fs; uint32_t gs; uint32_t es; uint32_t ds; /*pusha保存的寄存器*/ uint32_t edi; uint32_t esi; uint32_t ebp; uint32_t esp; uint32_t ebx; uint32_t edx; uint32_t ecx; uint32_t eax; /*中断号*/ uint32_t intr_num; /*错误代码*/ uint32_t err_code; uint32_t eip; uint32_t cs; //16bit 	uint32_t eflags; /*特权级切换时才会压入ss及esp*/ uint32_t u_esp; uint32_t ss; //16bit }regs_t; 需要注意的是，并非所有的中断都会压入error code（错误代码），故中断发生时的程序快照结构体本应有两种，但此处为了方便后续程序的编写进行了统一，即在汇编macro生成的不压入错误代码的相关中断的处理程序中(见kernel/idt_s.</description>
+    </item>
     
+    <item>
+      <title>Blanca-OS设计之线程，进程与锁</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</link>
+      <pubDate>Wed, 22 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</guid>
+      <description>线程与进程 线程与进程都是程序执行流，其区别在于进程拥有独立的地址空间与一些资源，而线程则需与其所属进程中的其他的线程共享地址空间与一些资源。Blanca-OS中参考了linux中的实现，采用了”伪“线程的概念，将所有程序执行流（每一个线程/进程都分配一个PCB）统一归为任务（Task）进行调度。
+程序控制块（PCB） Blanca-OS管理线程与线程时统一使用了程序控制块（PCB），程序控制块结构体task_struct设计如下（见inc/thread.h）：
+typedef struct{ uint8_t* kstack; uint8_t status; uint8_t priority; uint32_t run_time; list_node ready_list_node; list_node all_list_node; char name[16]; uint32_t* pgdir; uint32_t stack_boundary; }task_struct; （待完善）
+严格来说，PCB并不仅限于这个结构体，还包含了kstack所指向的内核线程栈，整个PCB的内存结构如下图：
+（待添加）
+程序调度 程序切换 程序切换的操作由汇编实现（见thread/switch.asm），该操作保存了当前程序的上下文并切换到下一个程序去。
+switch_to: mov eax,[esp + 4] mov [eax],esp mov eax,[esp + 8] push esi push edi push ebx push ebp mov esp,[eax] pop ebp pop ebx pop edi pop esi ret switch_to函数按照ABI将上下文（esi，edi，ebx，ebp寄存器的内容，esp寄存器值由调用约定保存）保存在当前程序的内核栈中，并切换出下一个程序的上下文，最后通过ret切换到下一个程序。
+调度算法 锁 现阶段，Blanca-OS仅支持单处理器，故目前对于共享资源只提供了互斥锁（mutex）这一种机制以避免竞争。互斥锁的原理即将抢锁失败的任务阻塞并等待锁的释放。其实现主要采用了semaphore与mutex_lock两种数据结构（见inc/sync.h），锁的获取与释放代码如下:
+void acquire_mutex(mutex_lock* mutex){ if(mutex-&amp;gt;holder != cur_thread()){ sema_busy(&amp;amp;(mutex-&amp;gt;sig));	//信号量设为忙碌 	mutex-&amp;gt;holder = cur_thread();	//将互斥锁持有者设为当前任务 	mutex-&amp;gt;request_num = 1;	//初始化互斥锁申请次数为1 	}else{ ++mutex-&amp;gt;request_num;	//互斥锁申请次数加1 	} } void release_mutex(mutex_lock* mutex){ if(mutex-&amp;gt;request_num &amp;gt; 1){ --mutex-&amp;gt;request_num;	//互斥锁申请次数减1 	return; }else{ --mutex-&amp;gt;reqauest_num;	mutex-&amp;gt;holder = NULL;	//清空持有者 	sema_free(&amp;amp;(mutex-&amp;gt;sig));	//信号量设为空闲 	} } </description>
+    </item>
     
+    <item>
+      <title>Blanca-OS设计之内存管理</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
+      <description>内存分布 Blanca-OS假定使用者的内存大于1G，并将1G的内核空间永远映射于地址的3/4高位之上（3GB-4GB），而超出1G内存的部分则被分配为用户空间并映射于地址的低位（0-3GB）。内核空间参考linux的设计分为了3个zone：DMA ZONE（0-1MB），NORMAL ZONE（1-896MB），HIGHMEM ZONE（896MB+）。Blanca-OS目前的内存管理模块主要聚焦于对NORMAL ZONE的管理，其他zone的管理与使用需等待后期的开发。
+页管理结构 Blanca-OS对页的管理主要使用了以下的结构：
+typedef struct{ list_node list; atomic_t count; uint32_t order; uint32_t flag; }page_t; 页管理结构体page_t（见inc/pmm.h）：
+每一个页管理结构体存储了对应的一个或多个页的信息，包括：list（用于添加至空闲页表以标记每一个或一组空闲页），count（当前页引用计数），order（当前页管理结构体管理的页数为2的order次幂），flag（当前页状态）。
+static page_t* p_pages = (page_t*)(uint32_t)KERNEL_END + KERNEL_BASE; 指向页管理结构体数组的指针p_pages（见mm/pmm.c）:该页管理结构体数组中记录了NORMAL ZONE中所有页对应的页管理结构体。
+static list_node free_list[MAX_ORDER + 1]; 空闲页表free_list（见mm/buddy.c）：空闲页表记录了每一个order的空闲页集合所对应的链表头，可根据表头查找出一组所需大小空闲页对应的list值并反向确定该组起始空闲页的位置。
+页管理算法 选用了伙伴算法： （updating&amp;hellip;）</description>
+    </item>
     
-        <item>
-        <title>Blanca-OS设计之中断</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</link>
-        <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/ -&lt;h2 id=&#34;中断&#34;&gt;中断&lt;/h2&gt;
-&lt;p&gt;中断，即CPU接收到一定的信号，打断了当前的程序控制流以处理其他事务的机制。
-中断主要可分为两类：同步中断与异步中断。
-其中，同步中断又称异常，可分为故障（fault），陷阱（trap），终止（abort）三类。异步中断则简称为中断。&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;类别&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;中断&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;故障&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;陷阱&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;终止&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;中断例程&#34;&gt;中断例程&lt;/h2&gt;
-&lt;p&gt;Blanca-OS中的所有中断处理程序都要经过一段汇编实现的例程asm_isr_stub（见&lt;code&gt;kernel/idt_asm.asm&lt;/code&gt;），该例程将中断将中断发生时的程序信息（主要是寄存器）快照压栈并调用中断号对应的中断处理程序，该快照在C语言中以如下结构体表示（见inc/idt.h）：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;typedef&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt;{
-	&lt;span style=&#34;color:#228b22&#34;&gt;/*段寄存器,16bit*/&lt;/span&gt;
-	uint32_t fs;
-	uint32_t gs;
-	uint32_t es;
-	uint32_t ds;
-	
-	&lt;span style=&#34;color:#228b22&#34;&gt;/*pusha保存的寄存器*/&lt;/span&gt;
-	uint32_t edi;
-	uint32_t esi;
-	uint32_t ebp;
-	uint32_t esp;
-	uint32_t ebx;
-	uint32_t edx;
-	uint32_t ecx;
-	uint32_t eax;
-
-	&lt;span style=&#34;color:#228b22&#34;&gt;/*中断号*/&lt;/span&gt;
-	uint32_t intr_num;
-
-	&lt;span style=&#34;color:#228b22&#34;&gt;/*错误代码*/&lt;/span&gt;
-	uint32_t err_code;
-
-	uint32_t eip;
-	uint32_t cs; &lt;span style=&#34;color:#228b22&#34;&gt;//16bit
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;	uint32_t eflags;
-
-	&lt;span style=&#34;color:#228b22&#34;&gt;/*特权级切换时才会压入ss及esp*/&lt;/span&gt;
-	uint32_t u_esp;
-	uint32_t ss; &lt;span style=&#34;color:#228b22&#34;&gt;//16bit
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;}regs_t;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;需要注意的是，并非所有的中断都会压入error code（错误代码），故中断发生时的程序快照结构体本应有两种，但此处为了方便后续程序的编写进行了统一，即在汇编macro生成的不压入错误代码的相关中断的处理程序中(见&lt;code&gt;kernel/idt_s.asm&lt;/code&gt;)自动在相应位置压入32字节数据，该数据值统一为0。&lt;/p&gt;
-- https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/ - 咸鱼白</description>
-        </item>
+    <item>
+      <title>自制系统Blanca-OS记录（持续更新）</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</link>
+      <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</guid>
+      <description>&lt;h4 id=&#34;20200225&#34;&gt;2020.02.25&lt;/h4&gt;
+&lt;p&gt;loader在加载内核文件到内存的时候出现莫名错误，表现为无法对某部分内存进行操作。起初排查认为是640KB以上至4GB的内存都无法写入，复查gdt表以及ds寄存器确认所选择的数据段覆盖了0-4GB范围，可读可写，经过十几小时的苦恼之后，终于尝试出1MB以上的内存可写入，而之前无法写入主要是因为我采用了640KB出头的内存区域及0xc0001500进行尝试,前者属于BIOS扩展区，无法写入，后者超出了我所设置的虚拟机的总内存32MB，属于不存在的区域，其实至今出现的很多莫名错误本质上都是小问题，但总会因为自己的粗心失误造成大量的时间损失。&lt;/p&gt;</description>
+    </item>
     
+    <item>
+      <title>2019年终总结</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;已经步入2020年的第十天了，才想起来写一篇2019年的总结（其实是看到某非著名网友🍞说：“大佬都是不写年终总结的。”看看自己这么菜，还是写点总结反省反省比较好。）&lt;/p&gt;</description>
+    </item>
     
-    
-        <item>
-        <title>Blanca-OS设计之线程，进程与锁</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</link>
-        <pubDate>Wed, 22 Apr 2020 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/ -&lt;h2 id=&#34;线程与进程&#34;&gt;线程与进程&lt;/h2&gt;
-&lt;p&gt;线程与进程都是程序执行流，其区别在于进程拥有独立的地址空间与一些资源，而线程则需与其所属进程中的其他的线程共享地址空间与一些资源。Blanca-OS中参考了linux中的实现，采用了”伪“线程的概念，将所有程序执行流（每一个线程/进程都分配一个PCB）统一归为任务（Task）进行调度。&lt;/p&gt;
-&lt;h2 id=&#34;程序控制块pcb&#34;&gt;程序控制块（PCB）&lt;/h2&gt;
-&lt;p&gt;Blanca-OS管理线程与线程时统一使用了程序控制块（PCB），程序控制块结构体task_struct设计如下（见&lt;code&gt;inc/thread.h&lt;/code&gt;）：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;typedef&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt;{
-	uint8_t* kstack;
-	uint8_t status;
-	uint8_t priority;
-	uint32_t run_time;
-	list_node ready_list_node;
-	list_node all_list_node;
-	&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; name[&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;];
-	uint32_t* pgdir;
-	uint32_t stack_boundary;
-}task_struct;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;（待完善）&lt;/p&gt;
-&lt;p&gt;严格来说，PCB并不仅限于这个结构体，还包含了kstack所指向的内核线程栈，整个PCB的内存结构如下图：&lt;/p&gt;
-&lt;p&gt;（待添加）&lt;/p&gt;
-&lt;h2 id=&#34;程序调度&#34;&gt;程序调度&lt;/h2&gt;
-&lt;h4 id=&#34;程序切换&#34;&gt;程序切换&lt;/h4&gt;
-&lt;p&gt;程序切换的操作由汇编实现（见thread/switch.asm），该操作保存了当前程序的上下文并切换到下一个程序去。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;switch_to:
-	&lt;span style=&#34;color:#008b45&#34;&gt;mov&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;eax&lt;/span&gt;,[&lt;span style=&#34;color:#00688b&#34;&gt;esp&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;]
-	&lt;span style=&#34;color:#008b45&#34;&gt;mov&lt;/span&gt; [&lt;span style=&#34;color:#00688b&#34;&gt;eax&lt;/span&gt;],&lt;span style=&#34;color:#00688b&#34;&gt;esp&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;mov&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;eax&lt;/span&gt;,[&lt;span style=&#34;color:#00688b&#34;&gt;esp&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;]
-
-	&lt;span style=&#34;color:#008b45&#34;&gt;push&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;esi&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;push&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;edi&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;push&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;ebx&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;push&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;ebp&lt;/span&gt;
-
-	&lt;span style=&#34;color:#008b45&#34;&gt;mov&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;esp&lt;/span&gt;,[&lt;span style=&#34;color:#00688b&#34;&gt;eax&lt;/span&gt;]
-
-	&lt;span style=&#34;color:#008b45&#34;&gt;pop&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;ebp&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;pop&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;ebx&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;pop&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;edi&lt;/span&gt;
-	&lt;span style=&#34;color:#008b45&#34;&gt;pop&lt;/span&gt; &lt;span style=&#34;color:#00688b&#34;&gt;esi&lt;/span&gt;
-
-	&lt;span style=&#34;color:#008b45&#34;&gt;ret&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;switch_to函数按照ABI将上下文（esi，edi，ebx，ebp寄存器的内容，esp寄存器值由调用约定保存）保存在当前程序的内核栈中，并切换出下一个程序的上下文，最后通过ret切换到下一个程序。&lt;/p&gt;
-&lt;h4 id=&#34;调度算法&#34;&gt;调度算法&lt;/h4&gt;
-&lt;h2 id=&#34;锁&#34;&gt;锁&lt;/h2&gt;
-&lt;p&gt;现阶段，Blanca-OS仅支持单处理器，故目前对于共享资源只提供了互斥锁（mutex）这一种机制以避免竞争。互斥锁的原理即将抢锁失败的任务阻塞并等待锁的释放。其实现主要采用了&lt;code&gt;semaphore&lt;/code&gt;与&lt;code&gt;mutex_lock&lt;/code&gt;两种数据结构（见&lt;code&gt;inc/sync.h&lt;/code&gt;），锁的获取与释放代码如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;acquire_mutex&lt;/span&gt;(mutex_lock* mutex){
-	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt;(mutex-&amp;gt;holder != cur_thread()){
-		sema_busy(&amp;amp;(mutex-&amp;gt;sig));		&lt;span style=&#34;color:#228b22&#34;&gt;//信号量设为忙碌
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;		mutex-&amp;gt;holder = cur_thread();	&lt;span style=&#34;color:#228b22&#34;&gt;//将互斥锁持有者设为当前任务
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;		mutex-&amp;gt;request_num = &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;			&lt;span style=&#34;color:#228b22&#34;&gt;//初始化互斥锁申请次数为1
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;	}&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;{
-		++mutex-&amp;gt;request_num;			&lt;span style=&#34;color:#228b22&#34;&gt;//互斥锁申请次数加1
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;	}
-}
-
-&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;release_mutex&lt;/span&gt;(mutex_lock* mutex){
-	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt;(mutex-&amp;gt;request_num &amp;gt; &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;){
-		--mutex-&amp;gt;request_num;			&lt;span style=&#34;color:#228b22&#34;&gt;//互斥锁申请次数减1
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;		&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt;;
-	}&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;{
-		--mutex-&amp;gt;reqauest_num;			
-		mutex-&amp;gt;holder = &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;;			&lt;span style=&#34;color:#228b22&#34;&gt;//清空持有者
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;		sema_free(&amp;amp;(mutex-&amp;gt;sig));		&lt;span style=&#34;color:#228b22&#34;&gt;//信号量设为空闲
-&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;	}
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>Blanca-OS设计之内存管理</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
-        <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/ -&lt;h3 id=&#34;内存分布&#34;&gt;内存分布&lt;/h3&gt;
-&lt;p&gt;Blanca-OS假定使用者的内存大于1G，并将1G的内核空间永远映射于地址的3/4高位之上（3GB-4GB），而超出1G内存的部分则被分配为用户空间并映射于地址的低位（0-3GB）。内核空间参考linux的设计分为了3个zone：DMA ZONE（0-1MB），NORMAL ZONE（1-896MB），HIGHMEM ZONE（896MB+）。Blanca-OS目前的内存管理模块主要聚焦于对NORMAL ZONE的管理，其他zone的管理与使用需等待后期的开发。&lt;/p&gt;
-&lt;h3 id=&#34;页管理结构&#34;&gt;页管理结构&lt;/h3&gt;
-&lt;p&gt;Blanca-OS对页的管理主要使用了以下的结构：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;typedef&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt;{
-	list_node list;
-	atomic_t count;
-	uint32_t order;
-	uint32_t flag;
-}page_t;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;页管理结构体page_t（见&lt;code&gt;inc/pmm.h&lt;/code&gt;）：&lt;/p&gt;
-&lt;p&gt;每一个页管理结构体存储了对应的一个或多个页的信息，包括：list（用于添加至空闲页表以标记每一个或一组空闲页），count（当前页引用计数），order（当前页管理结构体管理的页数为2的order次幂），flag（当前页状态）。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;static&lt;/span&gt; page_t* p_pages = (page_t*)(uint32_t)KERNEL_END + KERNEL_BASE;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;指向页管理结构体数组的指针p_pages（见&lt;code&gt;mm/pmm.c&lt;/code&gt;）:该页管理结构体数组中记录了NORMAL ZONE中所有页对应的页管理结构体。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;static&lt;/span&gt; list_node free_list[MAX_ORDER + &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;];
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;空闲页表free_list（见&lt;code&gt;mm/buddy.c&lt;/code&gt;）：空闲页表记录了每一个order的空闲页集合所对应的链表头，可根据表头查找出一组所需大小空闲页对应的list值并反向确定该组起始空闲页的位置。&lt;/p&gt;
-&lt;h3 id=&#34;页管理算法&#34;&gt;页管理算法&lt;/h3&gt;
-&lt;p&gt;选用了伙伴算法：
-（updating&amp;hellip;）&lt;/p&gt;
-- https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>自制系统Blanca-OS记录（持续更新）</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</link>
-        <pubDate>Sat, 29 Feb 2020 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/ -&lt;h4 id=&#34;20200225&#34;&gt;2020.02.25&lt;/h4&gt;
-&lt;p&gt;loader在加载内核文件到内存的时候出现莫名错误，表现为无法对某部分内存进行操作。起初排查认为是640KB以上至4GB的内存都无法写入，复查gdt表以及ds寄存器确认所选择的数据段覆盖了0-4GB范围，可读可写，经过十几小时的苦恼之后，终于尝试出1MB以上的内存可写入，而之前无法写入主要是因为我采用了640KB出头的内存区域及0xc0001500进行尝试,前者属于BIOS扩展区，无法写入，后者超出了我所设置的虚拟机的总内存32MB，属于不存在的区域，其实至今出现的很多莫名错误本质上都是小问题，但总会因为自己的粗心失误造成大量的时间损失。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200301&#34;&gt;2020.03.01&lt;/h4&gt;
-&lt;p&gt;昨天把后面经常要用到的string库基本完成了，个别函数仍在选择更优的算法实现（原谅我的强迫症），今天正在看内核调试相关的资料，这几天准备完成printk函数及打印内核调用栈的debug函数。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200303&#34;&gt;2020.03.03&lt;/h4&gt;
-&lt;p&gt;为了后续更方便的构造内核并写入虚拟机，选择使用makefile，研究了一晚上makefile的语法，写得我头大，不过初步有了头绪，刚刚在床上躺了一小时之后决定爬起来继续研究makefile，现在已经过零点了，确切的说现在已经是3月4号了（哭）。计组原理实验课后面还要造cpu，看来这学期是要忙死了。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200304&#34;&gt;2020.03.04&lt;/h4&gt;
-&lt;p&gt;凌晨在&lt;a href=&#34;https://github.com/Geno1024&#34;&gt;@geno&lt;/a&gt;与&lt;a href=&#34;https://github.com/AmazingRise&#34;&gt;@rise&lt;/a&gt;二位大佬的指点下，弄明白了makefile中折腾了我一晚上的问题，白天起床后边上网课边把项目的makefile基本写好了（我居然还是和老师互动最积极的学生。。你永远不知道上网课的学术在干什么.jpg），后续随着项目的进展还会继续调整makefile，短期之内是不用再为这玩意伤神了，继续投入精力去完成printk函数。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200305&#34;&gt;2020.03.05&lt;/h4&gt;
-&lt;p&gt;添加了printk函数的vga支持（扩展内联汇编实属可怕，幸好目前用这玩意写的代码没几行），简易版的printk函数基本完成，后续可能根据需求进一步添加功能支持，但今天还没来得及对printk函数进行完备的测试，明天会测试一下修修bug，周末尽可能地搞定debug函数，下周估计就要开始给内核添加中断功能了。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200306&#34;&gt;2020.03.06&lt;/h4&gt;
-&lt;p&gt;今天测试了之后发现，写代码的过程中粗心写的bug还是很多的，除了printk相关的函数之外，makefile以及之前以为完全搞定的loader中也出现了点小bug，历时4个多小时，终于彻底搞定了printk函数的功能，一级残废内核Blanca-OS终于会开口说话了（笑），明天可能下乡一趟，回来之后再开始写debug函数，继续加油！btw,光靠bochs调试汇编代码还是太麻烦了，这两天捣鼓看看能不能把bochs和gdb连接到一起，直接在内核中用gdb调试c代码。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200311&#34;&gt;2020.03.11&lt;/h4&gt;
-&lt;p&gt;debug这块思路基本理顺了，大体上各块功能差不多搞定了，最后的整合到打印调用栈这块还在思考，暂时决定等到写内存管理的时候一起完成，现在先跳过去把中断这块研究明白。这学期上网课真的好烦啊，各种群，各种平台，没完没了的作业。。。以及无力吐槽的辣鸡培养方案，这大学教育就很离谱。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200319&#34;&gt;2020.03.19&lt;/h4&gt;
-&lt;p&gt;开学之后各种各样的事情多得离谱，写OS的时间都被挤得不剩啥了（说着突然想起来毛概作业要ddl了。。佛），不过好歹这几天把中断这块全理清了，预计本周末能把中断功能全部实现，下周向内存管理进军，冲鸭！&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200322&#34;&gt;2020.03.22&lt;/h4&gt;
-&lt;p&gt;昨天搞定了中断功能，今天添加了计时器，并在中断的基础上测试了一下计时器，完全OK，今晚写一下assert和panic函数，明天应该就能正式开始内存管理器这块了，emmmm，debug还晾在那。。。带着一起搞搞看吧，搞不定就先继续晾着（实惨）。内存管理这块，因为之前做csapp的malloc lab有一点经验了，应该能很快搞定吧，争取在三月结束前搞定！&lt;/p&gt;
-&lt;p&gt;睡觉前再次更新一下，assert和panic函数都添加好了。以及之前debug相关功能有些bug（主要指那个链接脚本），暂时把debug相关的代码注释了。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200326&#34;&gt;2020.03.26&lt;/h4&gt;
-&lt;p&gt;这两天一直在研究内存管理方面的算法，最后决定参考linux使用buddy算法加slab算法，目前刚写了个物理内存初始化的功能，昨天研究别人写的内核源码时被volatile和原子操作绕了进去（其实这两者没有关系），研究了一晚上，终于搞清楚来龙去脉了，后面可能写个博客记录一下。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200328&#34;&gt;2020.03.28&lt;/h4&gt;
-&lt;p&gt;最近上课都在研究内核，课程落下不少，感觉这学期期末绩点，危！这两天结合了hurlex的源码以及linux2.6.11的源码（linux2.6.11的源码也太复杂了叭！一行行扒函数功能理依赖关系给我整哭辽也不过借鉴了个皮毛）整了下物理页结构体数组的初始化功能。附上目前的内存分布图（纯手打的图，丑哭了，以后可能补上真图）：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-
-——————————————
-|            |
-|ZONE_HIGHMEM|
-|            |
-——————————————  &amp;lt;--3GB+896MB
-|	     |
-|内核可用物理页|
-|            |
-——————————————  &amp;lt;--pmm_addr_start
-|            |
-|  物理页数组  |
-|            |
-—————————————  &amp;lt;--p_pages
-|	     |
-|  内核镜像   |
-|            |
-——————————————  &amp;lt;--3GB+1MB
-|            |
-——————————————  &amp;lt;--3GB
-|            |
-|   用户空间  | 
-|            |
-——————————————
-
-&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
-&lt;h4 id=&#34;20200402&#34;&gt;2020.04.02&lt;/h4&gt;
-&lt;p&gt;基本搞定了物理内存管理的部分，阅读hurlex前辈的源码时发现了free函数中似乎有bug（还是很怀疑自我的，毕竟hurlex前辈的源码中写了测试功能，应该不会出这种问题的啊。。），纠结了一晚上，自己又写了将近一百行测试代码模拟了一下那段free函数的内存切割释放过程，最终基本肯定自己的想法是对的，fork，commit，push，pull request，一顿操作猛如虎，一看战力只有5,233,在线卑微，不过认真读读别人源码还是很爽的。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200420&#34;&gt;2020.04.20&lt;/h4&gt;
-&lt;p&gt;有两周没更新记录了，主要是对内核空间和用户空间内存管理的分割有些许纠结，暂时是先抛开了用户空间的考量，后期再进行完善吧。这两天主要是在研究线程与进程的实现，目前有两种方案，一种是像早期linux一样，没有线程的概念，一切都归为任务，另一种是实现线程机制，然后基于此实现进程（任务）机制，还不确定选用哪种，参考了四份OS的源码，感觉虽然是两种方案，但大家总体的设计思路还是比较相近的。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200426&#34;&gt;2020.04.26&lt;/h4&gt;
-&lt;p&gt;线程机制的总体设计基本厘情了（花的时间略长，最近事太多了，五一假期结束还有期中考试，太难顶了），明天差不多能把基本结构方面的代码搞定，还有调度要等到进程实现之后才写。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h4 id=&#34;20200505&#34;&gt;2020.05.05&lt;/h4&gt;
-&lt;p&gt;线程以及锁这块搞定了，准备实现完键盘驱动就去搞进程那块，最近和朋友以及学长交流得知这个OS可以作为毕业设计，所以开始在博客里同步更新各个模块的设计与实现方法，准备到大四的时候可以直接整合成一篇毕业论文，以后主要的记录都是更详细的分模块的博文，大概这篇零散记录的博文不会频繁更新了。&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A27-%E8%87%AA%E5%88%B6%E7%B3%BB%E7%BB%9Fblanca-os%E8%AE%B0%E5%BD%95%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>2019年终总结</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
-        <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/ -&lt;p&gt;已经步入2020年的第十天了，才想起来写一篇2019年的总结（其实是看到某非著名网友🍞说：“大佬都是不写年终总结的。”看看自己这么菜，还是写点总结反省反省比较好。）&lt;/p&gt;
-&lt;p&gt;前几天看到轮子哥发了一篇文章：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;h3 id=&#34;你只是在去死&#34;&gt;&lt;em&gt;你只是在去死&lt;/em&gt;&lt;/h3&gt;
-&lt;p&gt;&lt;em&gt;大家都要高考，高考是最重要的。那你是不是就把所有的时间都投入高考其他的全部都不做了呢？对大部分人来说就是这样的。古典音乐不需要被高考，所以就不做。甚至连与大学密切相关的专业调研都不做，所有的时间都花在高考上。&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;你终于考上大学了，因为你只高考，别人也只高考，大家都在内卷，你并没有任何优势。你发现之前高中学的东西除了数学英语以外基本就可以扔掉了。为什么呢？因为大学不考语文呀。就算有些人要学物理，基本上也是重新学的，高中物理除了几个哲学思想以外也没有用了。你要的是毕业，所以你只做跟毕业考研拿奖有关的事情。甚至专业的内容都不好好学，想着反正我也不一定干这一行对吧，学的好也没奖学金，考研也不考。&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;填志愿的时候压根不知道这些专业都是什么东西，大学快读完了你甚至不知道该如何在考研和找工作里面选择，甚至找工作也不知道找什么，最后都只退化为一个指标：考分数高的，找给钱多的。万一找不到怎么办？你也不知道。想想你是不是这样。如果不是，恭喜你（逃&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;后来你真的毕业了，还找到了个不错的工作，你就只赚钱买房了。买完房结婚，结婚完生小孩，你只赚钱和带小孩。小孩读书了，你就只赚钱和供小孩读书。小孩如果成绩不好，你就只赚钱、供小孩读书和生气。小孩成绩好，你就只赚钱、供小孩读书和不生气。&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;小孩毕业了，只把自己的钱给小孩买房，可能你都给不起了因为你房贷也就刚还完，只会听到小孩说什么本事都没有干嘛把我生下来。小孩结婚生孩子了，你也退休了，你只带孙子。现在医疗发达了，你苟到了孙子终于也大学毕业的时候，你也可以去死了，因为除了去死也没有什么用了，所以你只去死。&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;于是你在病床上回顾你这一生。你做过什么事情吗？没有。你活过吗？也没有。你只是在繁殖而已，毕竟这就是大自然进化出来的作为生物的目的。钱也都在房子里没有为自己花过，等于没赚过钱。&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;感触其实挺深，2019年这一整年我都在思考自己到底想做什么，哪些事于我是有意义的，怎样才能活得快乐些。&lt;/p&gt;
-&lt;p&gt;上半年学了点函数式编程和零散的算法，其实也没干成啥事。暑假开始刷CSAPP，结果刷了没几天，扁桃体化脓，痛不欲生了好多天，大半个暑假就浑浑噩噩地过去了，其间女朋友也在爆肝国赛，经常性地莫名其妙和我吵起来，着实让我伤神。9月开学后，继续开始啃CSAPP，确实受益匪浅，顺带看了一下x86汇编并入了c++的坑（吐槽一下，c++的确很复杂），&lt;del&gt;变成了GDB调试小能手&lt;/del&gt;，这段时间，因为沉迷计算机以及因为和女朋友的多次矛盾开始下意识地躲着她，最终导致了被分手（我活该，我有罪，但我真的希望两个人之间多点信任和理解，少一点埋怨，很多时候我真的不明白“为什么这种事也值得吵起来啊？）&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/20-01-11/gOBbn.jpg&#34; alt=&#34; &#34;&gt;&lt;/p&gt;
-&lt;p&gt;就这样，没有了儿女情长的拖累，重新变成单身狗的我&lt;del&gt;难过&lt;/del&gt;快乐地开启了操作系统的学习，入了自制kernel的坑（&lt;a href=&#34;https://github.com/xclwt/Blanca-OS&#34;&gt;Blanca-OS&lt;/a&gt;）磨来磨去磨了个BootLoader出来，要考试了，只能先放下我的操作系统。&lt;/p&gt;
-&lt;p&gt;2019年，我变得越来越不关心绩点和奖学金什么的了（笑），为这种东西争来争去实在是浪费时间，学校安排的课程也不想学，大多数时间都泡在图书馆写自己的代码，大概不少人会觉得我这样是在做傻事，嗯，我挺想多做点这样傻事的，我只是不想就这么去死罢了。&lt;/p&gt;
-&lt;p&gt;2019年，我的github contribution只有零星的几个绿点：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/20-01-11/blog7.png&#34; alt=&#34; &#34;&gt;&lt;/p&gt;
-&lt;p&gt;希望2020年，我的github contribution能变成青青草原，自制kernel大概会是我学习生涯中的一个转折点，我希望自己能把这件傻事做好。&lt;/p&gt;
-&lt;p&gt;以上。&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>如何拆除CMU-15213的bomb lab？（2）</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</link>
-        <pubDate>Tue, 17 Sep 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/ -&lt;h3 id=&#34;phase-3&#34;&gt;phase 3：&lt;/h3&gt;
+    <item>
+      <title>如何拆除CMU-15213的bomb lab？（2）</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</link>
+      <pubDate>Tue, 17 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</guid>
+      <description>&lt;h3 id=&#34;phase-3&#34;&gt;phase 3：&lt;/h3&gt;
 &lt;p&gt;执行以下操作：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e72&lt;/span&gt;		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_3函数调用处设置断点
 ......
 &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;（输入任意字符串）&lt;/span&gt;
 stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_3函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_3函数后，我们可以看到程序在栈上分配了24字节空间，我们把现在的栈顶称为s1：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f43&lt;/span&gt; &amp;lt;phase_3&amp;gt;      sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f47&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;    lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp),%rcx        &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;12&lt;/span&gt; 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f4c&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp),%rdx		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rdx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接下来又出现了包含即时数的操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f51&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025cf&lt;/span&gt;,%esi
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f56&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;19&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f5b&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400bf0&lt;/span&gt; &amp;lt;__isoc99_sscanf&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;@&lt;/span&gt;plt&amp;gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f60&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;29&lt;/span&gt;&amp;gt;   cmp    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;,%eax                           
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f63&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;   jg     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f6a&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;39&lt;/span&gt;&amp;gt;                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f65&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我们来看看这个地址里有什么，输入：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;x/s &lt;span style=&#34;color:#b452cd&#34;&gt;0x4025cf&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到返回值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025cf&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;%d %d&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;并且又调用了sscanf操作，并且返回值小于等于1会触发炸弹，所以此处应该是从我们输入的字符串中读入了2个整数。&lt;/p&gt;
-&lt;p&gt;重新进入phase3（此次的密钥输入两个任意整数），继续往下读：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f6a&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;39&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x7&lt;/span&gt;,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f6f&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;44&lt;/span&gt;&amp;gt;   ja     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fad&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;106&lt;/span&gt;&amp;gt; 
-......
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fad&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;106&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此处出现了s1+8存储的值与7的比较，执行以下操作查看s1+8存储的值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;x/x &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;rsp+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我们会发现该值正是我们输入的第一个整数,若这个数大于7,则会跳转到explode_bomb函数的调用，注意此处的跳转使用的是ja命令，说明上一步执行了对无符号整数的比较，故我们输入的第一个整数范围应当是0-7。&lt;/p&gt;
-&lt;p&gt;再向下看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f71&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp),%eax                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f75&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;50&lt;/span&gt;&amp;gt;   jmpq   *&lt;span style=&#34;color:#b452cd&#34;&gt;0x402470&lt;/span&gt;(,%rax,&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;)                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f7c&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0xcf&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f81&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;62&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f83&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;64&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x2c3&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f88&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;69&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f8a&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;71&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x100&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f8f&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;76&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f91&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;78&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x185&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f96&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;83&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f98&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;85&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0xce&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f9d&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;90&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f9f&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;92&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x2aa&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fa4&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;97&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fa6&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;99&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x147&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fab&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;104&lt;/span&gt;&amp;gt;  jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fad&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;106&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fb2&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;111&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fb7&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;116&lt;/span&gt;&amp;gt;  jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fb9&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;118&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x137&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp),%eax                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc2&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;127&lt;/span&gt;&amp;gt;  je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc9&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;134&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc4&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;129&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc9&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;134&lt;/span&gt;&amp;gt;  add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fcd&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;138&lt;/span&gt;&amp;gt;  retq
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我们输入的第一个整数被移入%rax寄存器，并且在下一步操作中直接跳转到了（0x402470+%rax×8）地址中存储的位置，因为我们输入的整数范围0-7,而十六进制整型数据占用4个字节，则%rax×8跨越15个内存地址，所以尝试执行以下指令查看从0x402470往后16个内存地址的内容（每个内存地址4字节）：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;x/&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;xw &lt;span style=&#34;color:#b452cd&#34;&gt;0x402470&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到结果：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402470&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f7c&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400fb9&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x402480&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f83&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f8a&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x402490&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f91&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f98&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x4024a0&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f9f&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400fa6&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中有8个非0的十六进制数，我们仔细比对可以发现正可以与后面尚未执行的指令中的8个的地址相对应。这8个指令，每个都是执行将一个十六进制整型数传入寄存器%eax的指令，紧接其后都是跳转向了这条指令：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp),%eax
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;将s1+12处的数（就是我们输入的第二个整数）与寄存器%eax中的数比较，若相同便不回触发炸弹。&lt;/p&gt;
-&lt;p&gt;至此，我们可以理清楚了：当输入的第一个整数为0-7时，分别有一个对应的第二个整数可以通过关卡3.&lt;/p&gt;
-&lt;p&gt;仔细对比指令中的组合，我们最终得到了以下8组整数：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;0 207
-1 311
-2 707
-3 256
-4 389
-5 206
-6 682
-7 327
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;至此，phase 3通过。&lt;/p&gt;
-&lt;h3 id=&#34;phase-4&#34;&gt;phase 4：&lt;/h3&gt;
-&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e8e&lt;/span&gt;		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_4函数调用处设置断点
-......
-&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;（输入任意字符串）&lt;/span&gt;
-stepi					&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#单步执行进入&lt;/span&gt;phase_2函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;一如既往的，我们见到了含有立即数的指令并且很容易得出了对我们输入字符串的要求是两个整数。往下看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40102e&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0xe&lt;/span&gt;,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)           
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401033&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;39&lt;/span&gt;&amp;gt;   jbe    &lt;span style=&#34;color:#b452cd&#34;&gt;0x40103a&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401035&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;程序将我们输入的第一个整数与14比较，如果大于14就会触发炸弹，并且由jbe指令我们可以得出输入的第一个整数应该是0-14中的任一无符号整数。&lt;/p&gt;
-&lt;p&gt;再往后看，调用了函数func4,且返回值不为0会触发炸弹，进入函数func4看看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fce&lt;/span&gt; &amp;lt;func4&amp;gt;        sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;,%rsp                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;      mov    %edx,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd4&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;6&lt;/span&gt;&amp;gt;      sub    %esi,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd6&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;&amp;gt;      mov    %eax,%ecx                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd8&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;10&lt;/span&gt;&amp;gt;     shr    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1f&lt;/span&gt;,%ecx                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fdb&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;13&lt;/span&gt;&amp;gt;     add    %ecx,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fdd&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;15&lt;/span&gt;&amp;gt;     sar    %eax                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fdf&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;17&lt;/span&gt;&amp;gt;     lea    (%rax,%rsi,&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;),%ecx                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;     cmp    %edi,%ecx                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe4&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;22&lt;/span&gt;&amp;gt;     jle    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe6&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;     lea    -&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;(%rcx),%edx                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe9&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fce&lt;/span&gt; &amp;lt;func4&amp;gt;                       
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fee&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;     add    %eax,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff0&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;     jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x401007&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;     mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff7&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;     cmp    %edi,%ecx                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff9&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;43&lt;/span&gt;&amp;gt;     jge    &lt;span style=&#34;color:#b452cd&#34;&gt;0x401007&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ffb&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;45&lt;/span&gt;&amp;gt;     lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;(%rcx),%esi                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ffe&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;48&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fce&lt;/span&gt; &amp;lt;func4&amp;gt;                       
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401003&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;53&lt;/span&gt;&amp;gt;     lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;(%rax,%rax,&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;),%eax                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401007&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;     add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;,%rsp                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40100b&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;61&lt;/span&gt;&amp;gt;     retq
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在func4中，我们可以看到存在调用自身的操作，这应该是个递归函数，逻辑不是很清楚，尝试用逆向工程的方法将其还原为如下c程序：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;func4&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; num, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; x, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; y){				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; num为我们输入的第一个整数
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; result = x - y;
-    result /= &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;;
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; temp = result + y;
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (temp &amp;lt; num){
-        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt; * func(num, x, temp + &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;) + &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
-    }
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (temp &amp;gt; num){
-        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt; * func4(num, temp - &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;, y);
-    }
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; result;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;根据这段c程序很容易推演出当我们输入的第一个整数为0,1,3,7时，func4返回值为0。&lt;/p&gt;
-&lt;p&gt;回到phase_4继续看&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x401051&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;69&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,&lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp)                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401056&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;74&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x40105d&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;81&lt;/span&gt;&amp;gt;                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401058&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;76&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这段程序将第二个整数与0比较，若不想等就会触发炸弹，所以，第二个整数应该为0。&lt;/p&gt;
-&lt;p&gt;至此，phase 4通过。&lt;/p&gt;
-&lt;p&gt;(在写5，6关的解法时和人怼了起来导致最后半途而废，抱歉)&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/ - 咸鱼白</description>
-        </item>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
     
-    
-    
-        <item>
-        <title>如何拆除CMU-15213的bomb lab？（1）</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</link>
-        <pubDate>Sun, 15 Sep 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/ -&lt;h3 id=&#34;phase-1&#34;&gt;phase 1：&lt;/h3&gt;
+    <item>
+      <title>如何拆除CMU-15213的bomb lab？（1）</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</link>
+      <pubDate>Sun, 15 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</guid>
+      <description>&lt;h3 id=&#34;phase-1&#34;&gt;phase 1：&lt;/h3&gt;
 &lt;p&gt;用gdb调试器打开bomb程序：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;gdb bomb
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;显示汇编窗口以方便调试：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;layout &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;asm&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时我们可以看到bomb程序的反汇编代码，并在main函数中找到phase_1至phase_6这6个函数的调用，这应该对应着炸弹的六个关卡：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3a&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;154&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee0&lt;/span&gt; &amp;lt;phase_1&amp;gt;                                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3f&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;159&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4015c4&lt;/span&gt; &amp;lt;phase_defused&amp;gt;
-......
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ec6&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;294&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4010f4&lt;/span&gt; &amp;lt;phase_6&amp;gt;                                        
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ecb&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;299&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4015c4&lt;/span&gt; &amp;lt;phase_defused&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3a&lt;/span&gt; 	&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_1函数调用处加断点
-run					&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;运行程序&lt;/span&gt;
-(&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;输入任意字符串&lt;/span&gt;)
-stepi				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_1函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_1函数之后我们可以看到对strings_not_equal函数的调用：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee9&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x401338&lt;/span&gt; &amp;lt;strings_not_equal&amp;gt;  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400eee&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   test   %eax,%eax                                                  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef0&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef7&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;23&lt;/span&gt;&amp;gt;   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef2&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;18&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当strings_not_equal的返回值为0时，将跳过explode_bomb，否则将执行explode_bomb，炸弹就会爆炸。&lt;/p&gt;
-&lt;p&gt;而在strings_not_equal函数调用之前，我们可以看到一条指令：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee4&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;    mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402400&lt;/span&gt;,%esi      
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这条指令将一个即时数传入了寄存器%esi，或许这是strings_not_equal函数的参数之一，我们看看这个地址里有什么，输入：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;x/s 0x402400
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到结果：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402400&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;Border relations with Canada have never been better.&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;显然，这是phase 1用来与我们输入字符串比对的密码字符串。至此，phase 1通过。&lt;/p&gt;
-&lt;h3 id=&#34;phase-2&#34;&gt;phase 2：&lt;/h3&gt;
-&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e56&lt;/span&gt;	&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_2函数调用处加断点
-......
-(&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;输入任意字符串&lt;/span&gt;)
-stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_2函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_2函数之后我们可以看到：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400efe&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;&amp;gt;    sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x28&lt;/span&gt;,%rsp  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f02&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;6&lt;/span&gt;&amp;gt;    mov    %rsp,%rsi 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;程序在栈上分配了40个字节的空间，并把栈顶地址存入了寄存器%rsi，我们把这个地址称为s1。&lt;/p&gt;
-&lt;p&gt;接着，调用了read_six_numbers函数：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f05&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40145c&lt;/span&gt; &amp;lt;read_six_numbers&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入read_six_numbers函数之后，我们可以看到：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40145c&lt;/span&gt; &amp;lt;read_six_numbers&amp;gt;     sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp        &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在栈上分配了&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;字节空间&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401460&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;   mov    %rsi,%rdx         &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rdx值设为s1  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401463&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;7&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rsi),%rcx    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;          
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401467&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;11&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x14&lt;/span&gt;(%rsi),%rax                                
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40146b&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;15&lt;/span&gt;&amp;gt;  mov    %rax,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;值设为&lt;/span&gt;s1+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401470&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x10&lt;/span&gt;(%rsi),%rax                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401474&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;  mov    %rax,(%rsp)       &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; (%rsp)&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;值设为&lt;/span&gt;s1+&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401478&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;28&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsi),%r9     &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;12&lt;/span&gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40147c&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsi),%r8	 &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;紧接其后再次出现了含有即时数的操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x401480&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025c3&lt;/span&gt;,%esi
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看看这个地址里有什么，输入：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;x/s 0x4025c3
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到返回值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025c3&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;%d %d %d %d %d %d&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看到这里感觉和字符串格式化有关，再往下看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40148a&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400bf0&lt;/span&gt; &amp;lt;__isoc99_sscanf&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;@&lt;/span&gt;plt&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40148f&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;51&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x5&lt;/span&gt;,%eax                                           
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401492&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;54&lt;/span&gt;&amp;gt;  jg     &lt;span style=&#34;color:#b452cd&#34;&gt;0x401499&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;61&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401494&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;56&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看起来可能是调用了sscanf函数(从一个字符串中读进相应格式数据)，并且返回值小于等于5会触发炸弹，结合前面存储的6个地址可推测出，应该是从我们输入的字符串中读入了6个整数，即我们输入的字符串要包含大于等于6个被空格隔开的整数。&lt;/p&gt;
-&lt;p&gt;返回到phase_2函数，继续看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f0a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;,(%rsp)                                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f0e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;18&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f10&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f15&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;25&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;   mov    -&lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rbx),%eax      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;30&lt;/span&gt;&amp;gt;   add    %eax,%eax 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;   cmp    %eax,(%rbx)                                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f25&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f20&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f25&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;   add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;,%rbx                                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f29&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;45&lt;/span&gt;&amp;gt;   cmp    %rbp,%rbx                                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f2c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;48&lt;/span&gt;&amp;gt;   jne    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f2e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;50&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f3c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;64&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rsp),%rbx                                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f35&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;(%rsp),%rbp                                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f3a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;62&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;仔细看这段代码，我们可以看出这是一个循环，其功能是将s1,s1+4,s1+8,s1+12,s1+16,s1+20这6个地址内的值与1,2,4,8,16,32比对，于是便可以得出结论，关卡2的密码字符串开头应是“1 2 4 8 16 32 ”，后续如何并无影响，至此，phase 2通过。&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/ - 咸鱼白</description>
-        </item>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
     
+    <item>
+      <title>详解KMP算法</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Wed, 03 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</guid>
+      <description>&lt;h3 id=&#34;引子&#34;&gt;&lt;strong&gt;引子&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。&lt;/p&gt;</description>
+    </item>
     
-    
-        <item>
-        <title>详解KMP算法</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</link>
-        <pubDate>Wed, 03 Apr 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ -&lt;h3 id=&#34;引子&#34;&gt;&lt;strong&gt;引子&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。&lt;/p&gt;
-&lt;h3 id=&#34;简述bf算法&#34;&gt;&lt;strong&gt;简述BF算法&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;讲述KMP算法的原理之前，BF算法是绕不开的话题，也只有了解了BF算法，才能知道KMP算法的优势。
-先来看一个例子：给出两个字符串A和B，求解A中是否包含B？如果包含，包含了几个？&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E4%B8%B2.png&#34; alt=&#34;图1&#34;&gt;&lt;/p&gt;
-&lt;p&gt;BF算法的原理是一位一位地比较，比较到失配位的时候，将B串的向后移动一个单位，再从头一位一位地进行匹配。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图2：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png&#34; alt=&#34;图2&#34;&gt;&lt;/p&gt;
-&lt;p&gt;在比较到第6个字符时（字符索引：5），不匹配了，此时就要将B串后移一个单位，从头开始匹配（将原本指向A串第六个字符的指针i指向第二个字符，指向B串第六个字符的指针j重新指向B串开头）：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B.png&#34; alt=&#34;图3&#34;&gt;&lt;/p&gt;
-&lt;p&gt;然而此时我们一眼可以看出第二次匹配也是必然失败的，但计算机并不知道，它只会按照BF算法一位一位的比较下去（在很多情况下要比较很多位才能发现不匹配），这种暴力求解的算法效率是极低的，所以我们有没有办法让计算机根据已经匹配过的部分知道自己从头匹配的时候应该忽略哪些部分，省去不必要的匹配？（在此例中即为从头跳过第二位的b从第三位开始新的匹配，例子不够极端，可能并不是很好理解跳过的必要性，请耐心看后续讲解）为了解决这个问题，KMP算法便诞生了。&lt;/p&gt;
-&lt;h3 id=&#34;kmp算法&#34;&gt;&lt;strong&gt;KMP算法&lt;/strong&gt;&lt;/h3&gt;
-&lt;h4 id=&#34;1前缀与后缀&#34;&gt;&lt;strong&gt;1、前缀与后缀&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;首先我们要了解几个概念：前缀、后缀、相同前缀后缀的最大长度（为表述方便，下文均用公共最大长指代），为了直观一点，我们直接举例：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;abcdef的前缀：a、ab、abc、abcd、abcde（注意：abcdef不是前缀）
-abcdef的后缀：f、ef、def、cdef、bcdef（注意：abcdef不是后缀）
-abcdef的公共最大长：0（因为其前缀与后缀没有相同的）
-ababa的前缀：a、ab、aba、abab
-ababa的后缀：a、ba、aba、baba
-ababa的公共最大长：3（因为他们的公共前缀后缀中最长的为aba，长度3）&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h4 id=&#34;2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化&#34;&gt;&lt;strong&gt;2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化&lt;/strong&gt;&lt;/h4&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图4：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new7.png&#34; alt=&#34;图4&#34;&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;index行是字符在B串中的位置索引值。
-B串行则记录了所有字符。
-next行则记录了当前从B串头部到当前位置的这一子串的公共最大长。（我们先不用管这些公共最大长是如何得到的，暂且假设是上帝告诉了我们）
-new行记录的值则是相应的公共最大长减去1。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;好的，我们现在可以再次进行匹配了，还是开头的例子，B串在第6个字符处（索引5）失配，此时我们可以确认的是B串的前五个字符已经匹配成功了，让我们根据上面那个表格查找一下已经匹配成功的子串的公共最大长吧**（请注意是已经匹配成功的，我们在第6个字符处失配，所以应当去查找第五个字符或者说索引4的位置记录的公共最大长）**。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png&#34; alt=&#34;图5&#34;&gt;&lt;/p&gt;
-&lt;p&gt;很明显，已匹配成功的子串（我们称之为C串吧）的公共最大长为2，这说明了什么？想一想，&lt;strong&gt;B串匹配成功的部分和A串失配处之前的一小部分子串都是C串&lt;/strong&gt;，C串的公共最大长为2，C串最前面的两个字符（也就是B串的开头两个字符）和C串最后面的两个字符（也就是A串失配位前面两个字符）是相同的，这就意味着我们重新进行匹配的时候可以直接将&lt;strong&gt;B串的头部2个字符和A串匹配成功的部分的最后两个字符&lt;/strong&gt;对齐。然后开始对比B串的第三个字符与A串的失配字符，进行新一轮的匹配&lt;/p&gt;
-&lt;p&gt;关于对齐，计算机运行时是怎么做的？我们在匹配时分别用指针i和j指向字符串当前匹配的位置，失配之后&lt;strong&gt;指针i不变&lt;/strong&gt;，继续指向A串的失配处，&lt;strong&gt;指针j则指向B串第三个位置&lt;/strong&gt;（公共最大长的后面一位，索引为公共最大长）。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图6所示：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E6%96%B0%E5%8C%B9%E9%85%8D.png&#34; alt=&#34;图6&#34;&gt;&lt;/p&gt;
-&lt;p&gt;蓝色的部分即是通过公共最大长直接匹配的位置，红色部分是重新开始匹配的位置（两个指针直接指向的位置），相较于BF算法，我们在这一步跳过了A串的第二个字符“b”，第三个字符“a”，直接将B串头部对齐了第四个字符，并从B串的第三个字符开始重新与此前失配的字符进行新一轮的匹配。实现就是如此简单，重新匹配的过程省去了一大堆不必要的匹配，为我们节省了很多时间。&lt;/p&gt;
-&lt;p&gt;也许有人会疑问，凭什么就应该跳过A串的第三个字符“a”去直接和第四个字符“a”进行匹配呢？难道从第三个开始匹配就不能成功吗？请回忆一下什么是公共最大长吧？是相同前缀后缀的最大长度。请对照着图6看完我下面的解释：我在前面有加粗这么一句话“B串的这部分子串和A串失配处之前的一小部分是相同的”，现在我们假设是从第三个字符“a”开始重新匹配的，如果要与B一直匹配成功到第五个字符“b”，也就是匹配成功了三个字符，这意味着什么？意味着第五个字符位对应的公共最大长应该是3，这显然是和事实的公共最大长为2是不符合的，以此类推，重新开始匹配时参考公共最大长是合理的最优解。再梳理一下其中的逻辑，现在你应该能理解公共最大长度的意义了。&lt;/p&gt;
-&lt;p&gt;等一等，我们好像忘了什么？原理懂是懂了，可上帝在哪？我们之前假设上帝告诉了我们next行（next数组中记录的值），可事实上上帝并不存在，还是得靠我们自己求值鸭！所以，怎么求next数组呢？&lt;/p&gt;
-&lt;h4 id=&#34;3nextnew数组的求解&#34;&gt;&lt;strong&gt;3、next（new）数组的求解&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;在此我要先解释一下new数组中值的意义，正如表示公共最大长的next的数组的值同时表示了对应的最大前缀（&lt;strong&gt;为方便表示，我们将最大相同前缀后缀中的前缀称为最大前缀，最大相同前缀后缀中的后缀称为最大后缀&lt;/strong&gt;）的后面一位的索引，new数组中的值等于next数组中的值减去1，我们同时用其表示了对应的最大前缀的最后一位的索引，这是为了后续的程序表达的便利，所以我们此处讲解对new数组的求解，因为求出了new数组等于求出来next数组。&lt;/p&gt;
-&lt;p&gt;先把求解new数组的类c伪代码贴在这里(B即为B字符串，new即为new数组，不要急于看懂代码，先看明白我的解释,代码看不懂也不碍事，反正是伪代码):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;new[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] = -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;
-&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i=&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;i&amp;lt;n;i++) &lt;span style=&#34;color:#228b22&#34;&gt;/* n为B串长度 */&lt;/span&gt;
-{
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j=new[i-&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;];   &lt;span style=&#34;color:#228b22&#34;&gt;/* j为待计算位置前一位对应的new值，也就是最大前缀最后一位对应的索引 */&lt;/span&gt;
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; ((B[j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;]!=B[i])&amp;amp;&amp;amp;(j&amp;gt;=&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;))   &lt;span style=&#34;color:#228b22&#34;&gt;/* 任何一个最大前缀后一位与当前求值字符相同时或者向前继续寻找的索引为-1时停止循环 */&lt;/span&gt;
-        j=new[j];
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (B[j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;]==B[i])  &lt;span style=&#34;color:#228b22&#34;&gt;/* 字符相同，公共最大长+1，new值+1 */&lt;/span&gt;
-        new[i]=j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;               &lt;span style=&#34;color:#228b22&#34;&gt;/* 最终寻找到的索引为-1，公共最大长归零 */&lt;/span&gt;
-        new[i]=-&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;首先，我们可以知道B串的第一个字符对应的公共最大长一定是0，在new数组中则为-1，所以new[0] = -1。接下来，我们不从第二个字符开始类推，而是选取一个位置靠后的具有普适性的例子以便更好的理解推导过程。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图7所示：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new4.png&#34; alt=&#34;图7&#34;&gt;&lt;/p&gt;
-&lt;p&gt;假设我们已经一步步推导得出了前面0-9索引对应的new值，现在要求解索引10对应new值（再次提醒：这个值是公共最大长-1）。&lt;/p&gt;
-&lt;p&gt;我们首先需要考虑&lt;strong&gt;添加了字符b之后的公共最大长&lt;/strong&gt;是否会增加1，该如何判断呢？&lt;/p&gt;
-&lt;p&gt;将索引10对应的字符和**前面已经求得解的最长字符串“abaabbaba”**的最大前缀后面一位字符比较，如果二者相同，说明了最大前缀添加一位后产生的字符串和最大后缀添加了字符&amp;rsquo;b&amp;rsquo;产生的字符串相同，此时索引10位置对应的公共最大长应该在前面一位的基础上加1。&lt;/p&gt;
-&lt;p&gt;那么这个字符串**“abaabbaba”**的最大前缀的后一位的索引值该如何找到？&lt;/p&gt;
-&lt;p&gt;这个值是&lt;strong&gt;已经求得解的最长字符串的公共最大长的值&lt;/strong&gt;，即为next[9],或者说是new[9]+1。（next[9]对应了公共最大长的值，也表示着最大前缀后一位的索引）&lt;/p&gt;
-&lt;p&gt;这个值具体是什么？&lt;/p&gt;
-&lt;p&gt;是new[9]+1 = 3+1 = 4。我们继续寻找索引4对应的字符，是&amp;rsquo;b&amp;rsquo;，和索引10对应的字符相同，所以索引10对应的公共最大长较之前一位加1，new值加1，所以new[10] = new[9]+1 = 3+1 = 4。&lt;/p&gt;
-&lt;p&gt;可是，如果B[10]不是&amp;rsquo;b&amp;rsquo;呢，如果B[10]=&#39;a&amp;rsquo;呢？怎么办？&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图8所示：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png&#34; alt=&#34;图8&#34;&gt;&lt;/p&gt;
-&lt;p&gt;很明显，按之前的推理，在当前情况下，B[10]=&#39;a&amp;rsquo;和B[4]=&#39;b&amp;rsquo;是不等的，所以公共最大长不可能增加了，我们只能考虑其与前一位相等甚至减少的情况了，此时该怎么求呢？我们现在要找的是&lt;strong&gt;最大前缀的前缀，与“最大后缀加‘a’字符”这一组合的后缀的公共最大长&lt;/strong&gt;了，我们暂且&lt;strong&gt;将索引10前一位对应的子串的最大前缀与最大后缀称为C串&lt;/strong&gt;吧（因为二者是相同的字符串），此时我们要求解的问题其实&lt;strong&gt;转化为了C串后面添加一个字符&amp;rsquo;a&amp;rsquo;对应的公共最大长&lt;/strong&gt;，于是我们先利用索引10前面一位索引9对应的new值找到C串（从头数起）的最后一位，并重复上面的过程来推测此时公共最大长应该朝什么方向变化（这就是代码中循环的意义），如果向前找到的最后一位的索引是-1，即公共最大长已经减到0的时候，循环终止。现在回头再看看代码和注释，就应当能够理解了。&lt;/p&gt;
-&lt;h3 id=&#34;小结&#34;&gt;&lt;strong&gt;小结&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;第一次写技术博客，写得比较啰嗦，可能表述也并不到位，如有不能理解的地方或者修改建议请加我微信或在评论区留言。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
-&lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>最近的一些情况总结</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</link>
-        <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/ -&lt;blockquote&gt;
+    <item>
+      <title>最近的一些情况总结</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;blockquote&gt;
 &lt;p&gt;博客搭了好几个月了，因为个人能力不足，很少更新。
 上学期搞了搞Python,一个人做了个大作业，到头来发现自己其实也就是个调包侠，内心比较迷茫。
 最近也挺忙，被项目搞得焦头烂额，实在想摆脱干什么都觉得自己没用的困境，现在打算开个新坑调整一下，关于scheme语言的，大概会读些相关的书，做些总结，记录在博客中。
 以上。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&amp;mdash;&amp;mdash;书单持续更新中&amp;mdash;&amp;mdash;
-&lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
-&lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;此处输入图片的描述&#34;&gt;&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/ - 咸鱼白</description>
-        </item>
+&lt;/blockquote&gt;</description>
+    </item>
     
+    <item>
+      <title>Hello,world!</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A21-hello-world/</link>
+      <pubDate>Sun, 30 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A21-hello-world/</guid>
+      <description>一只咸鱼踏出了翻身的第一步。</description>
+    </item>
+    
+    <item>
+      <title>咸鱼白的自我介绍</title>
+      <link>https://blanca.world/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blanca.world/resume/</guid>
+      <description>关于我 0.坐标广州，某不用军训的侨校，大三在读。
+1.咸鱼coder，外号小白，又叫咸鱼白。
+2.AI相关专业在读，不喜欢花里胡哨的东西（比如AI），更喜欢探究计算机程序背后的体系与原理。
+3.喜欢用C和C++写代码。
+4.正在自制一个破烂操作系统Blanca-OS。
+5.看上去外向但实则很容易自闭。
+6.单身狗。
+7.爱好小姐姐。
+关于本站 个人博客，偶尔更新（原谅我的懒，咕咕咕），记录生活中的随想，记录阶段性的总结，记录编程过程中的经验与感悟。
+联系我   github
+  email
+  </description>
+    </item>
     
   </channel>
-</rss> 
+</rss>
