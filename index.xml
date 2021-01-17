@@ -6,9 +6,78 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Mon, 08 Jun 2020 20:25:11 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 17 Jan 2021 23:25:11 +0800</lastBuildDate>
     
         <atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>关于一个bug的记录</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</link>
+        <pubDate>Sun, 17 Jan 2021 23:25:11 +0800</pubDate>
+        
+        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ -&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
+&lt;p&gt;这两天打算过一遍《Linux高性能服务器编程》，虽然都是些熟悉的知识，但我还是把该书的源码一个个运行了试了试。然后发现了&lt;a href=&#34;https://github.com/raichen/LinuxServerCodes/blob/master/6/6-5testtee.cpp&#34;&gt;6-5testtee.cpp&lt;/a&gt;存在bug。&lt;/p&gt;
+&lt;p&gt;代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;assert.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;errno.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;string.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;fcntl.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;main&lt;/span&gt;( &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; argc, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt;* argv[] )
+{
+	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; ( argc != &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt; )
+	{
+		printf( &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;usage: %s &amp;lt;file&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;&lt;/span&gt;, argv[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
+		&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
+	}
+	&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; filefd = open( argv[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;], O_CREAT | O_WRONLY | O_TRUNC, &lt;span style=&#34;color:#b452cd&#34;&gt;0666&lt;/span&gt; );
+	assert( filefd &amp;gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt; );
+
+	&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;];
+        &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; ret = pipe( pipefd_stdout );
+	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
+
+	&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;];
+        ret = pipe( pipefd_file );
+	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
+
+	ret = splice( STDIN_FILENO, &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;], &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, &lt;span style=&#34;color:#b452cd&#34;&gt;32768&lt;/span&gt;, SPLICE_F_MORE | SPLICE_F_MOVE );
+	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
+
+	ret = tee( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;], pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;], &lt;span style=&#34;color:#b452cd&#34;&gt;32768&lt;/span&gt;, SPLICE_F_NONBLOCK ); 
+	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
+	ret = splice( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;], &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, filefd, &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, &lt;span style=&#34;color:#b452cd&#34;&gt;32768&lt;/span&gt;, SPLICE_F_MORE | SPLICE_F_MOVE );
+	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
+    
+    ret = splice( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;], &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, STDOUT_FILENO, &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, &lt;span style=&#34;color:#b452cd&#34;&gt;32768&lt;/span&gt;, SPLICE_F_GIFT );
+    printf(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;errno:%d&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;&lt;/span&gt;,errno);
+
+    assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
+
+
+	close( filefd );
+        close( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
+        close( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] );
+        close( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
+        close( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] );
+	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;该代码的第三次splice系统调用本应该将stdin的内容输出到stdout，但在我的terminal中运行时该系统调用失败了，错误码22。&lt;/p&gt;
+&lt;p&gt;起初我尝试用gdb调试，结果系统调用在gdb中成功了。。。很离谱。查了一圈，上&lt;a href=&#34;https://stackoverflow.com/questions/65749455/why-splice-syscall-fails-when-my-program-runs-on-linux-but-succeeds-when-it-runs/65751382#65751382&#34;&gt;stackoverflow&lt;/a&gt;开了个问题，结果那上面的老哥说复现不了。&lt;/p&gt;
+&lt;p&gt;又回头找朋友复现、讨论，在此过程中又发现：在我的manjaro下，clion的run console，dolphin的Terminal，gdb调试窗口都能正确运行该代码，clion的Terminal以及各种其他的自行启动的Terminal都无法正确运行该代码。排查半天得到结论的时候恨不得扇自己一巴掌。&lt;/p&gt;
+&lt;h3 id=&#34;解决办法&#34;&gt;解决办法&lt;/h3&gt;
+&lt;p&gt;使用&lt;code&gt;man 2 splice&lt;/code&gt;查看splice的文档时，关于其Errors的描述有这么一条：&lt;code&gt;**EINVAL** The target file is opened in append mode.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;我的manjaro上所有无法正确运行该代码的Terminal的标准输出都处于Append模式下，因而导致了splice系统调用失败。&lt;/p&gt;
+&lt;p&gt;只需要在调用之前添加&lt;code&gt;fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) &amp;amp; ~O_APPEND);&lt;/code&gt;取消stdout的Append模式就能解决该bug。&lt;/p&gt;
+&lt;h3 id=&#34;总结&#34;&gt;总结&lt;/h3&gt;
+&lt;p&gt;其实发现bug后我第一时间就查阅了Linux Manual，然而却没有考虑到所有文件描述符的状态，下意识忽略了STDOUT_FILENO这一特殊的文件描述符，想当然地认为是系统调用本身的问题，白白浪费了大半天时间，需要吸取教训。&lt;/p&gt;
+- https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ - 咸鱼白</description>
+        </item>
     
     
     
@@ -662,13 +731,13 @@ new行记录的值则是相应的公共最大长减去1。&lt;/p&gt;
 &lt;p&gt;那么这个字符串**“abaabbaba”**的最大前缀的后一位的索引值该如何找到？&lt;/p&gt;
 &lt;p&gt;这个值是&lt;strong&gt;已经求得解的最长字符串的公共最大长的值&lt;/strong&gt;，即为next[9],或者说是new[9]+1。（next[9]对应了公共最大长的值，也表示着最大前缀后一位的索引）&lt;/p&gt;
 &lt;p&gt;这个值具体是什么？&lt;/p&gt;
-&lt;p&gt;是new[9]+1 = 3+1 = 4。我们继续寻找索引4对应的字符，是&amp;rsquo;b&amp;rsquo;，和索引10对应的字符相同，所以索引10对应的公共最大长较之前一位加1，new值加1，所以new[10] = new[9]+1 = 3+1 = 4。&lt;/p&gt;
-&lt;p&gt;可是，如果B[10]不是&amp;rsquo;b&amp;rsquo;呢，如果B[10]=&#39;a&amp;rsquo;呢？怎么办？&lt;/p&gt;
+&lt;p&gt;是new[9]+1 = 3+1 = 4。我们继续寻找索引4对应的字符，是&amp;rsquo;b&#39;，和索引10对应的字符相同，所以索引10对应的公共最大长较之前一位加1，new值加1，所以new[10] = new[9]+1 = 3+1 = 4。&lt;/p&gt;
+&lt;p&gt;可是，如果B[10]不是&amp;rsquo;b&amp;rsquo;呢，如果B[10]=&amp;lsquo;a&amp;rsquo;呢？怎么办？&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;如图8所示：&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png&#34; alt=&#34;图8&#34;&gt;&lt;/p&gt;
-&lt;p&gt;很明显，按之前的推理，在当前情况下，B[10]=&#39;a&amp;rsquo;和B[4]=&#39;b&amp;rsquo;是不等的，所以公共最大长不可能增加了，我们只能考虑其与前一位相等甚至减少的情况了，此时该怎么求呢？我们现在要找的是&lt;strong&gt;最大前缀的前缀，与“最大后缀加‘a’字符”这一组合的后缀的公共最大长&lt;/strong&gt;了，我们暂且&lt;strong&gt;将索引10前一位对应的子串的最大前缀与最大后缀称为C串&lt;/strong&gt;吧（因为二者是相同的字符串），此时我们要求解的问题其实&lt;strong&gt;转化为了C串后面添加一个字符&amp;rsquo;a&amp;rsquo;对应的公共最大长&lt;/strong&gt;，于是我们先利用索引10前面一位索引9对应的new值找到C串（从头数起）的最后一位，并重复上面的过程来推测此时公共最大长应该朝什么方向变化（这就是代码中循环的意义），如果向前找到的最后一位的索引是-1，即公共最大长已经减到0的时候，循环终止。现在回头再看看代码和注释，就应当能够理解了。&lt;/p&gt;
+&lt;p&gt;很明显，按之前的推理，在当前情况下，B[10]=&amp;lsquo;a&amp;rsquo;和B[4]=&amp;lsquo;b&amp;rsquo;是不等的，所以公共最大长不可能增加了，我们只能考虑其与前一位相等甚至减少的情况了，此时该怎么求呢？我们现在要找的是&lt;strong&gt;最大前缀的前缀，与“最大后缀加‘a’字符”这一组合的后缀的公共最大长&lt;/strong&gt;了，我们暂且&lt;strong&gt;将索引10前一位对应的子串的最大前缀与最大后缀称为C串&lt;/strong&gt;吧（因为二者是相同的字符串），此时我们要求解的问题其实&lt;strong&gt;转化为了C串后面添加一个字符&amp;rsquo;a&amp;rsquo;对应的公共最大长&lt;/strong&gt;，于是我们先利用索引10前面一位索引9对应的new值找到C串（从头数起）的最后一位，并重复上面的过程来推测此时公共最大长应该朝什么方向变化（这就是代码中循环的意义），如果向前找到的最后一位的索引是-1，即公共最大长已经减到0的时候，循环终止。现在回头再看看代码和注释，就应当能够理解了。&lt;/p&gt;
 &lt;h3 id=&#34;小结&#34;&gt;&lt;strong&gt;小结&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;​&lt;/p&gt;
 &lt;blockquote&gt;
@@ -678,26 +747,6 @@ new行记录的值则是相应的公共最大长减去1。&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
 &lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>最近的一些情况总结</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</link>
-        <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/ -&lt;blockquote&gt;
-&lt;p&gt;博客搭了好几个月了，因为个人能力不足，很少更新。
-上学期搞了搞Python,一个人做了个大作业，到头来发现自己其实也就是个调包侠，内心比较迷茫。
-最近也挺忙，被项目搞得焦头烂额，实在想摆脱干什么都觉得自己没用的困境，现在打算开个新坑调整一下，关于scheme语言的，大概会读些相关的书，做些总结，记录在博客中。
-以上。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&amp;mdash;&amp;mdash;书单持续更新中&amp;mdash;&amp;mdash;
-&lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
-&lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;此处输入图片的描述&#34;&gt;&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/ - 咸鱼白</description>
         </item>
     
     

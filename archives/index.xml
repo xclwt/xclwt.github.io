@@ -7,10 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Mon, 08 Jun 2020 20:25:11 +0800</lastBuildDate>
-    
-	<atom:link href="https://blanca.world/archives/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Sun, 17 Jan 2021 23:25:11 +0800</lastBuildDate><atom:link href="https://blanca.world/archives/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>关于一个bug的记录</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sun, 17 Jan 2021 23:25:11 +0800</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</guid>
+      <description>问题 这两天打算过一遍《Linux高性能服务器编程》，虽然都是些熟悉的知识，但我还是把该书的源码一个个运行了试了试。然后发现了6-5testtee.cpp存在bug。
+代码如下：
+#include &amp;lt;assert.h&amp;gt;#include &amp;lt;stdio.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;errno.h&amp;gt;#include &amp;lt;string.h&amp;gt;#include &amp;lt;fcntl.h&amp;gt; int main( int argc, char* argv[] ) { if ( argc != 2 ) { printf( &amp;#34;usage: %s &amp;lt;file&amp;gt;\n&amp;#34;, argv[0] ); return 1; } int filefd = open( argv[1], O_CREAT | O_WRONLY | O_TRUNC, 0666 ); assert( filefd &amp;gt; 0 ); int pipefd_stdout[2]; int ret = pipe( pipefd_stdout ); assert( ret != -1 ); int pipefd_file[2]; ret = pipe( pipefd_file ); assert( ret !</description>
+    </item>
     
     <item>
       <title>干掉wine-qqmusic的黑框</title>
