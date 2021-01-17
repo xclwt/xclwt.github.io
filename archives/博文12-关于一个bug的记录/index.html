@@ -462,7 +462,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                     <div class="post-meta">
                         
                         <time itemprop="datePublished">
-                            2021-01-17 23:25
+                            2021-01-17 23:40
                         </time>
                         
 
@@ -537,7 +537,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 <p>起初我尝试用gdb调试，结果系统调用在gdb中成功了。。。很离谱。查了一圈，上<a href="https://stackoverflow.com/questions/65749455/why-splice-syscall-fails-when-my-program-runs-on-linux-but-succeeds-when-it-runs/65751382#65751382">stackoverflow</a>开了个问题，结果那上面的老哥说复现不了。</p>
 <p>又回头找朋友复现、讨论，在此过程中又发现：在我的manjaro下，clion的run console，dolphin的Terminal，gdb调试窗口都能正确运行该代码，clion的Terminal以及各种其他的自行启动的Terminal都无法正确运行该代码。排查半天得到结论的时候恨不得扇自己一巴掌。</p>
 <h3 id="解决办法">解决办法</h3>
-<p>使用<code>man 2 splice</code>查看splice的文档时，关于其Errors的描述有这么一条：<code>**EINVAL** The target file is opened in append mode.</code></p>
+<p>使用<code>man 2 splice</code>查看splice的文档时，关于其Errors的描述有这么一条：<code>EINVAL The target file is opened in append mode.</code></p>
 <p>我的manjaro上所有无法正确运行该代码的Terminal的标准输出都处于Append模式下，因而导致了splice系统调用失败。</p>
 <p>只需要在调用之前添加<code>fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) &amp; ~O_APPEND);</code>取消stdout的Append模式就能解决该bug。</p>
 <h3 id="总结">总结</h3>

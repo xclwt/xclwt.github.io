@@ -6,7 +6,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Sun, 17 Jan 2021 23:25:11 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 17 Jan 2021 23:40:11 +0800</lastBuildDate>
     
         <atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
         <item>
         <title>关于一个bug的记录</title>
         <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</link>
-        <pubDate>Sun, 17 Jan 2021 23:25:11 +0800</pubDate>
+        <pubDate>Sun, 17 Jan 2021 23:40:11 +0800</pubDate>
         
         <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</guid>
         <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ -&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
@@ -71,7 +71,7 @@
 &lt;p&gt;起初我尝试用gdb调试，结果系统调用在gdb中成功了。。。很离谱。查了一圈，上&lt;a href=&#34;https://stackoverflow.com/questions/65749455/why-splice-syscall-fails-when-my-program-runs-on-linux-but-succeeds-when-it-runs/65751382#65751382&#34;&gt;stackoverflow&lt;/a&gt;开了个问题，结果那上面的老哥说复现不了。&lt;/p&gt;
 &lt;p&gt;又回头找朋友复现、讨论，在此过程中又发现：在我的manjaro下，clion的run console，dolphin的Terminal，gdb调试窗口都能正确运行该代码，clion的Terminal以及各种其他的自行启动的Terminal都无法正确运行该代码。排查半天得到结论的时候恨不得扇自己一巴掌。&lt;/p&gt;
 &lt;h3 id=&#34;解决办法&#34;&gt;解决办法&lt;/h3&gt;
-&lt;p&gt;使用&lt;code&gt;man 2 splice&lt;/code&gt;查看splice的文档时，关于其Errors的描述有这么一条：&lt;code&gt;**EINVAL** The target file is opened in append mode.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;使用&lt;code&gt;man 2 splice&lt;/code&gt;查看splice的文档时，关于其Errors的描述有这么一条：&lt;code&gt;EINVAL The target file is opened in append mode.&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;我的manjaro上所有无法正确运行该代码的Terminal的标准输出都处于Append模式下，因而导致了splice系统调用失败。&lt;/p&gt;
 &lt;p&gt;只需要在调用之前添加&lt;code&gt;fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) &amp;amp; ~O_APPEND);&lt;/code&gt;取消stdout的Append模式就能解决该bug。&lt;/p&gt;
 &lt;h3 id=&#34;总结&#34;&gt;总结&lt;/h3&gt;
