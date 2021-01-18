@@ -13,12 +13,12 @@
     
     
         <item>
-        <title>关于一个bug的记录</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</link>
+        <title>关于splice调用中易出现的一个bug的记录</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</link>
         <pubDate>Sun, 17 Jan 2021 23:40:11 +0800</pubDate>
         
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ -&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
+        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ -&lt;h3 id=&#34;问题&#34;&gt;问题&lt;/h3&gt;
 &lt;p&gt;这两天打算过一遍《Linux高性能服务器编程》，虽然都是些熟悉的知识，但我还是把该书的源码一个个运行了试了试。然后发现了&lt;a href=&#34;https://github.com/raichen/LinuxServerCodes/blob/master/6/6-5testtee.cpp&#34;&gt;6-5testtee.cpp&lt;/a&gt;存在bug。&lt;/p&gt;
 &lt;p&gt;代码如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;assert.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
@@ -75,8 +75,8 @@
 &lt;p&gt;我的manjaro上所有无法正确运行该代码的Terminal的标准输出都处于Append模式下，因而导致了splice系统调用失败。&lt;/p&gt;
 &lt;p&gt;只需要在调用之前添加&lt;code&gt;fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) &amp;amp; ~O_APPEND);&lt;/code&gt;取消stdout的Append模式就能解决该bug。&lt;/p&gt;
 &lt;h3 id=&#34;总结&#34;&gt;总结&lt;/h3&gt;
-&lt;p&gt;其实发现bug后我第一时间就查阅了Linux Manual，然而却没有考虑到所有文件描述符的状态，下意识忽略了STDOUT_FILENO这一特殊的文件描述符，想当然地认为是系统调用本身的问题，白白浪费了大半天时间，需要吸取教训。&lt;/p&gt;
-- https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ - 咸鱼白</description>
+&lt;p&gt;其实发现bug后我第一时间就查阅了Linux Manual，然而却没有考虑到进程中所有文件描述符的状态，下意识忽略了STDOUT_FILENO这一特殊的并非手动打开的文件描述符，想当然地认为是系统调用本身的问题，白白浪费了大半天时间，需要吸取教训。&lt;/p&gt;
+- https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/ - 咸鱼白</description>
         </item>
     
     

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<title>Linux</title>
+<title>关于splice调用中易出现的一个bug的记录</title>
 
 
 
@@ -54,11 +54,17 @@
 
 
 
+  
+    <script src="https://blanca.world//js/toc-collapse.js"></script>
+  
 
 
 
 
 
+
+
+<script src='https://unpkg.com/valine@1.4.14/dist/Valine.min.js'></script>
 
 
 
@@ -86,9 +92,11 @@
             
             
             
+                
             
             
-            <a class="a-block nav-link-item false" href="/archives">
+            
+            <a class="a-block nav-link-item active" href="/archives">
                 Archives
             </a>
             
@@ -96,11 +104,9 @@
             
             
             
-                
             
             
-            
-            <a class="a-block nav-link-item active" href="/tags">
+            <a class="a-block nav-link-item false" href="/tags">
                 Tags
             </a>
             
@@ -157,6 +163,84 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 <div ref="extraContainer" class="extra-container">
     
     
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								<ul class="collapse" data-toggle="collapse">
+							
+								<ul class="collapse" data-toggle="collapse">
+							
+						
+						
+							<li>
+								<a href="#%e9%97%ae%e9%a2%98" onclick="onNavClick(`#问题-nav`)" id="问题-nav">
+									问题
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%a7%a3%e5%86%b3%e5%8a%9e%e6%b3%95" onclick="onNavClick(`#解决办法-nav`)" id="解决办法-nav">
+									解决办法
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%80%bb%e7%bb%93" onclick="onNavClick(`#总结-nav`)" id="总结-nav">
+									总结
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
     <div class="pagination">
         <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
             <i class="material-icons pagination-action-icon">
@@ -174,8 +258,6 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
         </a>
         
         
-        
-        
     </div>
 </div>
 <div class="single-column-drawer-container" ref="drawer"
@@ -188,9 +270,11 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                 
                 
+                    
                 
                 
-                <a class="a-block drawer-menu-item false" href="/archives">
+                
+                <a class="a-block drawer-menu-item active" href="/archives">
                     Archives
                 </a>
                 
@@ -198,11 +282,9 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                 
                 
-                    
                 
                 
-                
-                <a class="a-block drawer-menu-item active" href="/tags">
+                <a class="a-block drawer-menu-item false" href="/tags">
                     Tags
                 </a>
                 
@@ -237,6 +319,84 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 </a>
                 
             
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								<ul class="collapse" data-toggle="collapse">
+							
+								<ul class="collapse" data-toggle="collapse">
+							
+						
+						
+							<li>
+								<a href="#%e9%97%ae%e9%a2%98" onclick="onNavClick(`#问题-nav`)" id="问题-nav">
+									问题
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%a7%a3%e5%86%b3%e5%8a%9e%e6%b3%95" onclick="onNavClick(`#解决办法-nav`)" id="解决办法-nav">
+									解决办法
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%80%bb%e7%bb%93" onclick="onNavClick(`#总结-nav`)" id="总结-nav">
+									总结
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
             
         </div>
     </div>
@@ -281,41 +441,148 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
             <div id="content">
 <div ref="streamContainer" class="stream-container">
     <div class="post-list-container post-list-container-shadow">
-        <div class="post-item-wrapper post-item-wrapper-no-hover">
-            <div class="post-item post-item-no-gaps">
-                <div class="post-item-info-wrapper">
-                    <div class="post-item-title  post-item-title-small">
-                        <a href="https://blanca.world/">咸鱼白的窝</a> / Linux
+        <div class="post">
+            
+            
+            
+                
+            
+
+            <div class="post-head-wrapper"
+                
+                    
+                    
+                    style="background-image: url('https://blanca.world/images/syscall.jpg')"
+                    
+                
+            >
+                <div class="post-title">
+                    关于splice调用中易出现的一个bug的记录
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2021-01-17 23:40
+                        </time>
+                        
+
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/linux">Linux</a>
+                                &nbsp;
+                            
+                        
+                        
                     </div>
                 </div>
             </div>
-        </div><a href="/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/" class="a-block">
-            <div class="post-item-wrapper">
-                <div class="post-item post-item-no-gaps">
-                    <div class="post-item-info-wrapper">
-                        <div class="post-item-title">
-                            关于splice调用中易出现的一个bug的记录
-                        </div>
-                        <div class="post-item-meta">
-    2021-01-17
-    &emsp;
-    
-    
-    
-    &emsp;
-    
-</div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <h3 id="问题">问题</h3>
+<p>这两天打算过一遍《Linux高性能服务器编程》，虽然都是些熟悉的知识，但我还是把该书的源码一个个运行了试了试。然后发现了<a href="https://github.com/raichen/LinuxServerCodes/blob/master/6/6-5testtee.cpp">6-5testtee.cpp</a>存在bug。</p>
+<p>代码如下：</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;assert.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;stdio.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;unistd.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;errno.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;string.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;fcntl.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b"></span>
+<span style="color:#00688b;font-weight:bold">int</span> <span style="color:#008b45">main</span>( <span style="color:#00688b;font-weight:bold">int</span> argc, <span style="color:#00688b;font-weight:bold">char</span>* argv[] )
+{
+	<span style="color:#8b008b;font-weight:bold">if</span> ( argc != <span style="color:#b452cd">2</span> )
+	{
+		printf( <span style="color:#cd5555">&#34;usage: %s &lt;file&gt;</span><span style="color:#cd5555">\n</span><span style="color:#cd5555">&#34;</span>, argv[<span style="color:#b452cd">0</span>] );
+		<span style="color:#8b008b;font-weight:bold">return</span> <span style="color:#b452cd">1</span>;
+	}
+	<span style="color:#00688b;font-weight:bold">int</span> filefd = open( argv[<span style="color:#b452cd">1</span>], O_CREAT | O_WRONLY | O_TRUNC, <span style="color:#b452cd">0666</span> );
+	assert( filefd &gt; <span style="color:#b452cd">0</span> );
 
-                    </div>
+	<span style="color:#00688b;font-weight:bold">int</span> pipefd_stdout[<span style="color:#b452cd">2</span>];
+        <span style="color:#00688b;font-weight:bold">int</span> ret = pipe( pipefd_stdout );
+	assert( ret != -<span style="color:#b452cd">1</span> );
+
+	<span style="color:#00688b;font-weight:bold">int</span> pipefd_file[<span style="color:#b452cd">2</span>];
+        ret = pipe( pipefd_file );
+	assert( ret != -<span style="color:#b452cd">1</span> );
+
+	ret = splice( STDIN_FILENO, <span style="color:#658b00">NULL</span>, pipefd_stdout[<span style="color:#b452cd">1</span>], <span style="color:#658b00">NULL</span>, <span style="color:#b452cd">32768</span>, SPLICE_F_MORE | SPLICE_F_MOVE );
+	assert( ret != -<span style="color:#b452cd">1</span> );
+
+	ret = tee( pipefd_stdout[<span style="color:#b452cd">0</span>], pipefd_file[<span style="color:#b452cd">1</span>], <span style="color:#b452cd">32768</span>, SPLICE_F_NONBLOCK ); 
+	assert( ret != -<span style="color:#b452cd">1</span> );
+	ret = splice( pipefd_file[<span style="color:#b452cd">0</span>], <span style="color:#658b00">NULL</span>, filefd, <span style="color:#658b00">NULL</span>, <span style="color:#b452cd">32768</span>, SPLICE_F_MORE | SPLICE_F_MOVE );
+	assert( ret != -<span style="color:#b452cd">1</span> );
+    
+    ret = splice( pipefd_stdout[<span style="color:#b452cd">0</span>], <span style="color:#658b00">NULL</span>, STDOUT_FILENO, <span style="color:#658b00">NULL</span>, <span style="color:#b452cd">32768</span>, SPLICE_F_GIFT );
+    printf(<span style="color:#cd5555">&#34;errno:%d</span><span style="color:#cd5555">\n</span><span style="color:#cd5555">&#34;</span>,errno);
+
+    assert( ret != -<span style="color:#b452cd">1</span> );
+
+
+	close( filefd );
+        close( pipefd_stdout[<span style="color:#b452cd">0</span>] );
+        close( pipefd_stdout[<span style="color:#b452cd">1</span>] );
+        close( pipefd_file[<span style="color:#b452cd">0</span>] );
+        close( pipefd_file[<span style="color:#b452cd">1</span>] );
+	<span style="color:#8b008b;font-weight:bold">return</span> <span style="color:#b452cd">0</span>;
+}
+</code></pre></div><p>该代码的第三次splice系统调用本应该将stdin的内容输出到stdout，但在我的terminal中运行时该系统调用失败了，错误码22。</p>
+<p>起初我尝试用gdb调试，结果系统调用在gdb中成功了。。。很离谱。查了一圈，上<a href="https://stackoverflow.com/questions/65749455/why-splice-syscall-fails-when-my-program-runs-on-linux-but-succeeds-when-it-runs/65751382#65751382">stackoverflow</a>开了个问题，结果那上面的老哥说复现不了。</p>
+<p>又回头找朋友复现、讨论，在此过程中又发现：在我的manjaro下，clion的run console，dolphin的Terminal，gdb调试窗口都能正确运行该代码，clion的Terminal以及各种其他的自行启动的Terminal都无法正确运行该代码。排查半天得到结论的时候恨不得扇自己一巴掌。</p>
+<h3 id="解决办法">解决办法</h3>
+<p>使用<code>man 2 splice</code>查看splice的文档时，关于其Errors的描述有这么一条：<code>EINVAL The target file is opened in append mode.</code></p>
+<p>我的manjaro上所有无法正确运行该代码的Terminal的标准输出都处于Append模式下，因而导致了splice系统调用失败。</p>
+<p>只需要在调用之前添加<code>fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) &amp; ~O_APPEND);</code>取消stdout的Append模式就能解决该bug。</p>
+<h3 id="总结">总结</h3>
+<p>其实发现bug后我第一时间就查阅了Linux Manual，然而却没有考虑到进程中所有文件描述符的状态，下意识忽略了STDOUT_FILENO这一特殊的并非手动打开的文件描述符，想当然地认为是系统调用本身的问题，白白浪费了大半天时间，需要吸取教训。</p>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">Last modified on 2021-01-17</p>
+                    
                 </div>
             </div>
-        </a></div>
-</div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts">
+			Next<br>No newer posts.
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://blanca.world/archives/%E5%8D%9A%E6%96%8711-%E5%B9%B2%E6%8E%89wine-qqmusic%E7%9A%84%E9%BB%91%E6%A1%86/">
+			Previous<br>干掉wine-qqmusic的黑框
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+<div id="vcomments"></div>
+
+
+
+
 
             </div>
+        </div>
+    </div>
+</div>
 
-
-<div id="single-column-footer">
+            </div><div id="single-column-footer">
 Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://amazingrise.net">Rise</a>
 <br>
 Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
@@ -418,6 +685,15 @@ app = new Vue({
         this.handleResize();
         this.mounted = true;
 
+        
+            new Valine({
+                el: '#vcomments',
+                appId: "IEw5wsNMyrvp5VD0PG2y9LG8-gzGzoHsz",
+                appKey: "HkCMIV24pGny0U23wXUcgYyj",
+                requiredFields: ['nick','mail'],
+                enableQQ: true,
+                recordIP: true,
+            })
         
     },
     destroyed() {
