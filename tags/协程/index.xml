@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>协程 on 咸鱼白的窝</title>
+    <link>https://blanca.world/tags/%E5%8D%8F%E7%A8%8B/</link>
+    <description>Recent content in 协程 on 咸鱼白的窝</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>咸鱼白</copyright>
+    <lastBuildDate>Sat, 30 Jan 2021 22:35:11 +0800</lastBuildDate><atom:link href="https://blanca.world/tags/%E5%8D%8F%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>一个C&#43;&#43;协程库的实现与优化</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Sat, 30 Jan 2021 22:35:11 +0800</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/</guid>
+      <description>预备知识 在阅读本文之前，你应当:
+  理解阻塞I/O与非阻塞I/O，同步调用与异步调用的概念。
+  熟悉操作系统任务切换的过程（上下文的切换与保存）。
+  了解X86-64-ABI。
+  了解Linux下的I/O多路复用。
+  本文所述的协程库源代码可以在我的github仓库获得。
+协程是什么 (∩_∩)这种概念我就不慢慢解释了（偷个懒），自己查。
+API Schedule Schedule::Schedule(); Schedule::Schedule(int size); 第一种方法会创建一个拥有1MB共享栈的schedule，该schedule创建的所有的共享栈协程都会共享这个1MB的运行栈。
+第二种方法会创建一个schedule，其拥有的共享栈大小由stack_size参数决定。
+即使一个schedule管理的所有协程都具有独立运行栈，使用者也必须为schedule创建至少100字节的共享栈。在我的设计中，所有协程在运行到末尾时都会销毁自有的栈，所有独立运行栈协程都必须在最后将运行栈切换到共享栈上以销毁其自有的独立运行栈。
+coroutine_create int Schedule::coroutine_create(co_func func, void *args); int Schedule::coroutine_create(co_func func, void *args, int stack_type, int stack_size); 第一个方法会创建一个共享运行栈协程，该方法等价于: Schedule::coroutine_create(func, args, SAVED_STACK, 0);。
+第二个方法在 stack_type 为SAVED_STACK时会创建一个共享运行栈协程，stack_size决定了用来保存运行栈内容的内存区域的初始大小，该内存区域大小会随着每次的协程挂起而动态调整，所以建议将stack_size设为0。
+第二个方法在 stack_type 为INDEPENDENT_STACK时会创建一个独立运行栈协程，stack_size决定了独立运行栈的大小。
+coroutine_destroy void Schedule::coroutine_destroy(int co_id); 这个方法会销毁由co_id指定的协程。
+coroutine_resume void Schedule::coroutine_resume(int co_id); 这个方法会将主协程切换到非主协程（由参数co_id指定）。
+coroutine_yield void Schedule::coroutine_yield(); 这个方法会将正在运行的非主协程挂起并切换到主协程。
+coroutine_status int Schedule::coroutine_status(int co_id); 这个方法会返回一个协程（由参数co_id指定）的状态，状态（在coroutine.</description>
+    </item>
+    
+  </channel>
+</rss>

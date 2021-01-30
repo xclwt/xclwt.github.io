@@ -6,9 +6,306 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Sun, 17 Jan 2021 23:40:11 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 30 Jan 2021 22:35:11 +0800</lastBuildDate>
     
         <atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>一个C&#43;&#43;协程库的实现与优化</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/</link>
+        <pubDate>Sat, 30 Jan 2021 22:35:11 +0800</pubDate>
+        
+        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/ -&lt;h2 id=&#34;预备知识&#34;&gt;预备知识&lt;/h2&gt;
+&lt;p&gt;在阅读本文之前，你应当:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;理解&lt;code&gt;阻塞I/O与非阻塞I/O&lt;/code&gt;，&lt;code&gt;同步调用与异步调用&lt;/code&gt;的概念。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;熟悉&lt;code&gt;操作系统任务切换的过程（上下文的切换与保存）&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;了解&lt;code&gt;X86-64-ABI&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;了解&lt;code&gt;Linux下的I/O多路复用&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文所述的协程库源代码可以在我的&lt;a href=&#34;https://github.com/xclwt/Coroutine&#34;&gt;github仓库&lt;/a&gt;获得。&lt;/p&gt;
+&lt;h2 id=&#34;协程是什么&#34;&gt;协程是什么&lt;/h2&gt;
+&lt;p&gt;(∩_∩)这种概念我就不慢慢解释了（偷个懒），自己查。&lt;/p&gt;
+&lt;h2 id=&#34;api&#34;&gt;API&lt;/h2&gt;
+&lt;h3 id=&#34;schedule&#34;&gt;Schedule&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;Schedule::Schedule();
+
+Schedule::Schedule(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; size);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;第一种方法会创建一个拥有1MB共享栈的schedule，该schedule创建的所有的共享栈协程都会共享这个1MB的运行栈。&lt;/p&gt;
+&lt;p&gt;第二种方法会创建一个schedule，其拥有的共享栈大小由&lt;code&gt;stack_size&lt;/code&gt;参数决定。&lt;/p&gt;
+&lt;p&gt;即使一个schedule管理的所有协程都具有独立运行栈，使用者也必须为schedule创建至少100字节的共享栈。在我的设计中，所有协程在运行到末尾时都会销毁自有的栈，所有独立运行栈协程都必须在最后将运行栈切换到共享栈上以销毁其自有的独立运行栈。&lt;/p&gt;
+&lt;h3 id=&#34;coroutine_create&#34;&gt;coroutine_create&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; Schedule::coroutine_create(co_func func, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *args);
+
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; Schedule::coroutine_create(co_func func, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *args, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; stack_type, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; stack_size);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;第一个方法会创建一个共享运行栈协程，该方法等价于: &lt;code&gt;Schedule::coroutine_create(func, args, SAVED_STACK, 0);&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;第二个方法在 &lt;code&gt;stack_type&lt;/code&gt; 为&lt;code&gt;SAVED_STACK&lt;/code&gt;时会创建一个共享运行栈协程，&lt;code&gt;stack_size&lt;/code&gt;决定了用来保存运行栈内容的内存区域的初始大小，该内存区域大小会随着每次的协程挂起而动态调整，所以建议将&lt;code&gt;stack_size&lt;/code&gt;设为&lt;code&gt;0&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;第二个方法在 &lt;code&gt;stack_type&lt;/code&gt; 为&lt;code&gt;INDEPENDENT_STACK&lt;/code&gt;时会创建一个独立运行栈协程，&lt;code&gt;stack_size&lt;/code&gt;决定了独立运行栈的大小。&lt;/p&gt;
+&lt;h3 id=&#34;coroutine_destroy&#34;&gt;coroutine_destroy&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; Schedule::coroutine_destroy(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; co_id);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个方法会销毁由&lt;code&gt;co_id&lt;/code&gt;指定的协程。&lt;/p&gt;
+&lt;h3 id=&#34;coroutine_resume&#34;&gt;coroutine_resume&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; Schedule::coroutine_resume(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; co_id);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个方法会将主协程切换到非主协程（由参数&lt;code&gt;co_id&lt;/code&gt;指定）。&lt;/p&gt;
+&lt;h3 id=&#34;coroutine_yield&#34;&gt;coroutine_yield&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; Schedule::coroutine_yield();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个方法会将正在运行的非主协程挂起并切换到主协程。&lt;/p&gt;
+&lt;h3 id=&#34;coroutine_status&#34;&gt;coroutine_status&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; Schedule::coroutine_status(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; co_id);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个方法会返回一个协程（由参数&lt;code&gt;co_id&lt;/code&gt;指定）的状态，状态（在&lt;code&gt;coroutine.h&lt;/code&gt;中定义）可分为&lt;code&gt;COROUTINE_DEAD&lt;/code&gt;, &lt;code&gt;COROUTINE_READY&lt;/code&gt;, &lt;code&gt;COROUTINE_RUNNING&lt;/code&gt;, &lt;code&gt;COROUTINE_SUSPEND&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;coroutine_running&#34;&gt;coroutine_running&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; Schedule::coroutine_running() &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;const&lt;/span&gt;;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个方法会返回正在运行的协程的id。&lt;/p&gt;
+&lt;h2 id=&#34;基本实现&#34;&gt;基本实现&lt;/h2&gt;
+&lt;p&gt;基础的版本是去年读了&lt;a href=&#34;https://github.com/cloudwu&#34;&gt;云风前辈&lt;/a&gt;的&lt;a href=&#34;https://github.com/cloudwu/coroutine&#34;&gt;C coroutine&lt;/a&gt;源码后实现的&lt;a href=&#34;https://github.com/xclwt/Coroutine/tree/fb936e8fbadd4530fef32e64c3015642f8236b68&#34;&gt;C++ coroutine&lt;/a&gt;，这一版仅有共享运行栈协程。&lt;/p&gt;
+&lt;p&gt;后续的各种改进与优化都是基于这一版本。&lt;/p&gt;
+&lt;p&gt;该库主要由Schedule类和Coroutine类组成，创建schedule的程序被我们称为主协程，主协程未与任何一个Coroutine实例绑定，schedule创建的协程则称为非主协程，每一个非主协程都和一个Coroutine实例绑定。&lt;/p&gt;
+&lt;p&gt;协程分为四种状态：&lt;code&gt;COROUTINE_DEAD&lt;/code&gt;, &lt;code&gt;COROUTINE_READY&lt;/code&gt;, &lt;code&gt;COROUTINE_RUNNING&lt;/code&gt;, &lt;code&gt;COROUTINE_SUSPEND&lt;/code&gt;，如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/21-1-30/status.png&#34; alt=&#34;协程状态图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;schedule调用&lt;code&gt;coroutine_create&lt;/code&gt;方法创建一个非主协程，此时该协程处于&lt;code&gt;COROUTINE_READY&lt;/code&gt;状态。&lt;/p&gt;
+&lt;p&gt;当主协程的schedule第一次调用&lt;code&gt;coroutine_resume&lt;/code&gt;方法切入一个处于&lt;code&gt;COROUTINE_READY&lt;/code&gt;状态的非主协程时，会将schedule拥有的共享栈设为非主协程的运行栈，将非主协程上下文中的&lt;code&gt;uc_link&lt;/code&gt;设置为主协程上下文（非主协程运行完会自动切换回主协程）并使用&lt;code&gt;makecontext&lt;/code&gt;函数为非主协程构建上下文，最终调用&lt;code&gt;swapcontext&lt;/code&gt;函数将上下文切至非主协程，该非主协程由此进入&lt;code&gt;COROUTINE_RUNNING&lt;/code&gt;状态，代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;getcontext(&amp;amp;co-&amp;gt;ucontext);
+
+co-&amp;gt;ucontext.uc_stack.ss_sp = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;stack;
+co-&amp;gt;ucontext.uc_stack.ss_size = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;stack_size;
+
+&lt;span style=&#34;color:#228b22&#34;&gt;/*ucontext will change to main after non-main co return*/&lt;/span&gt;
+co-&amp;gt;ucontext.uc_link = &amp;amp;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;main;
+co-&amp;gt;status = COROUTINE_RUNNING;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;running_id = co_id;
+
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;auto&lt;/span&gt; S_ptr = (uintptr_t) &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;;
+makecontext(&amp;amp;co-&amp;gt;ucontext, (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; (*)()) start_func, &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;, (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;uint32_t&lt;/span&gt;) S_ptr, (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;uint32_t&lt;/span&gt;) (S_ptr &amp;gt;&amp;gt; &lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;));
+
+&lt;span style=&#34;color:#228b22&#34;&gt;/*main co to non-main co*/&lt;/span&gt;
+swapcontext(&amp;amp;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;main, &amp;amp;co-&amp;gt;ucontext);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当运行中的非主协程调用&lt;code&gt;coroutine_yield&lt;/code&gt;方法时，schedule会调用&lt;code&gt;save_stack&lt;/code&gt;函数将共享运行栈中的内容保存到当前运行的非主协程的保存栈中，调用&lt;code&gt;swapcontext&lt;/code&gt;函数将上下文切至主协程，非主协程变为&lt;code&gt;COROUTINE_SUSPEND&lt;/code&gt;状态，代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; co_id = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;running_id;
+Coroutine *co = &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;co_list[co_id];
+co-&amp;gt;status = COROUTINE_SUSPEND;
+
+save_stack(co, &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;stack + STACK_SIZE);
+
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;running_id = -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
+
+&lt;span style=&#34;color:#228b22&#34;&gt;/*non-main co to main co*/&lt;/span&gt;
+swapcontext(&amp;amp;co-&amp;gt;ucontext, &amp;amp;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;main);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当schedule调用&lt;code&gt;coroutine_resume&lt;/code&gt;函数切入一个处于&lt;code&gt;COROUTINE_SUSPEND&lt;/code&gt;的非主协程时，将非主协程保存栈中的内容恢复到schedule的共享运行栈中，调用&lt;code&gt;swapcontext&lt;/code&gt;函数将上下文切至非主协程，该非主协程由此变回&lt;code&gt;COROUTINE_RUNNING&lt;/code&gt;状态，代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;memcpy(&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;stack + STACK_SIZE - co-&amp;gt;size, co-&amp;gt;stack, co-&amp;gt;size);
+
+co-&amp;gt;status = COROUTINE_RUNNING;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;running_id = co_id;
+
+swapcontext(&amp;amp;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;this&lt;/span&gt;-&amp;gt;main, &amp;amp;co-&amp;gt;ucontext);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;无论一个协程处于什么状态（除了&lt;code&gt;COROUTINE_RUNNING&lt;/code&gt;状态），只要对其调用&lt;code&gt;coroutine_destroy&lt;/code&gt;函数即可销毁该协程。&lt;/p&gt;
+&lt;h2 id=&#34;优化方案&#34;&gt;优化方案&lt;/h2&gt;
+&lt;h3 id=&#34;具有独立运行栈的协程&#34;&gt;具有独立运行栈的协程&lt;/h3&gt;
+&lt;p&gt;为了区分共享运行栈协程和独立运行栈协程， 在Coroutine类中增加了&lt;code&gt;type&lt;/code&gt;成员， 构造Coroutine时会为&lt;code&gt;type == INDEPENDENT_STACK&lt;/code&gt;分配独立运行栈，在Schedule类中增加了成员函数&lt;code&gt;int coroutine_create(co_func func, void *args, int stack_type, int stack_size);&lt;/code&gt;,  &lt;code&gt;stack_type&lt;/code&gt;指定了协程类型， &lt;code&gt;stack_size&lt;/code&gt;指定了独立运行栈的大小（字节）。&lt;/p&gt;
+&lt;p&gt;在&lt;code&gt;coroutine_resume&lt;/code&gt;函数中，对两种协程的处理做了判断区分，对于处于&lt;code&gt;COROUTINE_READY&lt;/code&gt;状态的独立运行栈协程，上下文的栈区将初始化为独立运行栈，对于处于&lt;code&gt;COROUTINE_SUSPEND&lt;/code&gt;状态的独立运行栈协程，取消了恢复栈区的操作，直接切换上下文即可。&lt;/p&gt;
+&lt;p&gt;在&lt;code&gt;coroutine_yield&lt;/code&gt;函数中，对于独立运行栈协程，取消了保存栈区的操作，直接进行上下文切换。&lt;/p&gt;
+&lt;p&gt;一点小插曲，在我初版的共享栈协程实现中，协程结束前会释放对应的Coroutine对象的内存（包括其保存栈），免去了库使用者手动释放已结束协程的麻烦，但增加了独立运行栈协程后，协程结束前释放对应的Coroutine对象的内存这一操作将引发对内存的越界访问（单线程运行时看似不会出错，但在多线程情况下存在隐患），我在撰写本文时意识到了这一bug，并采取了复制栈内容至共享栈，将rsp寄存器内容指向共享栈对应的新“栈顶”的解决方案，代码实现如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (co-&amp;gt;type == INDEPENDENT_STACK){
+	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;register&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;long&lt;/span&gt; rsp &lt;span style=&#34;color:#008b45&#34;&gt;asm&lt;/span&gt; (&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;rsp&amp;#34;&lt;/span&gt;);
+
+	co-&amp;gt;size = co-&amp;gt;stack + co-&amp;gt;cap - (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; *)rsp;
+	memcpy(S-&amp;gt;stack + S-&amp;gt;stack_size - co-&amp;gt;size, (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; *)rsp, co-&amp;gt;size);
+	rsp = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;long&lt;/span&gt;)S-&amp;gt;stack + S-&amp;gt;stack_size - co-&amp;gt;size;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;基于这一实现，即使一个schedule管理的所有协程都具有独立运行栈，使用者也必须为schedule创建至少100字节的共享栈。&lt;/p&gt;
+&lt;h3 id=&#34;上下文切换优化&#34;&gt;上下文切换优化&lt;/h3&gt;
+&lt;p&gt;在初版实现中，上下文切换使用的是&lt;code&gt;ucontext.h&lt;/code&gt;中提供的&lt;code&gt;ucontext_t&lt;/code&gt;结构及相关库函数，然而该实现中涉及的FPU（浮点运算器），MXCSR（控制状态寄存器）在服务器端编程中极少用到，因此对这些寄存器的保存与恢复造成了不必要的性能消耗，这里参考了腾讯的libco的上下文切换并进行了精简（腾讯的libco涉及14个8字节数据的切换，其实我觉得根据那个实现完全可以精简成10个）：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-assembly&#34; data-lang=&#34;assembly&#34;&gt;.globl swap_ctx
+.globl change_stack
+.type  swap_ctx, @function
+
+swap_ctx:
+    leaq (%rsp),%rax
+    movq %rax, 64(%rdi)
+
+    movq %rbx, 56(%rdi)
+    
+    movq 0(%rax), %rax
+    movq %rax, 48(%rdi)
+    
+    movq %rdi, 40(%rdi)
+    movq %rbp, 32(%rdi)
+    movq %r12, 24(%rdi)
+    movq %r13, 16(%rdi)
+    movq %r14, 8(%rdi)
+    movq %r15, (%rdi)
+    xorq %rax, %rax
+    
+    movq 32(%rsi), %rbp
+    movq 64(%rsi), %rsp
+    movq (%rsi), %r15
+    movq 8(%rsi), %r14
+    movq 16(%rsi), %r13
+    movq 24(%rsi), %r12
+    movq 40(%rsi), %rdi
+    movq 56(%rsi), %rbx
+    
+    leaq 8(%rsp), %rsp
+    pushq 48(%rsi)
+    
+    ret
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;保存以及恢复了参数寄存器rdi（这个寄存器对应&lt;code&gt;start_func&lt;/code&gt;的参数&lt;code&gt;S&lt;/code&gt;，其实只需要保证第一次切入时能从上下文中取出来而已，保存操作纯粹是强迫症对称罢了），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。&lt;/p&gt;
+&lt;p&gt;用来取代的&lt;code&gt;ucontext_t&lt;/code&gt;的&lt;code&gt;coctx&lt;/code&gt;定义在&lt;code&gt;coctx.h&lt;/code&gt;中：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-C++&#34; data-lang=&#34;C++&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;typedef&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;coctx&lt;/span&gt;{
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *regs[&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;];
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;coctx&lt;/span&gt; *uc_link;
+    stack_t uc_stack;
+}coctx;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;stack_t&lt;/code&gt;类型（见 &lt;code&gt;bits/types/stack_t.h&lt;/code&gt;）的&lt;code&gt;uc_stack&lt;/code&gt;和&lt;code&gt;ucontext_t&lt;/code&gt;中的作用一样，用于初始化上下文时确定栈空间，&lt;code&gt;regs[9]&lt;/code&gt;中即是上面提到的返回地址与8个寄存器。&lt;code&gt;uc_link&lt;/code&gt;用来指定当前协程运行结束后的上下文，在本库中，所有非主协程上下文中的&lt;code&gt;uc_link&lt;/code&gt;都指向了主协程的上下文。&lt;/p&gt;
+&lt;p&gt;值得一提的是，腾讯的libco并没有提供类似uc_link的实现，libco似乎默认所有的协程函数都是处于永不终止的循环中，并且简单粗暴的把所有协程的返回地址都指向了协程函数的入口。。直觉告诉我在这种实现下，如果库使用者的协程会运行到结尾，极有可能引发错误，但因为libco缺少详细文档，加上我并没有完全细究其代码，所以对这种情况我也无法断言必然出错，也许有什么容错机制吧。&lt;/p&gt;
+&lt;p&gt;因为对&lt;code&gt;uc_link&lt;/code&gt;的需求，所以我去看了一下glibc中&lt;code&gt;makecontext&lt;/code&gt;函数的&lt;a href=&#34;https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/x86_64/makecontext.c.html#11sp&#34;&gt;源码&lt;/a&gt;，结合上面的&lt;code&gt;coctx&lt;/code&gt;结构体，实现了&lt;code&gt;make_ctx&lt;/code&gt;函数：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;make_ctx&lt;/span&gt;(coctx *ctx, co_start func, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *s){
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;auto&lt;/span&gt; *sp = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;long&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;long&lt;/span&gt; *)((uintptr_t)ctx-&amp;gt;uc_stack.ss_sp + ctx-&amp;gt;uc_stack.ss_size);
+
+    &lt;span style=&#34;color:#228b22&#34;&gt;/* 16 Bytes room reserved for uc_link and start_ctx addr*/&lt;/span&gt;
+    sp -= &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;;
+
+    &lt;span style=&#34;color:#228b22&#34;&gt;/* Align stack, 8 Bytes room reserved for swap_ctx ret addr */&lt;/span&gt;
+    sp = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;long&lt;/span&gt; &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;long&lt;/span&gt; *)(((uintptr_t)sp &amp;amp; -&lt;span style=&#34;color:#b452cd&#34;&gt;16L&lt;/span&gt;) - &lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;);
+
+    ctx-&amp;gt;regs[RSP] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; *)sp;
+    ctx-&amp;gt;regs[RBX] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; *)&amp;amp;sp[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;];
+    ctx-&amp;gt;regs[RDI] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; *)s;
+    ctx-&amp;gt;regs[RET] = (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;char&lt;/span&gt; *)func;
+
+    sp[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] = (uintptr_t)start_ctx;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (ctx-&amp;gt;uc_link)
+        sp[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;] = (uintptr_t)ctx-&amp;gt;uc_link;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;
+        sp[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;] = (uintptr_t)func;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;除去一些对基本上下文的初始化，&lt;code&gt;make_ctx&lt;/code&gt;确保在栈底预留了16字节给&lt;code&gt;uc_link&lt;/code&gt;与&lt;code&gt;start_ctx&lt;/code&gt;函数地址，如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;color:#228b22&#34;&gt;/*
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;high memory
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;uc_link		&amp;lt;--stack base
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;start_ctx
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;start_func	&amp;lt;--rsp
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;...
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;...
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;low memory
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;*/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;make_ctx&lt;/code&gt;将&lt;code&gt;rsp&lt;/code&gt;指向&lt;code&gt;start_ctx&lt;/code&gt;上面一个栈帧，在第一次调用&lt;code&gt;swap_ctx&lt;/code&gt;进入协程时，会在&lt;code&gt;rsp&lt;/code&gt;指向的栈帧中存入协程入口&lt;code&gt;start_func&lt;/code&gt;地址，然后&lt;code&gt;ret&lt;/code&gt;以进入协程，此时&lt;code&gt;rsp&lt;/code&gt;重新指向&lt;code&gt;start_ctx&lt;/code&gt;，栈由此向下扩展，当协程运行结束，&lt;code&gt;rsp&lt;/code&gt;指回&lt;code&gt;start_ctx&lt;/code&gt;，协程退出时&lt;code&gt;ret&lt;/code&gt;直接进入&lt;code&gt;start_ctx&lt;/code&gt;，其实现如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-assembly&#34; data-lang=&#34;assembly&#34;&gt;.globl start_ctx
+.globl __set_ctx
+.type  start_ctx, @function
+start_ctx:
+    movq (%rsp), %rdi
+
+    call __set_ctx
+
+__set_ctx:
+    movq 32(%rdi), %rbp
+    movq 64(%rdi), %rsp
+    movq (%rdi), %r15
+    movq 8(%rdi), %r14
+    movq 16(%rdi), %r13
+    movq 24(%rdi), %r12
+    movq 40(%rdi), %rdi
+    movq 56(%rdi), %rbx
+
+    leaq 8(%rsp), %rsp
+    pushq 48(%rdi)
+    
+    ret
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;将&lt;code&gt;uc_link&lt;/code&gt;取出至&lt;code&gt;rdi&lt;/code&gt;寄存器，然后调用&lt;code&gt;__set_ctx&lt;/code&gt;函数将上下文切换回主协程。&lt;/p&gt;
+&lt;p&gt;在实现&lt;code&gt;uc_link&lt;/code&gt;的过程中，我没有将&lt;code&gt;rsp&lt;/code&gt;寄存器设置到位，导致&lt;code&gt;set_start&lt;/code&gt;的地址被&lt;code&gt;start_func&lt;/code&gt;的地址覆盖了，debug时整出了&lt;code&gt;uc_link&lt;/code&gt;的另一种用法，即在协程中直接获取&lt;code&gt;uc_link&lt;/code&gt;的值并将其作为参数在协程结束前调用&lt;code&gt;__set_ctx&lt;/code&gt;从而完成跳转，两种实现性能基本无区别，默认使用第二种实现，如果想使用第一种实现，可以 &lt;code&gt;#define USE_UC_LINK&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;协程库默认使用coctx这一实现，如果想要使用ucontext_t的实现，可以&lt;code&gt;#define USE_SYS_UCONTEXT&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;性能比较&#34;&gt;性能比较&lt;/h3&gt;
+&lt;p&gt;100,000,000次协程切换总时长：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;类型&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;USE_SYS_UCONTEXT&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;USE_UC_LINK&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;时间（s）&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;共享运行栈&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;否&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;是&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;7.125&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;共享运行栈&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;否&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;否&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;7.230&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;共享运行栈&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;是&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;无作用&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;91.81&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;独立运行栈&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;否&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;是&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;5.749&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;独立运行栈&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;否&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;否&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;5.697&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;独立运行栈&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;是&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;无作用&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;89.52&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;谈谈libco&#34;&gt;谈谈libco&lt;/h2&gt;
+&lt;h2 id=&#34;tips&#34;&gt;Tips&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;注意共享栈协程和独立栈协程的选择，共享栈协程因为栈数据的保存与恢复操作，会使得性能下降，独立栈协程则更容易产生栈溢出的风险以及大量内存的占用。&lt;/li&gt;
+&lt;li&gt;在共享栈协程中使用异步IO调用时，必须使用堆中分配的内存作为缓冲区，不可以将栈上的空间作为缓冲区，因为一旦协程挂起，运行栈就不再归属于该协程。在独立栈协程中则无此限制。&lt;/li&gt;
+&lt;li&gt;在本库提供的协程中最好使用非阻塞调用而非阻塞调用，阻塞调用会使协程失去存在的必要性。（因为没有像libco一样实现对常用网络编程函数的hook，所以程序使用的第三方库中如果使用了阻塞调用，同样会使协程失去存在必要性）。&lt;/li&gt;
+&lt;/ul&gt;
+- https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/ - 咸鱼白</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>迟到的2020年终总结</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8713-2020%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
+        <pubDate>Mon, 25 Jan 2021 19:11:11 +0800</pubDate>
+        
+        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8713-2020%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8713-2020%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/ -&lt;p&gt;这里是咸鱼白没人看的博客，能看到这篇迟到的2020年终总结的大抵都是那几个在深夜倾听过我诉说的朋友，如果看到这里的你恰巧是个陌生人还愿意看完我的胡言乱语，那么，提前祝你晚安。&lt;/p&gt;
+&lt;p&gt;2020年于我而言算是人生的转折点，距离上一个人生转折点刚好十年，整整十年，还真是够巧的。&lt;/p&gt;
+&lt;p&gt;上半年，我一直在努力完成2019年年终总结中定下的目标，即Blanca-OS的实现，在六月的时候基本只剩内存管理模块遗留的bug以及文件系统没完成了，暑假暂时放了放这一项目，去研究了一下Linux系统编程以及协程相关的内容，原计划九月开学继续写完Blanca-OS，可惜终究因为下半年的变故搁置了，不过虽然我至今仍未完成Blanca-OS，但我个人感觉自己的综合能力（对程序背后运行过程的理解，对有效信息的检索，对调试工具的运用等等）已经在上半年的磨砺中产生了飞跃并在近阶段的编程实践中得到了很好的体现。&lt;/p&gt;
+&lt;p&gt;下半年，父亲查出肝癌晚期，然后过世，说实话，对我打击很大。下半年有那么一段时间内我无法进入以往的状态，常常躺在床上审视过去十年的人生。&lt;/p&gt;
+&lt;p&gt;我以前经常看不懂自己到底是个什么样的人，我一直活得很奇怪，现在我想给以前的自己下个定义：一个本质极度感性却又崇尚绝对理性的理想主义者。&lt;/p&gt;
+&lt;p&gt;童年的一些经历让我变得早熟且善于察觉别人的情绪变化，然而很多人都觉得我不会照顾别人的感受，实际上，我知道他们的感受，但我若是觉得自己的行为从逻辑上不构成错误，我会强行忽视观察到的情绪因素，我行我素。长久以来，我觉得我给自己装了一个锁，把自己的感性锁了起来，绝大多数负面的影响作用于我时，我也都会把它们锁起来，强行回避掉，只有在我身体不适时，这个锁才可能会松开一些，露出我更为感性且真实的一面。我可活得真拧巴。&lt;/p&gt;
+&lt;p&gt;我一直以来其实都是个很不负责任的人，十年前的经历让我变得惧怕责任且善于逃避责任，然而迟早有一天现实会教我做人，让我后悔，我希望2020年是我最后一次为自己的逃避而后悔。父亲走前并没有留下什么遗言，只是走前一晚让我打开他的邮箱，我当时答应他“好的，你要相信你儿子，有什么事情我都会处理好的”。最终我在他邮箱里找到三封给我的邮件，一封是他为防自己发生意外早已写好的遗书，交代的事情暂且不表。还有两封是早就写好的给我的信，但却一直没有发出，一封讲述了一个“朋友”的故事，关于这个“朋友”从小到大干过的很多蠢事，写给我以作前车之鉴，另一封是关于责任的信，他试图以切身体会教导我做为父亲该承担对儿子的责任，作为丈夫该承担对妻子的责任，作为儿子对父母的责任，知子莫若父，原来他也觉得他的儿子很不负责任吗？他去世后我时常翻看他写给我的邮件，时常反思自己过去的所作所为，我觉得我能完成那晚对他的承诺。&lt;/p&gt;
+&lt;p&gt;曾经不愿意和父母谈心，没想到和母亲能够交心谈话是在父亲走后，父亲在世的时候的各种说教我从来不愿意认真去听，临到他走了，我反而开始郑重其事地要信守承诺了，要开始接受他的教导了，呵，我这种人，多可笑！我以前总喜欢理想化一切，总认为事情会怎么这么地按照自己的规划发展，我常常对十年后，二十年后，三十年的我的生活会是怎样充满了期待，然鹅现实冷酷无情地把我扇醒，指不定这篇博文还没写完我就暴毙当场了呢？前一阵子看了一部很长很平淡的电影《少年时代》，深有感触，过去和未来，都不属于我，真正属于我的，只有现在这一瞬罢了，我能做的唯有珍惜当下拥有的一切，尽力做好现在的自己，这才是我的生活。&lt;/p&gt;
+&lt;p&gt;2020年末，向一个很久没见的朋友为曾经的不愉快道了歉，虽然这份歉意迟到了，但我仍然为自己能够勇敢地道歉感到开心，祝ta一切顺利，有缘再见。&lt;/p&gt;
+&lt;p&gt;现在，站在2021年年初，站在下一个十年开始的地方，我终于看懂了过去十年的我到底是个什么样的人，而现在的我，又到底是什么样的人？有了什么改变？又有什么没变？我不知道，兴许要等到十年后回顾时才能得到答案。但这并不重要，起码我知道现在我应该做一个什么样的人，然后在每一个现在努力做好自己，这就够了。&lt;/p&gt;
+- https://blanca.world/archives/%E5%8D%9A%E6%96%8713-2020%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/ - 咸鱼白</description>
+        </item>
     
     
     
@@ -561,195 +858,6 @@ stepi					&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#�
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这段程序将第二个整数与0比较，若不想等就会触发炸弹，所以，第二个整数应该为0。&lt;/p&gt;
 &lt;p&gt;至此，phase 4通过。&lt;/p&gt;
 &lt;p&gt;(在写5，6关的解法时和人怼了起来导致最后半途而废，抱歉)&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>如何拆除CMU-15213的bomb lab？（1）</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</link>
-        <pubDate>Sun, 15 Sep 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/ -&lt;h3 id=&#34;phase-1&#34;&gt;phase 1：&lt;/h3&gt;
-&lt;p&gt;用gdb调试器打开bomb程序：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;gdb bomb
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;显示汇编窗口以方便调试：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;layout &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;asm&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时我们可以看到bomb程序的反汇编代码，并在main函数中找到phase_1至phase_6这6个函数的调用，这应该对应着炸弹的六个关卡：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3a&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;154&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee0&lt;/span&gt; &amp;lt;phase_1&amp;gt;                                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3f&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;159&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4015c4&lt;/span&gt; &amp;lt;phase_defused&amp;gt;
-......
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ec6&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;294&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4010f4&lt;/span&gt; &amp;lt;phase_6&amp;gt;                                        
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ecb&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;299&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4015c4&lt;/span&gt; &amp;lt;phase_defused&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3a&lt;/span&gt; 	&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_1函数调用处加断点
-run					&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;运行程序&lt;/span&gt;
-(&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;输入任意字符串&lt;/span&gt;)
-stepi				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_1函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_1函数之后我们可以看到对strings_not_equal函数的调用：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee9&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x401338&lt;/span&gt; &amp;lt;strings_not_equal&amp;gt;  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400eee&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   test   %eax,%eax                                                  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef0&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef7&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;23&lt;/span&gt;&amp;gt;   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef2&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;18&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当strings_not_equal的返回值为0时，将跳过explode_bomb，否则将执行explode_bomb，炸弹就会爆炸。&lt;/p&gt;
-&lt;p&gt;而在strings_not_equal函数调用之前，我们可以看到一条指令：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee4&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;    mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402400&lt;/span&gt;,%esi      
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这条指令将一个即时数传入了寄存器%esi，或许这是strings_not_equal函数的参数之一，我们看看这个地址里有什么，输入：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;x/s 0x402400
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到结果：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402400&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;Border relations with Canada have never been better.&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;显然，这是phase 1用来与我们输入字符串比对的密码字符串。至此，phase 1通过。&lt;/p&gt;
-&lt;h3 id=&#34;phase-2&#34;&gt;phase 2：&lt;/h3&gt;
-&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e56&lt;/span&gt;	&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_2函数调用处加断点
-......
-(&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;输入任意字符串&lt;/span&gt;)
-stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_2函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_2函数之后我们可以看到：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400efe&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;&amp;gt;    sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x28&lt;/span&gt;,%rsp  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f02&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;6&lt;/span&gt;&amp;gt;    mov    %rsp,%rsi 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;程序在栈上分配了40个字节的空间，并把栈顶地址存入了寄存器%rsi，我们把这个地址称为s1。&lt;/p&gt;
-&lt;p&gt;接着，调用了read_six_numbers函数：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f05&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40145c&lt;/span&gt; &amp;lt;read_six_numbers&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入read_six_numbers函数之后，我们可以看到：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40145c&lt;/span&gt; &amp;lt;read_six_numbers&amp;gt;     sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp        &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在栈上分配了&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;字节空间&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401460&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;   mov    %rsi,%rdx         &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rdx值设为s1  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401463&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;7&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rsi),%rcx    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;          
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401467&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;11&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x14&lt;/span&gt;(%rsi),%rax                                
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40146b&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;15&lt;/span&gt;&amp;gt;  mov    %rax,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;值设为&lt;/span&gt;s1+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401470&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x10&lt;/span&gt;(%rsi),%rax                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401474&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;  mov    %rax,(%rsp)       &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; (%rsp)&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;值设为&lt;/span&gt;s1+&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401478&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;28&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsi),%r9     &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;12&lt;/span&gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40147c&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsi),%r8	 &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;紧接其后再次出现了含有即时数的操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x401480&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025c3&lt;/span&gt;,%esi
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看看这个地址里有什么，输入：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;x/s 0x4025c3
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到返回值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025c3&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;%d %d %d %d %d %d&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看到这里感觉和字符串格式化有关，再往下看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40148a&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400bf0&lt;/span&gt; &amp;lt;__isoc99_sscanf&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;@&lt;/span&gt;plt&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40148f&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;51&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x5&lt;/span&gt;,%eax                                           
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401492&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;54&lt;/span&gt;&amp;gt;  jg     &lt;span style=&#34;color:#b452cd&#34;&gt;0x401499&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;61&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401494&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;56&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看起来可能是调用了sscanf函数(从一个字符串中读进相应格式数据)，并且返回值小于等于5会触发炸弹，结合前面存储的6个地址可推测出，应该是从我们输入的字符串中读入了6个整数，即我们输入的字符串要包含大于等于6个被空格隔开的整数。&lt;/p&gt;
-&lt;p&gt;返回到phase_2函数，继续看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f0a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;,(%rsp)                                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f0e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;18&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f10&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f15&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;25&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;   mov    -&lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rbx),%eax      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;30&lt;/span&gt;&amp;gt;   add    %eax,%eax 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;   cmp    %eax,(%rbx)                                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f25&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f20&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f25&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;   add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;,%rbx                                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f29&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;45&lt;/span&gt;&amp;gt;   cmp    %rbp,%rbx                                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f2c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;48&lt;/span&gt;&amp;gt;   jne    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f2e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;50&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f3c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;64&lt;/span&gt;&amp;gt;                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rsp),%rbx                                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f35&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;(%rsp),%rbp                                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f3a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;62&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;仔细看这段代码，我们可以看出这是一个循环，其功能是将s1,s1+4,s1+8,s1+12,s1+16,s1+20这6个地址内的值与1,2,4,8,16,32比对，于是便可以得出结论，关卡2的密码字符串开头应是“1 2 4 8 16 32 ”，后续如何并无影响，至此，phase 2通过。&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>详解KMP算法</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</link>
-        <pubDate>Wed, 03 Apr 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ -&lt;h3 id=&#34;引子&#34;&gt;&lt;strong&gt;引子&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。&lt;/p&gt;
-&lt;h3 id=&#34;简述bf算法&#34;&gt;&lt;strong&gt;简述BF算法&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;讲述KMP算法的原理之前，BF算法是绕不开的话题，也只有了解了BF算法，才能知道KMP算法的优势。
-先来看一个例子：给出两个字符串A和B，求解A中是否包含B？如果包含，包含了几个？&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E4%B8%B2.png&#34; alt=&#34;图1&#34;&gt;&lt;/p&gt;
-&lt;p&gt;BF算法的原理是一位一位地比较，比较到失配位的时候，将B串的向后移动一个单位，再从头一位一位地进行匹配。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图2：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png&#34; alt=&#34;图2&#34;&gt;&lt;/p&gt;
-&lt;p&gt;在比较到第6个字符时（字符索引：5），不匹配了，此时就要将B串后移一个单位，从头开始匹配（将原本指向A串第六个字符的指针i指向第二个字符，指向B串第六个字符的指针j重新指向B串开头）：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B.png&#34; alt=&#34;图3&#34;&gt;&lt;/p&gt;
-&lt;p&gt;然而此时我们一眼可以看出第二次匹配也是必然失败的，但计算机并不知道，它只会按照BF算法一位一位的比较下去（在很多情况下要比较很多位才能发现不匹配），这种暴力求解的算法效率是极低的，所以我们有没有办法让计算机根据已经匹配过的部分知道自己从头匹配的时候应该忽略哪些部分，省去不必要的匹配？（在此例中即为从头跳过第二位的b从第三位开始新的匹配，例子不够极端，可能并不是很好理解跳过的必要性，请耐心看后续讲解）为了解决这个问题，KMP算法便诞生了。&lt;/p&gt;
-&lt;h3 id=&#34;kmp算法&#34;&gt;&lt;strong&gt;KMP算法&lt;/strong&gt;&lt;/h3&gt;
-&lt;h4 id=&#34;1前缀与后缀&#34;&gt;&lt;strong&gt;1、前缀与后缀&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;首先我们要了解几个概念：前缀、后缀、相同前缀后缀的最大长度（为表述方便，下文均用公共最大长指代），为了直观一点，我们直接举例：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;abcdef的前缀：a、ab、abc、abcd、abcde（注意：abcdef不是前缀）
-abcdef的后缀：f、ef、def、cdef、bcdef（注意：abcdef不是后缀）
-abcdef的公共最大长：0（因为其前缀与后缀没有相同的）
-ababa的前缀：a、ab、aba、abab
-ababa的后缀：a、ba、aba、baba
-ababa的公共最大长：3（因为他们的公共前缀后缀中最长的为aba，长度3）&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h4 id=&#34;2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化&#34;&gt;&lt;strong&gt;2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化&lt;/strong&gt;&lt;/h4&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图4：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new7.png&#34; alt=&#34;图4&#34;&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;index行是字符在B串中的位置索引值。
-B串行则记录了所有字符。
-next行则记录了当前从B串头部到当前位置的这一子串的公共最大长。（我们先不用管这些公共最大长是如何得到的，暂且假设是上帝告诉了我们）
-new行记录的值则是相应的公共最大长减去1。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;好的，我们现在可以再次进行匹配了，还是开头的例子，B串在第6个字符处（索引5）失配，此时我们可以确认的是B串的前五个字符已经匹配成功了，让我们根据上面那个表格查找一下已经匹配成功的子串的公共最大长吧**（请注意是已经匹配成功的，我们在第6个字符处失配，所以应当去查找第五个字符或者说索引4的位置记录的公共最大长）**。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png&#34; alt=&#34;图5&#34;&gt;&lt;/p&gt;
-&lt;p&gt;很明显，已匹配成功的子串（我们称之为C串吧）的公共最大长为2，这说明了什么？想一想，&lt;strong&gt;B串匹配成功的部分和A串失配处之前的一小部分子串都是C串&lt;/strong&gt;，C串的公共最大长为2，C串最前面的两个字符（也就是B串的开头两个字符）和C串最后面的两个字符（也就是A串失配位前面两个字符）是相同的，这就意味着我们重新进行匹配的时候可以直接将&lt;strong&gt;B串的头部2个字符和A串匹配成功的部分的最后两个字符&lt;/strong&gt;对齐。然后开始对比B串的第三个字符与A串的失配字符，进行新一轮的匹配&lt;/p&gt;
-&lt;p&gt;关于对齐，计算机运行时是怎么做的？我们在匹配时分别用指针i和j指向字符串当前匹配的位置，失配之后&lt;strong&gt;指针i不变&lt;/strong&gt;，继续指向A串的失配处，&lt;strong&gt;指针j则指向B串第三个位置&lt;/strong&gt;（公共最大长的后面一位，索引为公共最大长）。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图6所示：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E6%96%B0%E5%8C%B9%E9%85%8D.png&#34; alt=&#34;图6&#34;&gt;&lt;/p&gt;
-&lt;p&gt;蓝色的部分即是通过公共最大长直接匹配的位置，红色部分是重新开始匹配的位置（两个指针直接指向的位置），相较于BF算法，我们在这一步跳过了A串的第二个字符“b”，第三个字符“a”，直接将B串头部对齐了第四个字符，并从B串的第三个字符开始重新与此前失配的字符进行新一轮的匹配。实现就是如此简单，重新匹配的过程省去了一大堆不必要的匹配，为我们节省了很多时间。&lt;/p&gt;
-&lt;p&gt;也许有人会疑问，凭什么就应该跳过A串的第三个字符“a”去直接和第四个字符“a”进行匹配呢？难道从第三个开始匹配就不能成功吗？请回忆一下什么是公共最大长吧？是相同前缀后缀的最大长度。请对照着图6看完我下面的解释：我在前面有加粗这么一句话“B串的这部分子串和A串失配处之前的一小部分是相同的”，现在我们假设是从第三个字符“a”开始重新匹配的，如果要与B一直匹配成功到第五个字符“b”，也就是匹配成功了三个字符，这意味着什么？意味着第五个字符位对应的公共最大长应该是3，这显然是和事实的公共最大长为2是不符合的，以此类推，重新开始匹配时参考公共最大长是合理的最优解。再梳理一下其中的逻辑，现在你应该能理解公共最大长度的意义了。&lt;/p&gt;
-&lt;p&gt;等一等，我们好像忘了什么？原理懂是懂了，可上帝在哪？我们之前假设上帝告诉了我们next行（next数组中记录的值），可事实上上帝并不存在，还是得靠我们自己求值鸭！所以，怎么求next数组呢？&lt;/p&gt;
-&lt;h4 id=&#34;3nextnew数组的求解&#34;&gt;&lt;strong&gt;3、next（new）数组的求解&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;在此我要先解释一下new数组中值的意义，正如表示公共最大长的next的数组的值同时表示了对应的最大前缀（&lt;strong&gt;为方便表示，我们将最大相同前缀后缀中的前缀称为最大前缀，最大相同前缀后缀中的后缀称为最大后缀&lt;/strong&gt;）的后面一位的索引，new数组中的值等于next数组中的值减去1，我们同时用其表示了对应的最大前缀的最后一位的索引，这是为了后续的程序表达的便利，所以我们此处讲解对new数组的求解，因为求出了new数组等于求出来next数组。&lt;/p&gt;
-&lt;p&gt;先把求解new数组的类c伪代码贴在这里(B即为B字符串，new即为new数组，不要急于看懂代码，先看明白我的解释,代码看不懂也不碍事，反正是伪代码):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;new[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] = -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;
-&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i=&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;i&amp;lt;n;i++) &lt;span style=&#34;color:#228b22&#34;&gt;/* n为B串长度 */&lt;/span&gt;
-{
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j=new[i-&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;];   &lt;span style=&#34;color:#228b22&#34;&gt;/* j为待计算位置前一位对应的new值，也就是最大前缀最后一位对应的索引 */&lt;/span&gt;
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; ((B[j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;]!=B[i])&amp;amp;&amp;amp;(j&amp;gt;=&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;))   &lt;span style=&#34;color:#228b22&#34;&gt;/* 任何一个最大前缀后一位与当前求值字符相同时或者向前继续寻找的索引为-1时停止循环 */&lt;/span&gt;
-        j=new[j];
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (B[j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;]==B[i])  &lt;span style=&#34;color:#228b22&#34;&gt;/* 字符相同，公共最大长+1，new值+1 */&lt;/span&gt;
-        new[i]=j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;               &lt;span style=&#34;color:#228b22&#34;&gt;/* 最终寻找到的索引为-1，公共最大长归零 */&lt;/span&gt;
-        new[i]=-&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;首先，我们可以知道B串的第一个字符对应的公共最大长一定是0，在new数组中则为-1，所以new[0] = -1。接下来，我们不从第二个字符开始类推，而是选取一个位置靠后的具有普适性的例子以便更好的理解推导过程。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图7所示：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new4.png&#34; alt=&#34;图7&#34;&gt;&lt;/p&gt;
-&lt;p&gt;假设我们已经一步步推导得出了前面0-9索引对应的new值，现在要求解索引10对应new值（再次提醒：这个值是公共最大长-1）。&lt;/p&gt;
-&lt;p&gt;我们首先需要考虑&lt;strong&gt;添加了字符b之后的公共最大长&lt;/strong&gt;是否会增加1，该如何判断呢？&lt;/p&gt;
-&lt;p&gt;将索引10对应的字符和**前面已经求得解的最长字符串“abaabbaba”**的最大前缀后面一位字符比较，如果二者相同，说明了最大前缀添加一位后产生的字符串和最大后缀添加了字符&amp;rsquo;b&amp;rsquo;产生的字符串相同，此时索引10位置对应的公共最大长应该在前面一位的基础上加1。&lt;/p&gt;
-&lt;p&gt;那么这个字符串**“abaabbaba”**的最大前缀的后一位的索引值该如何找到？&lt;/p&gt;
-&lt;p&gt;这个值是&lt;strong&gt;已经求得解的最长字符串的公共最大长的值&lt;/strong&gt;，即为next[9],或者说是new[9]+1。（next[9]对应了公共最大长的值，也表示着最大前缀后一位的索引）&lt;/p&gt;
-&lt;p&gt;这个值具体是什么？&lt;/p&gt;
-&lt;p&gt;是new[9]+1 = 3+1 = 4。我们继续寻找索引4对应的字符，是&amp;rsquo;b&#39;，和索引10对应的字符相同，所以索引10对应的公共最大长较之前一位加1，new值加1，所以new[10] = new[9]+1 = 3+1 = 4。&lt;/p&gt;
-&lt;p&gt;可是，如果B[10]不是&amp;rsquo;b&amp;rsquo;呢，如果B[10]=&amp;lsquo;a&amp;rsquo;呢？怎么办？&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如图8所示：&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png&#34; alt=&#34;图8&#34;&gt;&lt;/p&gt;
-&lt;p&gt;很明显，按之前的推理，在当前情况下，B[10]=&amp;lsquo;a&amp;rsquo;和B[4]=&amp;lsquo;b&amp;rsquo;是不等的，所以公共最大长不可能增加了，我们只能考虑其与前一位相等甚至减少的情况了，此时该怎么求呢？我们现在要找的是&lt;strong&gt;最大前缀的前缀，与“最大后缀加‘a’字符”这一组合的后缀的公共最大长&lt;/strong&gt;了，我们暂且&lt;strong&gt;将索引10前一位对应的子串的最大前缀与最大后缀称为C串&lt;/strong&gt;吧（因为二者是相同的字符串），此时我们要求解的问题其实&lt;strong&gt;转化为了C串后面添加一个字符&amp;rsquo;a&amp;rsquo;对应的公共最大长&lt;/strong&gt;，于是我们先利用索引10前面一位索引9对应的new值找到C串（从头数起）的最后一位，并重复上面的过程来推测此时公共最大长应该朝什么方向变化（这就是代码中循环的意义），如果向前找到的最后一位的索引是-1，即公共最大长已经减到0的时候，循环终止。现在回头再看看代码和注释，就应当能够理解了。&lt;/p&gt;
-&lt;h3 id=&#34;小结&#34;&gt;&lt;strong&gt;小结&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;​&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;第一次写技术博客，写得比较啰嗦，可能表述也并不到位，如有不能理解的地方或者修改建议请加我微信或在评论区留言。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
-&lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ - 咸鱼白</description>
         </item>
     
     

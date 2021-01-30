@@ -6,9 +6,198 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Sun, 17 Jan 2021 23:40:11 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 30 Jan 2021 22:35:11 +0800</lastBuildDate>
     
         <atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>如何拆除CMU-15213的bomb lab？（1）</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</link>
+        <pubDate>Sun, 15 Sep 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/ -&lt;h3 id=&#34;phase-1&#34;&gt;phase 1：&lt;/h3&gt;
+&lt;p&gt;用gdb调试器打开bomb程序：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;gdb bomb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;显示汇编窗口以方便调试：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;layout &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;asm&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时我们可以看到bomb程序的反汇编代码，并在main函数中找到phase_1至phase_6这6个函数的调用，这应该对应着炸弹的六个关卡：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3a&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;154&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee0&lt;/span&gt; &amp;lt;phase_1&amp;gt;                                         
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3f&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;159&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4015c4&lt;/span&gt; &amp;lt;phase_defused&amp;gt;
+......
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ec6&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;294&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4010f4&lt;/span&gt; &amp;lt;phase_6&amp;gt;                                        
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ecb&lt;/span&gt; &amp;lt;main+&lt;span style=&#34;color:#b452cd&#34;&gt;299&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x4015c4&lt;/span&gt; &amp;lt;phase_defused&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行以下操作：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e3a&lt;/span&gt; 	&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_1函数调用处加断点
+run					&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;运行程序&lt;/span&gt;
+(&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;输入任意字符串&lt;/span&gt;)
+stepi				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_1函数
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_1函数之后我们可以看到对strings_not_equal函数的调用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee9&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x401338&lt;/span&gt; &amp;lt;strings_not_equal&amp;gt;  
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400eee&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   test   %eax,%eax                                                  
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef0&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef7&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;23&lt;/span&gt;&amp;gt;   
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ef2&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;18&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当strings_not_equal的返回值为0时，将跳过explode_bomb，否则将执行explode_bomb，炸弹就会爆炸。&lt;/p&gt;
+&lt;p&gt;而在strings_not_equal函数调用之前，我们可以看到一条指令：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ee4&lt;/span&gt; &amp;lt;phase_1+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;    mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402400&lt;/span&gt;,%esi      
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这条指令将一个即时数传入了寄存器%esi，或许这是strings_not_equal函数的参数之一，我们看看这个地址里有什么，输入：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;x/s 0x402400
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到结果：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402400&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;Border relations with Canada have never been better.&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;显然，这是phase 1用来与我们输入字符串比对的密码字符串。至此，phase 1通过。&lt;/p&gt;
+&lt;h3 id=&#34;phase-2&#34;&gt;phase 2：&lt;/h3&gt;
+&lt;p&gt;执行以下操作：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e56&lt;/span&gt;	&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_2函数调用处加断点
+......
+(&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;输入任意字符串&lt;/span&gt;)
+stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_2函数
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_2函数之后我们可以看到：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400efe&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;&amp;gt;    sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x28&lt;/span&gt;,%rsp  
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f02&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;6&lt;/span&gt;&amp;gt;    mov    %rsp,%rsi 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;程序在栈上分配了40个字节的空间，并把栈顶地址存入了寄存器%rsi，我们把这个地址称为s1。&lt;/p&gt;
+&lt;p&gt;接着，调用了read_six_numbers函数：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f05&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40145c&lt;/span&gt; &amp;lt;read_six_numbers&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入read_six_numbers函数之后，我们可以看到：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40145c&lt;/span&gt; &amp;lt;read_six_numbers&amp;gt;     sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp        &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在栈上分配了&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;字节空间&lt;/span&gt;
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401460&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;   mov    %rsi,%rdx         &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rdx值设为s1  
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401463&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;7&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rsi),%rcx    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;          
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401467&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;11&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x14&lt;/span&gt;(%rsi),%rax                                
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x40146b&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;15&lt;/span&gt;&amp;gt;  mov    %rax,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;值设为&lt;/span&gt;s1+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;             
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401470&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x10&lt;/span&gt;(%rsi),%rax                                 
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401474&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;  mov    %rax,(%rsp)       &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; (%rsp)&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;值设为&lt;/span&gt;s1+&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401478&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;28&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsi),%r9     &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;12&lt;/span&gt;                 
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x40147c&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;  lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsi),%r8	 &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;紧接其后再次出现了含有即时数的操作：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x401480&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025c3&lt;/span&gt;,%esi
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看看这个地址里有什么，输入：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;x/s 0x4025c3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到返回值：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025c3&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;%d %d %d %d %d %d&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看到这里感觉和字符串格式化有关，再往下看：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40148a&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400bf0&lt;/span&gt; &amp;lt;__isoc99_sscanf&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;@&lt;/span&gt;plt&amp;gt;                     
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x40148f&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;51&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x5&lt;/span&gt;,%eax                                           
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401492&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;54&lt;/span&gt;&amp;gt;  jg     &lt;span style=&#34;color:#b452cd&#34;&gt;0x401499&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;61&lt;/span&gt;&amp;gt;                     
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x401494&lt;/span&gt; &amp;lt;read_six_numbers+&lt;span style=&#34;color:#b452cd&#34;&gt;56&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看起来可能是调用了sscanf函数(从一个字符串中读进相应格式数据)，并且返回值小于等于5会触发炸弹，结合前面存储的6个地址可推测出，应该是从我们输入的字符串中读入了6个整数，即我们输入的字符串要包含大于等于6个被空格隔开的整数。&lt;/p&gt;
+&lt;p&gt;返回到phase_2函数，继续看：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f0a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;,(%rsp)                                                 
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f0e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;18&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;                                   
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f10&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                                 
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f15&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;25&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;                                   
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;   mov    -&lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rbx),%eax      
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;30&lt;/span&gt;&amp;gt;   add    %eax,%eax 
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;   cmp    %eax,(%rbx)                                             
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f1e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f25&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;                                   
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f20&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                                 
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f25&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;   add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;,%rbx                                               
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f29&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;45&lt;/span&gt;&amp;gt;   cmp    %rbp,%rbx                                               
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f2c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;48&lt;/span&gt;&amp;gt;   jne    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;                                   
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f2e&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;50&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f3c&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;64&lt;/span&gt;&amp;gt;                                   
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f30&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;52&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x4&lt;/span&gt;(%rsp),%rbx                                         
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f35&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;   lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;(%rsp),%rbp                                         
+&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f3a&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;62&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f17&lt;/span&gt; &amp;lt;phase_2+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;仔细看这段代码，我们可以看出这是一个循环，其功能是将s1,s1+4,s1+8,s1+12,s1+16,s1+20这6个地址内的值与1,2,4,8,16,32比对，于是便可以得出结论，关卡2的密码字符串开头应是“1 2 4 8 16 32 ”，后续如何并无影响，至此，phase 2通过。&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%874-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab1/ - 咸鱼白</description>
+        </item>
+    
+    
+    
+        <item>
+        <title>详解KMP算法</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</link>
+        <pubDate>Wed, 03 Apr 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ -&lt;h3 id=&#34;引子&#34;&gt;&lt;strong&gt;引子&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;这几天自学了KMP算法，也在网上看了很多相关的博文，然而他们对next数组的求解方法的解释都比较模糊，难于让读者理解，故参考几位前辈的博文，加以优化，撰此博文，分享一下自己的理解。&lt;/p&gt;
+&lt;h3 id=&#34;简述bf算法&#34;&gt;&lt;strong&gt;简述BF算法&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;讲述KMP算法的原理之前，BF算法是绕不开的话题，也只有了解了BF算法，才能知道KMP算法的优势。
+先来看一个例子：给出两个字符串A和B，求解A中是否包含B？如果包含，包含了几个？&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E4%B8%B2.png&#34; alt=&#34;图1&#34;&gt;&lt;/p&gt;
+&lt;p&gt;BF算法的原理是一位一位地比较，比较到失配位的时候，将B串的向后移动一个单位，再从头一位一位地进行匹配。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如图2：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png&#34; alt=&#34;图2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;在比较到第6个字符时（字符索引：5），不匹配了，此时就要将B串后移一个单位，从头开始匹配（将原本指向A串第六个字符的指针i指向第二个字符，指向B串第六个字符的指针j重新指向B串开头）：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B.png&#34; alt=&#34;图3&#34;&gt;&lt;/p&gt;
+&lt;p&gt;然而此时我们一眼可以看出第二次匹配也是必然失败的，但计算机并不知道，它只会按照BF算法一位一位的比较下去（在很多情况下要比较很多位才能发现不匹配），这种暴力求解的算法效率是极低的，所以我们有没有办法让计算机根据已经匹配过的部分知道自己从头匹配的时候应该忽略哪些部分，省去不必要的匹配？（在此例中即为从头跳过第二位的b从第三位开始新的匹配，例子不够极端，可能并不是很好理解跳过的必要性，请耐心看后续讲解）为了解决这个问题，KMP算法便诞生了。&lt;/p&gt;
+&lt;h3 id=&#34;kmp算法&#34;&gt;&lt;strong&gt;KMP算法&lt;/strong&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;1前缀与后缀&#34;&gt;&lt;strong&gt;1、前缀与后缀&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;首先我们要了解几个概念：前缀、后缀、相同前缀后缀的最大长度（为表述方便，下文均用公共最大长指代），为了直观一点，我们直接举例：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;abcdef的前缀：a、ab、abc、abcd、abcde（注意：abcdef不是前缀）
+abcdef的后缀：f、ef、def、cdef、bcdef（注意：abcdef不是后缀）
+abcdef的公共最大长：0（因为其前缀与后缀没有相同的）
+ababa的前缀：a、ab、aba、abab
+ababa的后缀：a、ba、aba、baba
+ababa的公共最大长：3（因为他们的公共前缀后缀中最长的为aba，长度3）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;2利用相同前缀后缀的最大长度公共最大长对匹配过程进行优化&#34;&gt;&lt;strong&gt;2、利用相同前缀后缀的最大长度（公共最大长）对匹配过程进行优化&lt;/strong&gt;&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如图4：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new7.png&#34; alt=&#34;图4&#34;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;index行是字符在B串中的位置索引值。
+B串行则记录了所有字符。
+next行则记录了当前从B串头部到当前位置的这一子串的公共最大长。（我们先不用管这些公共最大长是如何得到的，暂且假设是上帝告诉了我们）
+new行记录的值则是相应的公共最大长减去1。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;好的，我们现在可以再次进行匹配了，还是开头的例子，B串在第6个字符处（索引5）失配，此时我们可以确认的是B串的前五个字符已经匹配成功了，让我们根据上面那个表格查找一下已经匹配成功的子串的公共最大长吧**（请注意是已经匹配成功的，我们在第6个字符处失配，所以应当去查找第五个字符或者说索引4的位置记录的公共最大长）**。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/AB%E5%A4%B1%E9%85%8D.png&#34; alt=&#34;图5&#34;&gt;&lt;/p&gt;
+&lt;p&gt;很明显，已匹配成功的子串（我们称之为C串吧）的公共最大长为2，这说明了什么？想一想，&lt;strong&gt;B串匹配成功的部分和A串失配处之前的一小部分子串都是C串&lt;/strong&gt;，C串的公共最大长为2，C串最前面的两个字符（也就是B串的开头两个字符）和C串最后面的两个字符（也就是A串失配位前面两个字符）是相同的，这就意味着我们重新进行匹配的时候可以直接将&lt;strong&gt;B串的头部2个字符和A串匹配成功的部分的最后两个字符&lt;/strong&gt;对齐。然后开始对比B串的第三个字符与A串的失配字符，进行新一轮的匹配&lt;/p&gt;
+&lt;p&gt;关于对齐，计算机运行时是怎么做的？我们在匹配时分别用指针i和j指向字符串当前匹配的位置，失配之后&lt;strong&gt;指针i不变&lt;/strong&gt;，继续指向A串的失配处，&lt;strong&gt;指针j则指向B串第三个位置&lt;/strong&gt;（公共最大长的后面一位，索引为公共最大长）。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如图6所示：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/%E6%96%B0%E5%8C%B9%E9%85%8D.png&#34; alt=&#34;图6&#34;&gt;&lt;/p&gt;
+&lt;p&gt;蓝色的部分即是通过公共最大长直接匹配的位置，红色部分是重新开始匹配的位置（两个指针直接指向的位置），相较于BF算法，我们在这一步跳过了A串的第二个字符“b”，第三个字符“a”，直接将B串头部对齐了第四个字符，并从B串的第三个字符开始重新与此前失配的字符进行新一轮的匹配。实现就是如此简单，重新匹配的过程省去了一大堆不必要的匹配，为我们节省了很多时间。&lt;/p&gt;
+&lt;p&gt;也许有人会疑问，凭什么就应该跳过A串的第三个字符“a”去直接和第四个字符“a”进行匹配呢？难道从第三个开始匹配就不能成功吗？请回忆一下什么是公共最大长吧？是相同前缀后缀的最大长度。请对照着图6看完我下面的解释：我在前面有加粗这么一句话“B串的这部分子串和A串失配处之前的一小部分是相同的”，现在我们假设是从第三个字符“a”开始重新匹配的，如果要与B一直匹配成功到第五个字符“b”，也就是匹配成功了三个字符，这意味着什么？意味着第五个字符位对应的公共最大长应该是3，这显然是和事实的公共最大长为2是不符合的，以此类推，重新开始匹配时参考公共最大长是合理的最优解。再梳理一下其中的逻辑，现在你应该能理解公共最大长度的意义了。&lt;/p&gt;
+&lt;p&gt;等一等，我们好像忘了什么？原理懂是懂了，可上帝在哪？我们之前假设上帝告诉了我们next行（next数组中记录的值），可事实上上帝并不存在，还是得靠我们自己求值鸭！所以，怎么求next数组呢？&lt;/p&gt;
+&lt;h4 id=&#34;3nextnew数组的求解&#34;&gt;&lt;strong&gt;3、next（new）数组的求解&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;在此我要先解释一下new数组中值的意义，正如表示公共最大长的next的数组的值同时表示了对应的最大前缀（&lt;strong&gt;为方便表示，我们将最大相同前缀后缀中的前缀称为最大前缀，最大相同前缀后缀中的后缀称为最大后缀&lt;/strong&gt;）的后面一位的索引，new数组中的值等于next数组中的值减去1，我们同时用其表示了对应的最大前缀的最后一位的索引，这是为了后续的程序表达的便利，所以我们此处讲解对new数组的求解，因为求出了new数组等于求出来next数组。&lt;/p&gt;
+&lt;p&gt;先把求解new数组的类c伪代码贴在这里(B即为B字符串，new即为new数组，不要急于看懂代码，先看明白我的解释,代码看不懂也不碍事，反正是伪代码):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;new[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] = -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; i=&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;i&amp;lt;n;i++) &lt;span style=&#34;color:#228b22&#34;&gt;/* n为B串长度 */&lt;/span&gt;
+{
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; j=new[i-&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;];   &lt;span style=&#34;color:#228b22&#34;&gt;/* j为待计算位置前一位对应的new值，也就是最大前缀最后一位对应的索引 */&lt;/span&gt;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;while&lt;/span&gt; ((B[j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;]!=B[i])&amp;amp;&amp;amp;(j&amp;gt;=&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;))   &lt;span style=&#34;color:#228b22&#34;&gt;/* 任何一个最大前缀后一位与当前求值字符相同时或者向前继续寻找的索引为-1时停止循环 */&lt;/span&gt;
+        j=new[j];
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (B[j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;]==B[i])  &lt;span style=&#34;color:#228b22&#34;&gt;/* 字符相同，公共最大长+1，new值+1 */&lt;/span&gt;
+        new[i]=j+&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;               &lt;span style=&#34;color:#228b22&#34;&gt;/* 最终寻找到的索引为-1，公共最大长归零 */&lt;/span&gt;
+        new[i]=-&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;首先，我们可以知道B串的第一个字符对应的公共最大长一定是0，在new数组中则为-1，所以new[0] = -1。接下来，我们不从第二个字符开始类推，而是选取一个位置靠后的具有普适性的例子以便更好的理解推导过程。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如图7所示：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new4.png&#34; alt=&#34;图7&#34;&gt;&lt;/p&gt;
+&lt;p&gt;假设我们已经一步步推导得出了前面0-9索引对应的new值，现在要求解索引10对应new值（再次提醒：这个值是公共最大长-1）。&lt;/p&gt;
+&lt;p&gt;我们首先需要考虑&lt;strong&gt;添加了字符b之后的公共最大长&lt;/strong&gt;是否会增加1，该如何判断呢？&lt;/p&gt;
+&lt;p&gt;将索引10对应的字符和**前面已经求得解的最长字符串“abaabbaba”**的最大前缀后面一位字符比较，如果二者相同，说明了最大前缀添加一位后产生的字符串和最大后缀添加了字符&amp;rsquo;b&amp;rsquo;产生的字符串相同，此时索引10位置对应的公共最大长应该在前面一位的基础上加1。&lt;/p&gt;
+&lt;p&gt;那么这个字符串**“abaabbaba”**的最大前缀的后一位的索引值该如何找到？&lt;/p&gt;
+&lt;p&gt;这个值是&lt;strong&gt;已经求得解的最长字符串的公共最大长的值&lt;/strong&gt;，即为next[9],或者说是new[9]+1。（next[9]对应了公共最大长的值，也表示着最大前缀后一位的索引）&lt;/p&gt;
+&lt;p&gt;这个值具体是什么？&lt;/p&gt;
+&lt;p&gt;是new[9]+1 = 3+1 = 4。我们继续寻找索引4对应的字符，是&amp;rsquo;b&#39;，和索引10对应的字符相同，所以索引10对应的公共最大长较之前一位加1，new值加1，所以new[10] = new[9]+1 = 3+1 = 4。&lt;/p&gt;
+&lt;p&gt;可是，如果B[10]不是&amp;rsquo;b&amp;rsquo;呢，如果B[10]=&amp;lsquo;a&amp;rsquo;呢？怎么办？&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如图8所示：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/blog5/new6.png&#34; alt=&#34;图8&#34;&gt;&lt;/p&gt;
+&lt;p&gt;很明显，按之前的推理，在当前情况下，B[10]=&amp;lsquo;a&amp;rsquo;和B[4]=&amp;lsquo;b&amp;rsquo;是不等的，所以公共最大长不可能增加了，我们只能考虑其与前一位相等甚至减少的情况了，此时该怎么求呢？我们现在要找的是&lt;strong&gt;最大前缀的前缀，与“最大后缀加‘a’字符”这一组合的后缀的公共最大长&lt;/strong&gt;了，我们暂且&lt;strong&gt;将索引10前一位对应的子串的最大前缀与最大后缀称为C串&lt;/strong&gt;吧（因为二者是相同的字符串），此时我们要求解的问题其实&lt;strong&gt;转化为了C串后面添加一个字符&amp;rsquo;a&amp;rsquo;对应的公共最大长&lt;/strong&gt;，于是我们先利用索引10前面一位索引9对应的new值找到C串（从头数起）的最后一位，并重复上面的过程来推测此时公共最大长应该朝什么方向变化（这就是代码中循环的意义），如果向前找到的最后一位的索引是-1，即公共最大长已经减到0的时候，循环终止。现在回头再看看代码和注释，就应当能够理解了。&lt;/p&gt;
+&lt;h3 id=&#34;小结&#34;&gt;&lt;strong&gt;小结&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;第一次写技术博客，写得比较啰嗦，可能表述也并不到位，如有不能理解的地方或者修改建议请加我微信或在评论区留言。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;作者：爱好小姐姐的咸鱼白&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;欢迎小姐姐们扫码加我微信&lt;/em&gt;
+&lt;img src=&#34;http://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/18-10-1/80219838.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A23-%E8%AF%A6%E8%A7%A3kmp%E7%AE%97%E6%B3%95/ - 咸鱼白</description>
+        </item>
     
     
     
