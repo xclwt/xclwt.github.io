@@ -141,7 +141,7 @@
             </a>
             
         
-        <iframe frameborder="0" border="0" padding= "1000" marginwidth="0" marginheight="0" width=280 height=86 align="middle" src="//music.163.com/outchain/player?type=2&id=394670&auto=1&height=66"></iframe>
+        <iframe frameborder="0" border="0" padding= "1000" marginwidth="0" marginheight="0" width=280 height=86 align="middle" src="//music.163.com/outchain/player?type=2&id=5268346&auto=1&height=66"></iframe>
     </div>
 
 
@@ -475,8 +475,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e8%b0%88%e8%b0%88libco" onclick="onNavClick(`#谈谈libco-nav`)" id="谈谈libco-nav">
-									谈谈libco
+								<a href="#%e7%ae%80%e7%95%a5%e8%b0%88%e8%b0%88libco" onclick="onNavClick(`#简略谈谈libco-nav`)" id="简略谈谈libco-nav">
+									简略谈谈libco
 								</a>
 							</li>
 						
@@ -898,8 +898,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#%e8%b0%88%e8%b0%88libco" onclick="onNavClick(`#谈谈libco-nav`)" id="谈谈libco-nav">
-									谈谈libco
+								<a href="#%e7%ae%80%e7%95%a5%e8%b0%88%e8%b0%88libco" onclick="onNavClick(`#简略谈谈libco-nav`)" id="简略谈谈libco-nav">
+									简略谈谈libco
 								</a>
 							</li>
 						
@@ -998,7 +998,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                     <div class="post-meta">
                         
                         <time itemprop="datePublished">
-                            2021-01-30 22:35
+                            2021-01-31 13:47
                         </time>
                         
 
@@ -1049,7 +1049,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 Schedule::Schedule(<span style="color:#00688b;font-weight:bold">int</span> size);
 </code></pre></div><p>第一种方法会创建一个拥有1MB共享栈的schedule，该schedule创建的所有的共享栈协程都会共享这个1MB的运行栈。</p>
 <p>第二种方法会创建一个schedule，其拥有的共享栈大小由<code>stack_size</code>参数决定。</p>
-<p>即使一个schedule管理的所有协程都具有独立运行栈，使用者也必须为schedule创建至少100字节的共享栈。在我的设计中，所有协程在运行到末尾时都会销毁自有的栈，所有独立运行栈协程都必须在最后将运行栈切换到共享栈上以销毁其自有的独立运行栈。</p>
+<p>即使一个schedule管理的所有协程都具有独立运行栈，使用者也必须为schedule创建至少100字节的共享栈。在我的设计中，所有协程在运行到末尾时都会销毁自有的栈，所有独立运行栈协程都必须在最后将运行栈切换到共享栈上以销毁其自有的独立运行栈（具体分析请见<code>优化方案</code>中<code>具有独立运行栈的协程</code>部分）。</p>
 <h3 id="coroutine_create">coroutine_create</h3>
 <div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#00688b;font-weight:bold">int</span> Schedule::coroutine_create(co_func func, <span style="color:#00688b;font-weight:bold">void</span> *args);
 
@@ -1281,7 +1281,49 @@ __set_ctx:
 </tr>
 </tbody>
 </table>
-<h2 id="谈谈libco">谈谈libco</h2>
+<p>通过对比我们可以看出使用没有FPU信息和MXCSR信息的<code>coctx</code>代替glibc提供的<code>ucontext_t</code>进行上下文切换后，整体速度提升超过了10倍。且独立运行栈的上下文切换速度也明显优于共享运行栈的上下文切换速度（在实际应用中，共享运行栈中含有大量数据时，这种切换速度的差距会更明显）。</p>
+<h2 id="简略谈谈libco">简略谈谈libco</h2>
+<p>本来很想尝试像<a href="https://github.com/Tencent/libco">libco</a>那样hook几个阻塞IO调用，但最近事情太多，暂时没那个精力去实现，这里简略地聊聊libco hook的大致思路吧。</p>
+<p>libco通过<code>LD_PRELOAD</code>（详见<a href="https://man7.org/linux/man-pages/man8/ld-linux.so.8.html">ld.so(8)</a>）优先于系统的库函数加载进内存，运行时调用的将是libco hook后的IO调用，而真实的系统IO调用的函数指针则通过<a href="https://man7.org/linux/man-pages/man3/dlsym.3.html">dlsym(3)</a>取得，比如真实的read调用的函数指针通过<code>static read_pfn_t g_sys_read_func = (read_pfn_t)dlsym(RTLD_NEXT,&quot;read&quot;);</code>获得，现在<code>g_sys_read_func</code>指向真正的<code>read</code>调用。</p>
+<p>我们来看看hook后的<code>read</code>的实现：</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">ssize_t <span style="color:#008b45">read</span>( <span style="color:#00688b;font-weight:bold">int</span> fd, <span style="color:#00688b;font-weight:bold">void</span> *buf, size_t nbyte )
+{
+	HOOK_SYS_FUNC( read );
+	
+
+	<span style="color:#8b008b;font-weight:bold">if</span>( !co_is_enable_sys_hook() )
+	{
+		<span style="color:#8b008b;font-weight:bold">return</span> g_sys_read_func( fd,buf,nbyte );
+	}
+	rpchook_t *lp = get_by_fd( fd );
+	
+	<span style="color:#8b008b;font-weight:bold">if</span>( !lp || ( O_NONBLOCK &amp; lp-&gt;user_flag ) ) 
+	{
+		ssize_t ret = g_sys_read_func( fd,buf,nbyte );
+		<span style="color:#8b008b;font-weight:bold">return</span> ret;
+	}
+	<span style="color:#00688b;font-weight:bold">int</span> timeout = ( lp-&gt;read_timeout.tv_sec * <span style="color:#b452cd">1000</span> ) 
+				+ ( lp-&gt;read_timeout.tv_usec / <span style="color:#b452cd">1000</span> );
+	
+	<span style="color:#8b008b;font-weight:bold">struct</span> <span style="color:#008b45;font-weight:bold">pollfd</span> pf = { <span style="color:#b452cd">0</span> };
+	pf.fd = fd;
+	pf.events = ( POLLIN | POLLERR | POLLHUP );
+	
+	<span style="color:#00688b;font-weight:bold">int</span> pollret = poll( &amp;pf,<span style="color:#b452cd">1</span>,timeout );
+	
+	ssize_t readret = g_sys_read_func( fd,(<span style="color:#00688b;font-weight:bold">char</span>*)buf ,nbyte );
+	
+	<span style="color:#8b008b;font-weight:bold">if</span>( readret &lt; <span style="color:#b452cd">0</span> )
+	{
+		co_log_err(<span style="color:#cd5555">&#34;CO_ERR: read fd %d ret %ld errno %d poll ret %d timeout %d&#34;</span>,
+					fd,readret,errno,pollret,timeout);
+	}
+	
+	<span style="color:#8b008b;font-weight:bold">return</span> readret;
+
+}
+</code></pre></div><p>对于设置了<code>O_NONBLOCK</code>标志位的文件描述符，将直接通过<code>g_sys_read_func</code>调用真实的<code>read</code>，而对于阻塞的文件描述符，会加入poll轮询列表，等到poll返回后才通过<code>g_sys_read_func</code>调用真实的<code>read</code>，这里的<code>poll</code>也是经过了hook改造的，所有的hook后的函数的核心都在于这个<code>poll</code>，hook后的<code>poll</code>内部实现是<code>co_poll_inner</code>，<code>co_poll_inne</code>会为文件描述符注册epoll事件，且如果设定了<code>timeout</code>参数，<code>co_poll_inne</code>还会将文件描述符相关的结构加入定时器队列，随后让出当前协程。当主协程中的<code>co_eventloop</code>触发监听事件时抑或是定时器队列触发超时，都会将对应协程切回来，此时会发起第二次<code>poll</code>，如果判断出是IO事件唤醒了协程，则会通过<code>g_sys_read_func</code>调用真实的<code>read</code>，如果判断出超时，则会重复之前的流程。</p>
+<p><code>poll</code>背后的具体实现比较复杂，我也只理清了个大概，若是展开细讲，大概又是好几万字，只能像这样粗略地描述一下以作记录了。</p>
 <h2 id="tips">Tips</h2>
 <ul>
 <li>注意共享栈协程和独立栈协程的选择，共享栈协程因为栈数据的保存与恢复操作，会使得性能下降，独立栈协程则更容易产生栈溢出的风险以及大量内存的占用。</li>
@@ -1291,7 +1333,7 @@ __set_ctx:
 
                     
                     <HR width="100%" id="EOF">
-		    <p style="color:#777;">Last modified on 2021-01-30</p>
+		    <p style="color:#777;">Last modified on 2021-01-31</p>
                     
                 </div>
             </div>
