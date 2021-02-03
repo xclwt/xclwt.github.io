@@ -461,7 +461,7 @@ __set_ctx:
     
     
         <item>
-        <title>Blanca-OS设计之中断</title>
+        <title>Blanca-OS设计之中断（待更新）</title>
         <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8710-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%AD%E6%96%AD/</link>
         <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
         
@@ -541,7 +541,7 @@ __set_ctx:
     
     
         <item>
-        <title>Blanca-OS设计之线程，进程与锁</title>
+        <title>Blanca-OS设计之线程，进程与锁（待更新）</title>
         <link>https://blanca.world/archives/%E5%8D%9A%E6%96%879-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E7%BA%BF%E7%A8%8B%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/</link>
         <pubDate>Wed, 22 Apr 2020 00:00:00 +0000</pubDate>
         
@@ -615,7 +615,7 @@ __set_ctx:
     
     
         <item>
-        <title>Blanca-OS设计之内存管理</title>
+        <title>Blanca-OS设计之内存管理（待更新）</title>
         <link>https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
         <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
         
