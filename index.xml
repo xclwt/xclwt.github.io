@@ -125,45 +125,53 @@ swapcontext(&amp;amp;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;基于这一实现，即使一个schedule管理的所有协程都具有独立运行栈，使用者也必须为schedule创建至少100字节的共享栈。&lt;/p&gt;
 &lt;h3 id=&#34;上下文切换优化&#34;&gt;上下文切换优化&lt;/h3&gt;
-&lt;p&gt;在初版实现中，上下文切换使用的是&lt;code&gt;ucontext.h&lt;/code&gt;中提供的&lt;code&gt;ucontext_t&lt;/code&gt;结构及相关库函数，然而该实现中涉及的FPU（浮点运算器），MXCSR（控制状态寄存器）在服务器端编程中极少用到，因此对这些寄存器的保存与恢复造成了不必要的性能消耗，这里参考了腾讯的libco的上下文切换并进行了精简（腾讯的libco涉及14个8字节数据的切换，其实我觉得根据那个实现完全可以精简成10个）：&lt;/p&gt;
+&lt;p&gt;在初版实现中，上下文切换使用的是&lt;code&gt;ucontext.h&lt;/code&gt;中提供的&lt;code&gt;ucontext_t&lt;/code&gt;结构及相关库函数，然而该实现中涉及的FPU（浮点运算器），MXCSR（控制状态寄存器）在服务器端编程中极少用到，因此对这些寄存器的保存与恢复造成了不必要的性能消耗，这里参考了腾讯的libco的上下文切换并进行了精简：&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-assembly&#34; data-lang=&#34;assembly&#34;&gt;.globl swap_ctx
 .globl change_stack
 .type  swap_ctx, @function
 
 swap_ctx:
     leaq (%rsp),%rax
-    movq %rax, 64(%rdi)
+    movq %rax, 96(%rdi)
 
-    movq %rbx, 56(%rdi)
-    
+    movq %rbx, 88(%rdi)
+
     movq 0(%rax), %rax
-    movq %rax, 48(%rdi)
-    
-    movq %rdi, 40(%rdi)
+    movq %rax, 80(%rdi)
+
+    movq %r9, 72(%rdi)
+    movq %r8, 64(%rdi)
+    movq %rdx, 56(%rdi)
+    movq %rcx, 48(%rdi)
+    #movq %rdi, 40(%rdi)
     movq %rbp, 32(%rdi)
     movq %r12, 24(%rdi)
     movq %r13, 16(%rdi)
     movq %r14, 8(%rdi)
     movq %r15, (%rdi)
     xorq %rax, %rax
-    
+
     movq 32(%rsi), %rbp
-    movq 64(%rsi), %rsp
+    movq 96(%rsi), %rsp
     movq (%rsi), %r15
     movq 8(%rsi), %r14
     movq 16(%rsi), %r13
     movq 24(%rsi), %r12
     movq 40(%rsi), %rdi
-    movq 56(%rsi), %rbx
-    
+    movq 48(%rsi), %rcx
+    movq 56(%rsi), %rdx
+    movq 64(%rsi), %r8
+    movq 72(%rsi), %r9
+    movq 88(%rsi), %rbx
+
     leaq 8(%rsp), %rsp
-    pushq 48(%rsi)
-    
+    pushq 80(%rsi)
+
     ret
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;保存以及恢复了参数寄存器rdi（这个寄存器对应&lt;code&gt;start_func&lt;/code&gt;的参数&lt;code&gt;S&lt;/code&gt;，其实只需要保证第一次切入时能从上下文中取出来而已，保存操作纯粹是强迫症对称罢了），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;保存以及恢复了参数寄存器rcx，rdx，r8，r9（rsi不用保存与恢复，rdi这个寄存器对应&lt;code&gt;start_func&lt;/code&gt;的参数&lt;code&gt;S&lt;/code&gt;，其实只需要保证第一次切入时能从上下文中取出来而已，也不需要保存操作），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。&lt;/p&gt;
 &lt;p&gt;用来取代的&lt;code&gt;ucontext_t&lt;/code&gt;的&lt;code&gt;coctx&lt;/code&gt;定义在&lt;code&gt;coctx.h&lt;/code&gt;中：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-C++&#34; data-lang=&#34;C++&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;typedef&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;coctx&lt;/span&gt;{
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *regs[&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;];
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *regs[&lt;span style=&#34;color:#b452cd&#34;&gt;13&lt;/span&gt;];
     &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;coctx&lt;/span&gt; *uc_link;
     stack_t uc_stack;
 }coctx;
@@ -211,17 +219,22 @@ start_ctx:
 
 __set_ctx:
     movq 32(%rdi), %rbp
-    movq 64(%rdi), %rsp
+    movq 96(%rdi), %rsp
     movq (%rdi), %r15
     movq 8(%rdi), %r14
     movq 16(%rdi), %r13
     movq 24(%rdi), %r12
-    movq 40(%rdi), %rdi
-    movq 56(%rdi), %rbx
+    movq 48(%rdi), %rcx
+    movq 56(%rdi), %rdx
+    movq 64(%rdi), %r8
+    movq 72(%rdi), %r9
+    movq 88(%rdi), %rbx
 
     leaq 8(%rsp), %rsp
-    pushq 48(%rdi)
-    
+    pushq 80(%rdi)
+	
+    #movq 40(%rdi), %rdi
+
     ret
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;将&lt;code&gt;uc_link&lt;/code&gt;取出至&lt;code&gt;rdi&lt;/code&gt;寄存器，然后调用&lt;code&gt;__set_ctx&lt;/code&gt;函数将上下文切换回主协程。&lt;/p&gt;
 &lt;p&gt;在实现&lt;code&gt;uc_link&lt;/code&gt;的过程中，我没有将&lt;code&gt;rsp&lt;/code&gt;寄存器设置到位，导致&lt;code&gt;set_start&lt;/code&gt;的地址被&lt;code&gt;start_func&lt;/code&gt;的地址覆盖了，debug时整出了&lt;code&gt;uc_link&lt;/code&gt;的另一种用法，即在协程中直接获取&lt;code&gt;uc_link&lt;/code&gt;的值并将其作为参数在协程结束前调用&lt;code&gt;__set_ctx&lt;/code&gt;从而完成跳转，两种实现性能基本无区别，默认使用第二种实现，如果想使用第一种实现，可以 &lt;code&gt;#define USE_UC_LINK&lt;/code&gt;。&lt;/p&gt;
