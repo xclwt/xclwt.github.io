@@ -4,16 +4,36 @@
   
   <url>
     <loc>https://blanca.world/archives/</loc>
-    <lastmod>2021-01-31T13:47:29+08:00</lastmod>
+    <lastmod>2021-02-07T21:30:42+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blanca.world/tags/c&#43;&#43;/</loc>
-    <lastmod>2021-01-31T13:47:29+08:00</lastmod>
+    <loc>https://blanca.world/tags/c/</loc>
+    <lastmod>2021-02-07T21:30:42+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blanca.world/tags/linux/</loc>
+    <lastmod>2021-02-07T21:30:42+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://blanca.world/tags/</loc>
+    <lastmod>2021-02-07T21:30:42+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blanca.world/</loc>
+    <lastmod>2021-02-07T21:30:42+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/</loc>
+    <lastmod>2021-02-07T21:30:42+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blanca.world/tags/c&#43;&#43;/</loc>
     <lastmod>2021-01-31T13:47:29+08:00</lastmod>
   </url>
   
@@ -28,11 +48,6 @@
   </url>
   
   <url>
-    <loc>https://blanca.world/</loc>
-    <lastmod>2021-01-31T13:47:29+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://blanca.world/archives/%E5%8D%9A%E6%96%8713-2020%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2021-01-23T19:11:11+08:00</lastmod>
   </url>
@@ -40,11 +55,6 @@
   <url>
     <loc>https://blanca.world/tags/%E9%9A%8F%E7%AC%94/</loc>
     <lastmod>2021-01-23T19:11:11+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blanca.world/tags/linux/</loc>
-    <lastmod>2021-01-17T23:40:11+08:00</lastmod>
   </url>
   
   <url>

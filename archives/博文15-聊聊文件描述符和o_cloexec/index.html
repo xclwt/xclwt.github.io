@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<title>自制系统Blanca-OS记录（持续更新）</title>
+<title>聊聊文件描述符、fork()和O_CLOEXEC</title>
 
 
 
@@ -10,7 +10,7 @@
 <meta name="google-site-verification" content="">
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 <meta content="telephone=no" name="format-detection">
-<meta name="description" content="一个埋头kernel的傻瓜总想写点啥">
+<meta name="description" content="父与子的关系总是难以理解">
 <meta name="renderer" content="webkit">
 <meta name="theme-color" content="#ffffff">
 
@@ -186,15 +186,11 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 							
 								<ul class="collapse" data-toggle="collapse">
 							
-								<ul class="collapse" data-toggle="collapse">
-							
-								<ul class="collapse" data-toggle="collapse">
-							
 						
 						
 							<li>
-								<a href="#20200225" onclick="onNavClick(`#20200225-nav`)" id="20200225-nav">
-									2020.02.25
+								<a href="#%e5%bc%95%e8%a8%80" onclick="onNavClick(`#引言-nav`)" id="引言-nav">
+									引言
 								</a>
 							</li>
 						
@@ -211,8 +207,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#20200301" onclick="onNavClick(`#20200301-nav`)" id="20200301-nav">
-									2020.03.01
+								<a href="#%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6%e4%b8%8e%e6%89%93%e5%bc%80%e6%96%87%e4%bb%b6%e8%a1%a8" onclick="onNavClick(`#文件描述符与打开文件表-nav`)" id="文件描述符与打开文件表-nav">
+									文件描述符与打开文件表
 								</a>
 							</li>
 						
@@ -229,8 +225,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#20200303" onclick="onNavClick(`#20200303-nav`)" id="20200303-nav">
-									2020.03.03
+								<a href="#%e7%94%a8o_cloexec%e8%bf%9b%e8%a1%8c%e7%9a%84%e4%b8%80%e6%ac%a1%e5%b0%9d%e8%af%95" onclick="onNavClick(`#用o_cloexec进行的一次尝试-nav`)" id="用o_cloexec进行的一次尝试-nav">
+									用O_CLOEXEC进行的一次尝试
 								</a>
 							</li>
 						
@@ -247,224 +243,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#20200304" onclick="onNavClick(`#20200304-nav`)" id="20200304-nav">
-									2020.03.04
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200305" onclick="onNavClick(`#20200305-nav`)" id="20200305-nav">
-									2020.03.05
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200306" onclick="onNavClick(`#20200306-nav`)" id="20200306-nav">
-									2020.03.06
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200311" onclick="onNavClick(`#20200311-nav`)" id="20200311-nav">
-									2020.03.11
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200319" onclick="onNavClick(`#20200319-nav`)" id="20200319-nav">
-									2020.03.19
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200322" onclick="onNavClick(`#20200322-nav`)" id="20200322-nav">
-									2020.03.22
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200326" onclick="onNavClick(`#20200326-nav`)" id="20200326-nav">
-									2020.03.26
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200328" onclick="onNavClick(`#20200328-nav`)" id="20200328-nav">
-									2020.03.28
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200402" onclick="onNavClick(`#20200402-nav`)" id="20200402-nav">
-									2020.04.02
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200420" onclick="onNavClick(`#20200420-nav`)" id="20200420-nav">
-									2020.04.20
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200426" onclick="onNavClick(`#20200426-nav`)" id="20200426-nav">
-									2020.04.26
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200505" onclick="onNavClick(`#20200505-nav`)" id="20200505-nav">
-									2020.05.05
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20210121" onclick="onNavClick(`#20210121-nav`)" id="20210121-nav">
-									2021.01.21
+								<a href="#%e5%90%8c%e6%a0%b7%e9%87%8d%e8%a6%81%e7%9a%84%e7%bb%86%e8%8a%82%e8%a1%a5%e5%85%85" onclick="onNavClick(`#同样重要的细节补充-nav`)" id="同样重要的细节补充-nav">
+									同样重要的细节补充
 								</a>
 							</li>
 						
@@ -579,15 +359,11 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 							
 								<ul class="collapse" data-toggle="collapse">
 							
-								<ul class="collapse" data-toggle="collapse">
-							
-								<ul class="collapse" data-toggle="collapse">
-							
 						
 						
 							<li>
-								<a href="#20200225" onclick="onNavClick(`#20200225-nav`)" id="20200225-nav">
-									2020.02.25
+								<a href="#%e5%bc%95%e8%a8%80" onclick="onNavClick(`#引言-nav`)" id="引言-nav">
+									引言
 								</a>
 							</li>
 						
@@ -604,8 +380,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#20200301" onclick="onNavClick(`#20200301-nav`)" id="20200301-nav">
-									2020.03.01
+								<a href="#%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6%e4%b8%8e%e6%89%93%e5%bc%80%e6%96%87%e4%bb%b6%e8%a1%a8" onclick="onNavClick(`#文件描述符与打开文件表-nav`)" id="文件描述符与打开文件表-nav">
+									文件描述符与打开文件表
 								</a>
 							</li>
 						
@@ -622,8 +398,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#20200303" onclick="onNavClick(`#20200303-nav`)" id="20200303-nav">
-									2020.03.03
+								<a href="#%e7%94%a8o_cloexec%e8%bf%9b%e8%a1%8c%e7%9a%84%e4%b8%80%e6%ac%a1%e5%b0%9d%e8%af%95" onclick="onNavClick(`#用o_cloexec进行的一次尝试-nav`)" id="用o_cloexec进行的一次尝试-nav">
+									用O_CLOEXEC进行的一次尝试
 								</a>
 							</li>
 						
@@ -640,224 +416,8 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 						
 						
 							<li>
-								<a href="#20200304" onclick="onNavClick(`#20200304-nav`)" id="20200304-nav">
-									2020.03.04
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200305" onclick="onNavClick(`#20200305-nav`)" id="20200305-nav">
-									2020.03.05
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200306" onclick="onNavClick(`#20200306-nav`)" id="20200306-nav">
-									2020.03.06
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200311" onclick="onNavClick(`#20200311-nav`)" id="20200311-nav">
-									2020.03.11
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200319" onclick="onNavClick(`#20200319-nav`)" id="20200319-nav">
-									2020.03.19
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200322" onclick="onNavClick(`#20200322-nav`)" id="20200322-nav">
-									2020.03.22
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200326" onclick="onNavClick(`#20200326-nav`)" id="20200326-nav">
-									2020.03.26
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200328" onclick="onNavClick(`#20200328-nav`)" id="20200328-nav">
-									2020.03.28
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200402" onclick="onNavClick(`#20200402-nav`)" id="20200402-nav">
-									2020.04.02
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200420" onclick="onNavClick(`#20200420-nav`)" id="20200420-nav">
-									2020.04.20
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200426" onclick="onNavClick(`#20200426-nav`)" id="20200426-nav">
-									2020.04.26
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20200505" onclick="onNavClick(`#20200505-nav`)" id="20200505-nav">
-									2020.05.05
-								</a>
-							</li>
-						
-						
-					
-				
-			
-				
-				
-					
-						
-						
-						
-						
-						
-							<li>
-								<a href="#20210121" onclick="onNavClick(`#20210121-nav`)" id="20210121-nav">
-									2021.01.21
+								<a href="#%e5%90%8c%e6%a0%b7%e9%87%8d%e8%a6%81%e7%9a%84%e7%bb%86%e8%8a%82%e8%a1%a5%e5%85%85" onclick="onNavClick(`#同样重要的细节补充-nav`)" id="同样重要的细节补充-nav">
+									同样重要的细节补充
 								</a>
 							</li>
 						
@@ -924,21 +484,21 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                     
                     
-                    style="background-image: url('https://blanca.world/images/record.jpg')"
+                    style="background-image: url('https://blanca.world/images/fd.jpg')"
                     
                 
             >
                 <div class="post-title">
-                    自制系统Blanca-OS记录（持续更新）
+                    聊聊文件描述符、fork()和O_CLOEXEC
                     
                     <div class="post-subtitle">
-                        一个埋头kernel的傻瓜总想写点啥
+                        父与子的关系总是难以理解
                     </div>
                     
                     <div class="post-meta">
                         
                         <time itemprop="datePublished">
-                            2020-02-29 00:00
+                            2021-02-07 21:30
                         </time>
                         
 
@@ -947,10 +507,10 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                         
                             <i class="material-icons" style="">label</i>
                             
-                                <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a>
+                                <a href="/tags/c">C</a>
                                 &nbsp;
                             
-                                <a href="/tags/%E9%9A%8F%E7%AC%94">随笔</a>
+                                <a href="/tags/linux">Linux</a>
                                 &nbsp;
                             
                         
@@ -963,83 +523,57 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                 <div class="post-body" v-pre>
                 
-                    <h4 id="20200225">2020.02.25</h4>
-<p>loader在加载内核文件到内存的时候出现莫名错误，表现为无法对某部分内存进行操作。起初排查认为是640KB以上至4GB的内存都无法写入，复查gdt表以及ds寄存器确认所选择的数据段覆盖了0-4GB范围，可读可写，经过十几小时的苦恼之后，终于尝试出1MB以上的内存可写入，而之前无法写入主要是因为我采用了640KB出头的内存区域及0xc0001500进行尝试,前者属于BIOS扩展区，无法写入，后者超出了我所设置的虚拟机的总内存32MB，属于不存在的区域，其实至今出现的很多莫名错误本质上都是小问题，但总会因为自己的粗心失误造成大量的时间损失。</p>
-<hr>
-<h4 id="20200301">2020.03.01</h4>
-<p>昨天把后面经常要用到的string库基本完成了，个别函数仍在选择更优的算法实现（原谅我的强迫症），今天正在看内核调试相关的资料，这几天准备完成printk函数及打印内核调用栈的debug函数。</p>
-<hr>
-<h4 id="20200303">2020.03.03</h4>
-<p>为了后续更方便的构造内核并写入虚拟机，选择使用makefile，研究了一晚上makefile的语法，写得我头大，不过初步有了头绪，刚刚在床上躺了一小时之后决定爬起来继续研究makefile，现在已经过零点了，确切的说现在已经是3月4号了（哭）。计组原理实验课后面还要造cpu，看来这学期是要忙死了。</p>
-<hr>
-<h4 id="20200304">2020.03.04</h4>
-<p>凌晨在<a href="https://github.com/Geno1024">@geno</a>与<a href="https://github.com/AmazingRise">@rise</a>二位大佬的指点下，弄明白了makefile中折腾了我一晚上的问题，白天起床后边上网课边把项目的makefile基本写好了（我居然还是和老师互动最积极的学生。。你永远不知道上网课的学术在干什么.jpg），后续随着项目的进展还会继续调整makefile，短期之内是不用再为这玩意伤神了，继续投入精力去完成printk函数。</p>
-<hr>
-<h4 id="20200305">2020.03.05</h4>
-<p>添加了printk函数的vga支持（扩展内联汇编实属可怕，幸好目前用这玩意写的代码没几行），简易版的printk函数基本完成，后续可能根据需求进一步添加功能支持，但今天还没来得及对printk函数进行完备的测试，明天会测试一下修修bug，周末尽可能地搞定debug函数，下周估计就要开始给内核添加中断功能了。</p>
-<hr>
-<h4 id="20200306">2020.03.06</h4>
-<p>今天测试了之后发现，写代码的过程中粗心写的bug还是很多的，除了printk相关的函数之外，makefile以及之前以为完全搞定的loader中也出现了点小bug，历时4个多小时，终于彻底搞定了printk函数的功能，一级残废内核Blanca-OS终于会开口说话了（笑），明天可能下乡一趟，回来之后再开始写debug函数，继续加油！btw,光靠bochs调试汇编代码还是太麻烦了，这两天捣鼓看看能不能把bochs和gdb连接到一起，直接在内核中用gdb调试c代码。</p>
-<hr>
-<h4 id="20200311">2020.03.11</h4>
-<p>debug这块思路基本理顺了，大体上各块功能差不多搞定了，最后的整合到打印调用栈这块还在思考，暂时决定等到写内存管理的时候一起完成，现在先跳过去把中断这块研究明白。这学期上网课真的好烦啊，各种群，各种平台，没完没了的作业。。。以及无力吐槽的辣鸡培养方案，这大学教育就很离谱。</p>
-<hr>
-<h4 id="20200319">2020.03.19</h4>
-<p>开学之后各种各样的事情多得离谱，写OS的时间都被挤得不剩啥了（说着突然想起来毛概作业要ddl了。。佛），不过好歹这几天把中断这块全理清了，预计本周末能把中断功能全部实现，下周向内存管理进军，冲鸭！</p>
-<hr>
-<h4 id="20200322">2020.03.22</h4>
-<p>昨天搞定了中断功能，今天添加了计时器，并在中断的基础上测试了一下计时器，完全OK，今晚写一下assert和panic函数，明天应该就能正式开始内存管理器这块了，emmmm，debug还晾在那。。。带着一起搞搞看吧，搞不定就先继续晾着（实惨）。内存管理这块，因为之前做csapp的malloc lab有一点经验了，应该能很快搞定吧，争取在三月结束前搞定！</p>
-<p>睡觉前再次更新一下，assert和panic函数都添加好了。以及之前debug相关功能有些bug（主要指那个链接脚本），暂时把debug相关的代码注释了。</p>
-<hr>
-<h4 id="20200326">2020.03.26</h4>
-<p>这两天一直在研究内存管理方面的算法，最后决定参考linux使用buddy算法加slab算法，目前刚写了个物理内存初始化的功能，昨天研究别人写的内核源码时被volatile和原子操作绕了进去（其实这两者没有关系），研究了一晚上，终于搞清楚来龙去脉了，后面可能写个博客记录一下。</p>
-<hr>
-<h4 id="20200328">2020.03.28</h4>
-<p>最近上课都在研究内核，课程落下不少，感觉这学期期末绩点，危！这两天结合了hurlex的源码以及linux2.6.11的源码（linux2.6.11的源码也太复杂了叭！一行行扒函数功能理依赖关系给我整哭辽也不过借鉴了个皮毛）整了下物理页结构体数组的初始化功能。附上目前的内存分布图（纯手打的图，丑哭了，以后可能补上真图）：</p>
-<pre><code>
+                    <h2 id="引言">引言</h2>
+<p>本文只是记录了一次看上去意义不大的尝试与总结，如果看下去，可能会浪费您宝贵的5分钟时间。</p>
+<p>今日正为下周的分享会做准备，本打算讲讲当我们在终端键入<code>./helloworld</code>程序后都发生了什么事，理到<code>__start</code>初始化时，突然想起前不久研究的<a href="http://localhost:1313/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/">关于splice调用中易出现的一个bug</a>，在当初的测试中，一旦我在子进程中修改了<code>stdout</code>的<code>mode</code>后，即使我在terminal中运行没有修改过程序，也不会出bug了，子进程的文件描述符状态变化会影响到父进程shell吗？（事实证明是我这个菜鸡记性太差，该回头好好复习Linux系统编程了）</p>
+<h2 id="文件描述符与打开文件表">文件描述符与打开文件表</h2>
+<p>《Linux/Unix系统编程手册》的图5-2诠释了这种现象的本质原因，如图：</p>
+<p><img src="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/21-02-07/fd.jpg" alt=""></p>
+<p>进程的每一个文件描述符都会指向由内核维护的<code>打开文件表（open file table）</code>中的一个<code>打开文件句柄（open file handle）</code>，一个<code>打开文件句柄</code>存储着与一个<code>打开文件</code>相关的所有信息（文件偏移量，状态标志等）。</p>
+<p>父进程调用fork后，子进程会继承其所有已打开的文件描述符（不包括父进程在fork之后打开的文件描述符），即父进程与子进程的这些文件描述符指向了相同的<code>打开文件句柄</code>。</p>
+<p>上图进程A的<code>fd2</code>和进程B的<code>fd2</code>都指向了<code>打开文件句柄73</code>，这种情况通常都是在父进程fork出子进程后出现的，也有可能是某一进程使用UNIX域套接字将一个文件描述符传递给了另一个进程（第二种情况可参见《Linux/Unix系统编程手册》61.13.3-传递文件描述符，此处不做赘述）。</p>
+<h2 id="用o_cloexec进行的一次尝试">用O_CLOEXEC进行的一次尝试</h2>
+<p>关于O_CLOEXEC模式打开的文件描述符，我也不做什么过多解释了，大家只要知道进程调用exec时会关闭O_CLOEXEC模式打开的文件描述符就行了。</p>
+<p>接下来，只不过是我在理清了上面的问题后做的一个无聊尝试罢了。</p>
+<p>如果我们在父进程中把stdout设为O_CLOEXEC，fork出的子进程exec后还能正常输出吗？</p>
+<p>我用这两段不怎么规范的垃圾代码试了一下：</p>
+<div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#228b22">//test1.c
+</span><span style="color:#228b22"></span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;stdio.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;fcntl.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;unistd.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b"></span>
+<span style="color:#00688b;font-weight:bold">int</span> <span style="color:#008b45">main</span>(<span style="color:#00688b;font-weight:bold">void</span>){
+    fcntl(STDOUT_FILENO, F_SETFD, FD_CLOEXEC);
+    printf(<span style="color:#cd5555">&#34;test1</span><span style="color:#cd5555">\n</span><span style="color:#cd5555">&#34;</span>);
+    <span style="color:#00688b;font-weight:bold">int</span> stat;
+    <span style="color:#00688b;font-weight:bold">int</span> pid = fork();
+    <span style="color:#8b008b;font-weight:bold">if</span> (pid == <span style="color:#b452cd">0</span>){
+        execv(<span style="color:#cd5555">&#34;./test2&#34;</span>, <span style="color:#658b00">NULL</span>);
+    }
+    <span style="color:#8b008b;font-weight:bold">else</span>{
+        printf(<span style="color:#cd5555">&#34;father</span><span style="color:#cd5555">\n</span><span style="color:#cd5555">&#34;</span>);
+        pid = wait(&amp;stat);
+    }
+    
+    <span style="color:#8b008b;font-weight:bold">return</span> <span style="color:#b452cd">0</span>;
+}
+</code></pre></div><div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#228b22">//test2.c
+</span><span style="color:#228b22"></span><span style="color:#1e889b">#include</span> <span style="color:#1e889b">&lt;stdio.h&gt;</span><span style="color:#1e889b">
+</span><span style="color:#1e889b"></span>
+<span style="color:#00688b;font-weight:bold">int</span> <span style="color:#008b45">main</span>(<span style="color:#00688b;font-weight:bold">void</span>){
+    printf(<span style="color:#cd5555">&#34;test2</span><span style="color:#cd5555">\n</span><span style="color:#cd5555">&#34;</span>);
+    <span style="color:#8b008b;font-weight:bold">return</span> <span style="color:#b452cd">0</span>;
+}
+</code></pre></div><p>事实证明，确实不能正常输出了。</p>
+<p>所以这个探究有啥意义吗？好像没有诶，不过为啥一定要有意义才去探究呢？</p>
+<h2 id="同样重要的细节补充">同样重要的细节补充</h2>
+<p>对了，顺便一提，假如按我关于文件描述符与打开文件表的说法，test1设置了<code>O_CLOEXEC</code>状态后，理论上也会影响到test1的父进程shell，后续该终端的子进程应该都没法输出了，但事实上并没有出现预想中的情况，该终端的子进程依旧可以正常输出，其stdout的<code>O_CLOEXEC</code>状态并没有被设置，为啥？</p>
+<p>《Linux/Unix系统编程手册》中做出了提示：<code>O_CLOEXEC</code>标志为进程和文件描述符所私有，对其修改不会影响到同一进程或不同进程中的其他文件描述符。</p>
+<p>就是这样。</p>
 
-——————————————
-|            |
-|ZONE_HIGHMEM|
-|            |
-——————————————  &lt;--3GB+896MB
-|	     |
-|内核可用物理页|
-|            |
-——————————————  &lt;--pmm_addr_start
-|            |
-|  物理页数组  |
-|            |
-—————————————  &lt;--p_pages
-|	     |
-|  内核镜像   |
-|            |
-——————————————  &lt;--3GB+1MB
-|            |
-——————————————  &lt;--3GB
-|            |
-|   用户空间  | 
-|            |
-——————————————
-
-</code></pre><hr>
-<h4 id="20200402">2020.04.02</h4>
-<p>基本搞定了物理内存管理的部分，阅读hurlex前辈的源码时发现了free函数中似乎有bug（还是很怀疑自我的，毕竟hurlex前辈的源码中写了测试功能，应该不会出这种问题的啊。。），纠结了一晚上，自己又写了将近一百行测试代码模拟了一下那段free函数的内存切割释放过程，最终基本肯定自己的想法是对的，fork，commit，push，pull request，一顿操作猛如虎，一看战力只有5,233,在线卑微，不过认真读读别人源码还是很爽的。</p>
-<hr>
-<h4 id="20200420">2020.04.20</h4>
-<p>有两周没更新记录了，主要是对内核空间和用户空间内存管理的分割有些许纠结，暂时是先抛开了用户空间的考量，后期再进行完善吧。这两天主要是在研究线程与进程的实现，目前有两种方案，一种是像早期linux一样，没有线程的概念，一切都归为任务，另一种是实现线程机制，然后基于此实现进程（任务）机制，还不确定选用哪种，参考了四份OS的源码，感觉虽然是两种方案，但大家总体的设计思路还是比较相近的。</p>
-<hr>
-<h4 id="20200426">2020.04.26</h4>
-<p>线程机制的总体设计基本厘情了（花的时间略长，最近事太多了，五一假期结束还有期中考试，太难顶了），明天差不多能把基本结构方面的代码搞定，还有调度要等到进程实现之后才写。</p>
-<hr>
-<h4 id="20200505">2020.05.05</h4>
-<p>线程以及锁这块搞定了，准备实现完键盘驱动就去搞进程那块，最近和朋友以及学长交流得知这个OS可以作为毕业设计，所以开始在博客里同步更新各个模块的设计与实现方法，准备到大四的时候可以直接整合成一篇毕业论文，以后主要的记录都是更详细的分模块的博文，大概这篇零散记录的博文不会频繁更新了。</p>
-<hr>
-<h4 id="20210121">2021.01.21</h4>
-<p>去年下半年父亲查出肝癌晚期，然后过世，给我带来了沉重打击，消沉了几个月，很多原定计划都被耽搁了，现在是时候继续开始前进了，预计３月开学前把这个OS基本完工，下学期该找实习了，加油！</p>
                     
                     <HR width="100%" id="EOF">
-		    <p style="color:#777;">Last modified on 2020-02-29</p>
+		    <p style="color:#777;">Last modified on 2021-02-07</p>
                     
                 </div>
             </div>
@@ -1048,14 +582,14 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
             <nav class="post-pagination">
 
                 
-                <a class="newer-posts" href="https://blanca.world/archives/%E5%8D%9A%E6%96%878-blanca-os%E8%AE%BE%E8%AE%A1%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
-			Next<br>Blanca-OS设计之内存管理（待更新）
+                <a class="newer-posts">
+			Next<br>No newer posts.
                 </a>
                 
                 
                 
-                <a class="older-posts" href="https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/">
-			Previous<br>2019年终总结
+                <a class="older-posts" href="https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/">
+			Previous<br>一个C&#43;&#43;协程库的实现与优化
                 </a>
                 
             </nav>

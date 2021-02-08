@@ -7,7 +7,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Sun, 31 Jan 2021 13:47:29 +0800</lastBuildDate><atom:link href="https://blanca.world/archives/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 07 Feb 2021 21:30:42 +0800</lastBuildDate><atom:link href="https://blanca.world/archives/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>聊聊文件描述符、fork()和O_CLOEXEC</title>
+      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/</link>
+      <pubDate>Sun, 07 Feb 2021 21:30:42 +0800</pubDate>
+      
+      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/</guid>
+      <description>引言 本文只是记录了一次看上去意义不大的尝试与总结，如果看下去，可能会浪费您宝贵的5分钟时间。
+今日正为下周的分享会做准备，本打算讲讲当我们在终端键入./helloworld程序后都发生了什么事，理到__start初始化时，突然想起前不久研究的关于splice调用中易出现的一个bug，在当初的测试中，一旦我在子进程中修改了stdout的mode后，即使我在terminal中运行没有修改过程序，也不会出bug了，子进程的文件描述符状态变化会影响到父进程shell吗？（事实证明是我这个菜鸡记性太差，该回头好好复习Linux系统编程了）
+文件描述符与打开文件表 《Linux/Unix系统编程手册》的图5-2诠释了这种现象的本质原因，如图：
+进程的每一个文件描述符都会指向由内核维护的打开文件表（open file table）中的一个打开文件句柄（open file handle），一个打开文件句柄存储着与一个打开文件相关的所有信息（文件偏移量，状态标志等）。
+父进程调用fork后，子进程会继承其所有已打开的文件描述符（不包括父进程在fork之后打开的文件描述符），即父进程与子进程的这些文件描述符指向了相同的打开文件句柄。
+上图进程A的fd2和进程B的fd2都指向了打开文件句柄73，这种情况通常都是在父进程fork出子进程后出现的，也有可能是某一进程使用UNIX域套接字将一个文件描述符传递给了另一个进程（第二种情况可参见《Linux/Unix系统编程手册》61.13.3-传递文件描述符，此处不做赘述）。
+用O_CLOEXEC进行的一次尝试 关于O_CLOEXEC模式打开的文件描述符，我也不做什么过多解释了，大家只要知道进程调用exec时会关闭O_CLOEXEC模式打开的文件描述符就行了。
+接下来，只不过是我在理清了上面的问题后做的一个无聊尝试罢了。
+如果我们在父进程中把stdout设为O_CLOEXEC，fork出的子进程exec后还能正常输出吗？
+我用这两段不怎么规范的垃圾代码试了一下：
+//test1.c #include &amp;lt;stdio.h&amp;gt;#include &amp;lt;fcntl.h&amp;gt;#include &amp;lt;unistd.h&amp;gt; int main(void){ fcntl(STDOUT_FILENO, F_SETFD, FD_CLOEXEC); printf(&amp;#34;test1\n&amp;#34;); int stat; int pid = fork(); if (pid == 0){ execv(&amp;#34;./test2&amp;#34;, NULL); } else{ printf(&amp;#34;father\n&amp;#34;); pid = wait(&amp;amp;stat); } return 0; } //test2.c #include &amp;lt;stdio.h&amp;gt; int main(void){ printf(&amp;#34;test2\n&amp;#34;); return 0; } 事实证明，确实不能正常输出了。
+所以这个探究有啥意义吗？好像没有诶，不过为啥一定要有意义才去探究呢？
+同样重要的细节补充 对了，顺便一提，假如按我关于文件描述符与打开文件表的说法，test1设置了O_CLOEXEC状态后，理论上也会影响到test1的父进程shell，后续该终端的子进程应该都没法输出了，但事实上并没有出现预想中的情况，该终端的子进程依旧可以正常输出，其stdout的O_CLOEXEC状态并没有被设置，为啥？
+《Linux/Unix系统编程手册》中做出了提示：O_CLOEXEC标志为进程和文件描述符所私有，对其修改不会影响到同一进程或不同进程中的其他文件描述符。
+就是这样。</description>
+    </item>
+    
     <item>
       <title>一个C&#43;&#43;协程库的实现与优化</title>
       <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8714-%E4%B8%80%E4%B8%AAc&#43;&#43;%E5%8D%8F%E7%A8%8B%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BC%98%E5%8C%96/</link>
@@ -184,12 +207,10 @@ stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&l
       <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>https://blanca.world/archives/%E5%8D%9A%E5%AE%A22-%E6%9C%80%E8%BF%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%85%E5%86%B5%E6%80%BB%E7%BB%93/</guid>
-      <description>&lt;blockquote&gt;
-&lt;p&gt;博客搭了好几个月了，因为个人能力不足，很少更新。
+      <description>博客搭了好几个月了，因为个人能力不足，很少更新。
 上学期搞了搞Python,一个人做了个大作业，到头来发现自己其实也就是个调包侠，内心比较迷茫。
 最近也挺忙，被项目搞得焦头烂额，实在想摆脱干什么都觉得自己没用的困境，现在打算开个新坑调整一下，关于scheme语言的，大概会读些相关的书，做些总结，记录在博客中。
-以上。&lt;/p&gt;
-&lt;/blockquote&gt;</description>
+以上。</description>
     </item>
     
     <item>

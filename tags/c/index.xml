@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Linux on 咸鱼白的窝</title>
-    <link>https://blanca.world/tags/linux/</link>
-    <description>Recent content in Linux on 咸鱼白的窝</description>
+    <title>C on 咸鱼白的窝</title>
+    <link>https://blanca.world/tags/c/</link>
+    <description>Recent content in C on 咸鱼白的窝</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Sun, 07 Feb 2021 21:30:42 +0800</lastBuildDate><atom:link href="https://blanca.world/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 07 Feb 2021 21:30:42 +0800</lastBuildDate><atom:link href="https://blanca.world/tags/c/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>聊聊文件描述符、fork()和O_CLOEXEC</title>
       <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/</link>
@@ -29,17 +29,6 @@
 同样重要的细节补充 对了，顺便一提，假如按我关于文件描述符与打开文件表的说法，test1设置了O_CLOEXEC状态后，理论上也会影响到test1的父进程shell，后续该终端的子进程应该都没法输出了，但事实上并没有出现预想中的情况，该终端的子进程依旧可以正常输出，其stdout的O_CLOEXEC状态并没有被设置，为啥？
 《Linux/Unix系统编程手册》中做出了提示：O_CLOEXEC标志为进程和文件描述符所私有，对其修改不会影响到同一进程或不同进程中的其他文件描述符。
 就是这样。</description>
-    </item>
-    
-    <item>
-      <title>关于splice调用中易出现的一个bug的记录</title>
-      <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</link>
-      <pubDate>Sun, 17 Jan 2021 23:40:11 +0800</pubDate>
-      
-      <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/</guid>
-      <description>问题 这两天打算过一遍《Linux高性能服务器编程》，虽然都是些熟悉的知识，但我还是把该书的源码一个个运行了试了试。然后发现了6-5testtee.cpp存在bug。
-代码如下：
-#include &amp;lt;assert.h&amp;gt;#include &amp;lt;stdio.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;errno.h&amp;gt;#include &amp;lt;string.h&amp;gt;#include &amp;lt;fcntl.h&amp;gt; int main( int argc, char* argv[] ) { if ( argc != 2 ) { printf( &amp;#34;usage: %s &amp;lt;file&amp;gt;\n&amp;#34;, argv[0] ); return 1; } int filefd = open( argv[1], O_CREAT | O_WRONLY | O_TRUNC, 0666 ); assert( filefd &amp;gt; 0 ); int pipefd_stdout[2]; int ret = pipe( pipefd_stdout ); assert( ret != -1 ); int pipefd_file[2]; ret = pipe( pipefd_file ); assert( ret !</description>
     </item>
     
   </channel>

@@ -6,9 +6,67 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>咸鱼白</copyright>
-    <lastBuildDate>Sun, 31 Jan 2021 13:47:29 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 07 Feb 2021 21:30:42 +0800</lastBuildDate>
     
         <atom:link href="https://blanca.world/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>聊聊文件描述符、fork()和O_CLOEXEC</title>
+        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/</link>
+        <pubDate>Sun, 07 Feb 2021 21:30:42 +0800</pubDate>
+        
+        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/</guid>
+        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/ -&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
+&lt;p&gt;本文只是记录了一次看上去意义不大的尝试与总结，如果看下去，可能会浪费您宝贵的5分钟时间。&lt;/p&gt;
+&lt;p&gt;今日正为下周的分享会做准备，本打算讲讲当我们在终端键入&lt;code&gt;./helloworld&lt;/code&gt;程序后都发生了什么事，理到&lt;code&gt;__start&lt;/code&gt;初始化时，突然想起前不久研究的&lt;a href=&#34;http://localhost:1313/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/&#34;&gt;关于splice调用中易出现的一个bug&lt;/a&gt;，在当初的测试中，一旦我在子进程中修改了&lt;code&gt;stdout&lt;/code&gt;的&lt;code&gt;mode&lt;/code&gt;后，即使我在terminal中运行没有修改过程序，也不会出bug了，子进程的文件描述符状态变化会影响到父进程shell吗？（事实证明是我这个菜鸡记性太差，该回头好好复习Linux系统编程了）&lt;/p&gt;
+&lt;h2 id=&#34;文件描述符与打开文件表&#34;&gt;文件描述符与打开文件表&lt;/h2&gt;
+&lt;p&gt;《Linux/Unix系统编程手册》的图5-2诠释了这种现象的本质原因，如图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/21-02-07/fd.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;进程的每一个文件描述符都会指向由内核维护的&lt;code&gt;打开文件表（open file table）&lt;/code&gt;中的一个&lt;code&gt;打开文件句柄（open file handle）&lt;/code&gt;，一个&lt;code&gt;打开文件句柄&lt;/code&gt;存储着与一个&lt;code&gt;打开文件&lt;/code&gt;相关的所有信息（文件偏移量，状态标志等）。&lt;/p&gt;
+&lt;p&gt;父进程调用fork后，子进程会继承其所有已打开的文件描述符（不包括父进程在fork之后打开的文件描述符），即父进程与子进程的这些文件描述符指向了相同的&lt;code&gt;打开文件句柄&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;上图进程A的&lt;code&gt;fd2&lt;/code&gt;和进程B的&lt;code&gt;fd2&lt;/code&gt;都指向了&lt;code&gt;打开文件句柄73&lt;/code&gt;，这种情况通常都是在父进程fork出子进程后出现的，也有可能是某一进程使用UNIX域套接字将一个文件描述符传递给了另一个进程（第二种情况可参见《Linux/Unix系统编程手册》61.13.3-传递文件描述符，此处不做赘述）。&lt;/p&gt;
+&lt;h2 id=&#34;用o_cloexec进行的一次尝试&#34;&gt;用O_CLOEXEC进行的一次尝试&lt;/h2&gt;
+&lt;p&gt;关于O_CLOEXEC模式打开的文件描述符，我也不做什么过多解释了，大家只要知道进程调用exec时会关闭O_CLOEXEC模式打开的文件描述符就行了。&lt;/p&gt;
+&lt;p&gt;接下来，只不过是我在理清了上面的问题后做的一个无聊尝试罢了。&lt;/p&gt;
+&lt;p&gt;如果我们在父进程中把stdout设为O_CLOEXEC，fork出的子进程exec后还能正常输出吗？&lt;/p&gt;
+&lt;p&gt;我用这两段不怎么规范的垃圾代码试了一下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#228b22&#34;&gt;//test1.c
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;fcntl.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;main&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt;){
+    fcntl(STDOUT_FILENO, F_SETFD, FD_CLOEXEC);
+    printf(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;test1&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;&lt;/span&gt;);
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; stat;
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; pid = fork();
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (pid == &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;){
+        execv(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;./test2&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;);
+    }
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt;{
+        printf(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;father&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;&lt;/span&gt;);
+        pid = wait(&amp;amp;stat);
+    }
+    
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#228b22&#34;&gt;//test2.c
+&lt;/span&gt;&lt;span style=&#34;color:#228b22&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#1e889b&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#1e889b&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;main&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt;){
+    printf(&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;test2&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;&lt;/span&gt;);
+    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;事实证明，确实不能正常输出了。&lt;/p&gt;
+&lt;p&gt;所以这个探究有啥意义吗？好像没有诶，不过为啥一定要有意义才去探究呢？&lt;/p&gt;
+&lt;h2 id=&#34;同样重要的细节补充&#34;&gt;同样重要的细节补充&lt;/h2&gt;
+&lt;p&gt;对了，顺便一提，假如按我关于文件描述符与打开文件表的说法，test1设置了&lt;code&gt;O_CLOEXEC&lt;/code&gt;状态后，理论上也会影响到test1的父进程shell，后续该终端的子进程应该都没法输出了，但事实上并没有出现预想中的情况，该终端的子进程依旧可以正常输出，其stdout的&lt;code&gt;O_CLOEXEC&lt;/code&gt;状态并没有被设置，为啥？&lt;/p&gt;
+&lt;p&gt;《Linux/Unix系统编程手册》中做出了提示：&lt;code&gt;O_CLOEXEC&lt;/code&gt;标志为进程和文件描述符所私有，对其修改不会影响到同一进程或不同进程中的其他文件描述符。&lt;/p&gt;
+&lt;p&gt;就是这样。&lt;/p&gt;
+- https://blanca.world/archives/%E5%8D%9A%E6%96%8715-%E8%81%8A%E8%81%8A%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8Co_cloexec/ - 咸鱼白</description>
+        </item>
     
     
     
@@ -767,152 +825,6 @@ __set_ctx:
 &lt;p&gt;&lt;img src=&#34;https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/20-01-11/blog7.png&#34; alt=&#34; &#34;&gt;&lt;/p&gt;
 &lt;p&gt;希望2020年，我的github contribution能变成青青草原，自制kernel大概会是我学习生涯中的一个转折点，我希望自己能把这件傻事做好。&lt;/p&gt;
 &lt;p&gt;以上。&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E5%AE%A26-2019%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/ - 咸鱼白</description>
-        </item>
-    
-    
-    
-        <item>
-        <title>如何拆除CMU-15213的bomb lab？（2）</title>
-        <link>https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</link>
-        <pubDate>Tue, 17 Sep 2019 00:00:00 +0000</pubDate>
-        
-        <guid>https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/</guid>
-        <description>咸鱼白的窝 https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/ -&lt;h3 id=&#34;phase-3&#34;&gt;phase 3：&lt;/h3&gt;
-&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e72&lt;/span&gt;		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_3函数调用处设置断点
-......
-&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;（输入任意字符串）&lt;/span&gt;
-stepi 				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;单步执行，进入&lt;/span&gt;phase_3函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入phase_3函数后，我们可以看到程序在栈上分配了24字节空间，我们把现在的栈顶称为s1：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f43&lt;/span&gt; &amp;lt;phase_3&amp;gt;      sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f47&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;    lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp),%rcx        &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rcx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;12&lt;/span&gt; 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f4c&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;&amp;gt;    lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp),%rdx		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; %rdx值设为s1+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接下来又出现了包含即时数的操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f51&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;14&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025cf&lt;/span&gt;,%esi
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f56&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;19&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f5b&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400bf0&lt;/span&gt; &amp;lt;__isoc99_sscanf&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;@&lt;/span&gt;plt&amp;gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f60&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;29&lt;/span&gt;&amp;gt;   cmp    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;,%eax                           
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f63&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;   jg     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400f6a&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;39&lt;/span&gt;&amp;gt;                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f65&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我们来看看这个地址里有什么，输入：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;x/s &lt;span style=&#34;color:#b452cd&#34;&gt;0x4025cf&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到返回值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x4025cf&lt;/span&gt;:       &lt;span style=&#34;color:#cd5555&#34;&gt;&amp;#34;%d %d&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;并且又调用了sscanf操作，并且返回值小于等于1会触发炸弹，所以此处应该是从我们输入的字符串中读入了2个整数。&lt;/p&gt;
-&lt;p&gt;重新进入phase3（此次的密钥输入两个任意整数），继续往下读：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f6a&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;39&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x7&lt;/span&gt;,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f6f&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;44&lt;/span&gt;&amp;gt;   ja     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fad&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;106&lt;/span&gt;&amp;gt; 
-......
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fad&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;106&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此处出现了s1+8存储的值与7的比较，执行以下操作查看s1+8存储的值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;x/x &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;rsp+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我们会发现该值正是我们输入的第一个整数,若这个数大于7,则会跳转到explode_bomb函数的调用，注意此处的跳转使用的是ja命令，说明上一步执行了对无符号整数的比较，故我们输入的第一个整数范围应当是0-7。&lt;/p&gt;
-&lt;p&gt;再向下看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f71&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp),%eax                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f75&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;50&lt;/span&gt;&amp;gt;   jmpq   *&lt;span style=&#34;color:#b452cd&#34;&gt;0x402470&lt;/span&gt;(,%rax,&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;)                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f7c&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0xcf&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f81&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;62&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f83&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;64&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x2c3&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f88&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;69&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f8a&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;71&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x100&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f8f&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;76&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f91&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;78&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x185&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f96&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;83&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f98&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;85&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0xce&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f9d&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;90&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400f9f&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;92&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x2aa&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fa4&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;97&lt;/span&gt;&amp;gt;   jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fa6&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;99&lt;/span&gt;&amp;gt;   mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x147&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fab&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;104&lt;/span&gt;&amp;gt;  jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fad&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;106&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fb2&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;111&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fb7&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;116&lt;/span&gt;&amp;gt;  jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fb9&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;118&lt;/span&gt;&amp;gt;  mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x137&lt;/span&gt;,%eax                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp),%eax                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc2&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;127&lt;/span&gt;&amp;gt;  je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc9&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;134&lt;/span&gt;&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc4&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;129&lt;/span&gt;&amp;gt;  callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;                 
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fc9&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;134&lt;/span&gt;&amp;gt;  add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x18&lt;/span&gt;,%rsp                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fcd&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;138&lt;/span&gt;&amp;gt;  retq
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我们输入的第一个整数被移入%rax寄存器，并且在下一步操作中直接跳转到了（0x402470+%rax×8）地址中存储的位置，因为我们输入的整数范围0-7,而十六进制整型数据占用4个字节，则%rax×8跨越15个内存地址，所以尝试执行以下指令查看从0x402470往后16个内存地址的内容（每个内存地址4字节）：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;x/&lt;span style=&#34;color:#b452cd&#34;&gt;16&lt;/span&gt;xw &lt;span style=&#34;color:#b452cd&#34;&gt;0x402470&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;得到结果：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x402470&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f7c&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400fb9&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x402480&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f83&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f8a&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x402490&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f91&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f98&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x4024a0&lt;/span&gt;:       &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400f9f&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;      &lt;span style=&#34;color:#b452cd&#34;&gt;0x00400fa6&lt;/span&gt;      
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x00000000&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中有8个非0的十六进制数，我们仔细比对可以发现正可以与后面尚未执行的指令中的8个的地址相对应。这8个指令，每个都是执行将一个十六进制整型数传入寄存器%eax的指令，紧接其后都是跳转向了这条指令：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fbe&lt;/span&gt; &amp;lt;phase_3+&lt;span style=&#34;color:#b452cd&#34;&gt;123&lt;/span&gt;&amp;gt;  cmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp),%eax
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;将s1+12处的数（就是我们输入的第二个整数）与寄存器%eax中的数比较，若相同便不回触发炸弹。&lt;/p&gt;
-&lt;p&gt;至此，我们可以理清楚了：当输入的第一个整数为0-7时，分别有一个对应的第二个整数可以通过关卡3.&lt;/p&gt;
-&lt;p&gt;仔细对比指令中的组合，我们最终得到了以下8组整数：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;0 207
-1 311
-2 707
-3 256
-4 389
-5 206
-6 682
-7 327
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;至此，phase 3通过。&lt;/p&gt;
-&lt;h3 id=&#34;phase-4&#34;&gt;phase 4：&lt;/h3&gt;
-&lt;p&gt;执行以下操作：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;break&lt;/span&gt; * &lt;span style=&#34;color:#b452cd&#34;&gt;0x400e8e&lt;/span&gt;		&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;在&lt;/span&gt;phase_4函数调用处设置断点
-......
-&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;（输入任意字符串）&lt;/span&gt;
-stepi					&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#单步执行进入&lt;/span&gt;phase_2函数
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;一如既往的，我们见到了含有立即数的指令并且很容易得出了对我们输入字符串的要求是两个整数。往下看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x40102e&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0xe&lt;/span&gt;,&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;(%rsp)           
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401033&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;39&lt;/span&gt;&amp;gt;   jbe    &lt;span style=&#34;color:#b452cd&#34;&gt;0x40103a&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;46&lt;/span&gt;&amp;gt;  
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401035&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;程序将我们输入的第一个整数与14比较，如果大于14就会触发炸弹，并且由jbe指令我们可以得出输入的第一个整数应该是0-14中的任一无符号整数。&lt;/p&gt;
-&lt;p&gt;再往后看，调用了函数func4,且返回值不为0会触发炸弹，进入函数func4看看：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fce&lt;/span&gt; &amp;lt;func4&amp;gt;        sub    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;,%rsp                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;4&lt;/span&gt;&amp;gt;      mov    %edx,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd4&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;6&lt;/span&gt;&amp;gt;      sub    %esi,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd6&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;8&lt;/span&gt;&amp;gt;      mov    %eax,%ecx                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fd8&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;10&lt;/span&gt;&amp;gt;     shr    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x1f&lt;/span&gt;,%ecx                             
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fdb&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;13&lt;/span&gt;&amp;gt;     add    %ecx,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fdd&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;15&lt;/span&gt;&amp;gt;     sar    %eax                                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fdf&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;17&lt;/span&gt;&amp;gt;     lea    (%rax,%rsi,&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;),%ecx                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;20&lt;/span&gt;&amp;gt;     cmp    %edi,%ecx                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe4&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;22&lt;/span&gt;&amp;gt;     jle    &lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe6&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;24&lt;/span&gt;&amp;gt;     lea    -&lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;(%rcx),%edx                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fe9&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;27&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fce&lt;/span&gt; &amp;lt;func4&amp;gt;                       
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400fee&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;32&lt;/span&gt;&amp;gt;     add    %eax,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff0&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;34&lt;/span&gt;&amp;gt;     jmp    &lt;span style=&#34;color:#b452cd&#34;&gt;0x401007&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff2&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;36&lt;/span&gt;&amp;gt;     mov    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,%eax                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff7&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;41&lt;/span&gt;&amp;gt;     cmp    %edi,%ecx                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ff9&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;43&lt;/span&gt;&amp;gt;     jge    &lt;span style=&#34;color:#b452cd&#34;&gt;0x401007&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;                     
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ffb&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;45&lt;/span&gt;&amp;gt;     lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;(%rcx),%esi                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x400ffe&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;48&lt;/span&gt;&amp;gt;     callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x400fce&lt;/span&gt; &amp;lt;func4&amp;gt;                       
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401003&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;53&lt;/span&gt;&amp;gt;     lea    &lt;span style=&#34;color:#b452cd&#34;&gt;0x1&lt;/span&gt;(%rax,%rax,&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;),%eax                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401007&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;57&lt;/span&gt;&amp;gt;     add    &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x8&lt;/span&gt;,%rsp                               
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x40100b&lt;/span&gt; &amp;lt;func4+&lt;span style=&#34;color:#b452cd&#34;&gt;61&lt;/span&gt;&amp;gt;     retq
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在func4中，我们可以看到存在调用自身的操作，这应该是个递归函数，逻辑不是很清楚，尝试用逆向工程的方法将其还原为如下c程序：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#008b45&#34;&gt;func4&lt;/span&gt;(&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; num, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; x, &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; y){				&lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;#&lt;/span&gt; num为我们输入的第一个整数
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; result = x - y;
-    result /= &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;;
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; temp = result + y;
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (temp &amp;lt; num){
-        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt; * func(num, x, temp + &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;) + &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;;
-    }
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;if&lt;/span&gt; (temp &amp;gt; num){
-        &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt; * func4(num, temp - &lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;, y);
-    }
-    &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; result;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;根据这段c程序很容易推演出当我们输入的第一个整数为0,1,3,7时，func4返回值为0。&lt;/p&gt;
-&lt;p&gt;回到phase_4继续看&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x401051&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;69&lt;/span&gt;&amp;gt;   cmpl   &lt;span style=&#34;color:#a61717;background-color:#e3d2d2&#34;&gt;$&lt;/span&gt;&lt;span style=&#34;color:#b452cd&#34;&gt;0x0&lt;/span&gt;,&lt;span style=&#34;color:#b452cd&#34;&gt;0xc&lt;/span&gt;(%rsp)                         
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401056&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;74&lt;/span&gt;&amp;gt;   je     &lt;span style=&#34;color:#b452cd&#34;&gt;0x40105d&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;81&lt;/span&gt;&amp;gt;                   
-&lt;span style=&#34;color:#b452cd&#34;&gt;0x401058&lt;/span&gt; &amp;lt;phase_4+&lt;span style=&#34;color:#b452cd&#34;&gt;76&lt;/span&gt;&amp;gt;   callq  &lt;span style=&#34;color:#b452cd&#34;&gt;0x40143a&lt;/span&gt; &amp;lt;explode_bomb&amp;gt;  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这段程序将第二个整数与0比较，若不想等就会触发炸弹，所以，第二个整数应该为0。&lt;/p&gt;
-&lt;p&gt;至此，phase 4通过。&lt;/p&gt;
-&lt;p&gt;(在写5，6关的解法时和人怼了起来导致最后半途而废，抱歉)&lt;/p&gt;- https://blanca.world/archives/%E5%8D%9A%E6%96%875-%E5%A6%82%E4%BD%95%E6%8B%86%E9%99%A4cmu-15213%E7%9A%84bomb-lab2/ - 咸鱼白</description>
         </item>
     
     
