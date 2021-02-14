@@ -1137,17 +1137,13 @@ swapcontext(&amp;<span style="color:#8b008b;font-weight:bold">this</span>-&gt;ma
 
 swap_ctx:
     leaq (%rsp),%rax
-    movq %rax, 96(%rdi)
+    movq %rax, 64(%rdi)
 
-    movq %rbx, 88(%rdi)
+    movq %rbx, 56(%rdi)
 
     movq 0(%rax), %rax
-    movq %rax, 80(%rdi)
+    movq %rax, 48(%rdi)
 
-    movq %r9, 72(%rdi)
-    movq %r8, 64(%rdi)
-    movq %rdx, 56(%rdi)
-    movq %rcx, 48(%rdi)
     #movq %rdi, 40(%rdi)
     movq %rbp, 32(%rdi)
     movq %r12, 24(%rdi)
@@ -1157,26 +1153,22 @@ swap_ctx:
     xorq %rax, %rax
 
     movq 32(%rsi), %rbp
-    movq 96(%rsi), %rsp
+    movq 64(%rsi), %rsp
     movq (%rsi), %r15
     movq 8(%rsi), %r14
     movq 16(%rsi), %r13
     movq 24(%rsi), %r12
     movq 40(%rsi), %rdi
-    movq 48(%rsi), %rcx
-    movq 56(%rsi), %rdx
-    movq 64(%rsi), %r8
-    movq 72(%rsi), %r9
-    movq 88(%rsi), %rbx
+    movq 56(%rsi), %rbx
 
     leaq 8(%rsp), %rsp
-    pushq 80(%rsi)
+    pushq 48(%rsi)
 
     ret
-</code></pre><p>保存以及恢复了参数寄存器rcx，rdx，r8，r9（rsi不用保存与恢复，rdi这个寄存器对应<code>start_func</code>的参数<code>S</code>，其实只需要保证第一次切入时能从上下文中取出来而已，也不需要保存操作），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。</p>
+</code></pre><p>保存与恢复了参数寄存器rdi（rsi不用保存与恢复，rdi这个寄存器对应<code>start_func</code>的参数<code>S</code>，其实只需要保证第一次切入时能从上下文中取出来而已，也不需要保存操作，rcx，rdx，r8，r9理论上在本设计中无须保存），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。</p>
 <p>用来取代的<code>ucontext_t</code>的<code>coctx</code>定义在<code>coctx.h</code>中：</p>
 <div class="highlight"><pre style="background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#8b008b;font-weight:bold">typedef</span> <span style="color:#8b008b;font-weight:bold">struct</span> <span style="color:#008b45;font-weight:bold">coctx</span>{
-    <span style="color:#00688b;font-weight:bold">void</span> *regs[<span style="color:#b452cd">13</span>];
+    <span style="color:#00688b;font-weight:bold">void</span> *regs[<span style="color:#b452cd">9</span>];
     <span style="color:#8b008b;font-weight:bold">struct</span> <span style="color:#008b45;font-weight:bold">coctx</span> *uc_link;
     stack_t uc_stack;
 }coctx;
@@ -1224,21 +1216,16 @@ start_ctx:
 
 __set_ctx:
     movq 32(%rdi), %rbp
-    movq 96(%rdi), %rsp
+    movq 64(%rdi), %rsp
     movq (%rdi), %r15
     movq 8(%rdi), %r14
     movq 16(%rdi), %r13
     movq 24(%rdi), %r12
-    movq 48(%rdi), %rcx
-    movq 56(%rdi), %rdx
-    movq 64(%rdi), %r8
-    movq 72(%rdi), %r9
-    movq 88(%rdi), %rbx
+    movq 40(%rdi), %rdi
+    movq 56(%rdi), %rbx
 
     leaq 8(%rsp), %rsp
-    pushq 80(%rdi)
-	
-    #movq 40(%rdi), %rdi
+    pushq 48(%rdi)
 
     ret
 </code></pre><p>将<code>uc_link</code>取出至<code>rdi</code>寄存器，然后调用<code>__set_ctx</code>函数将上下文切换回主协程。</p>
@@ -1296,6 +1283,7 @@ __set_ctx:
 </table>
 <p>通过对比我们可以看出使用没有FPU信息和MXCSR信息的<code>coctx</code>代替glibc提供的<code>ucontext_t</code>进行上下文切换后，整体速度提升超过了10倍。且独立运行栈的上下文切换速度也明显优于共享运行栈的上下文切换速度（在实际应用中，共享运行栈中含有大量数据时，这种切换速度的差距会更明显）。</p>
 <h2 id="简略谈谈libco">简略谈谈libco</h2>
+<p>首先就是上面提到的libco的协程运行到结尾应该是没有任何回收措施的，很想找个鹅厂的前辈证实一下这个问题的答案。。</p>
 <p>本来很想尝试像<a href="https://github.com/Tencent/libco">libco</a>那样hook几个阻塞IO调用，但最近事情太多，暂时没那个精力去实现，这里简略地聊聊libco hook的大致思路吧。</p>
 <p>libco通过<code>LD_PRELOAD</code>（详见<a href="https://man7.org/linux/man-pages/man8/ld-linux.so.8.html">ld.so(8)</a>）优先于系统的库函数加载进内存，运行时调用的将是libco hook后的IO调用，而真实的系统IO调用的函数指针则通过<a href="https://man7.org/linux/man-pages/man3/dlsym.3.html">dlsym(3)</a>取得，比如真实的read调用的函数指针通过<code>static read_pfn_t g_sys_read_func = (read_pfn_t)dlsym(RTLD_NEXT,&quot;read&quot;);</code>获得，现在<code>g_sys_read_func</code>指向真正的<code>read</code>调用。</p>
 <p>我们来看看hook后的<code>read</code>的实现：</p>
@@ -1335,7 +1323,7 @@ __set_ctx:
 	<span style="color:#8b008b;font-weight:bold">return</span> readret;
 
 }
-</code></pre></div><p>对于设置了<code>O_NONBLOCK</code>标志位的文件描述符，将直接通过<code>g_sys_read_func</code>调用真实的<code>read</code>，而对于阻塞的文件描述符，会加入poll轮询列表，等到poll返回后才通过<code>g_sys_read_func</code>调用真实的<code>read</code>，这里的<code>poll</code>也是经过了hook改造的，所有的hook后的函数的核心都在于这个<code>poll</code>，hook后的<code>poll</code>内部实现是<code>co_poll_inner</code>，<code>co_poll_inne</code>会为文件描述符注册epoll事件，且如果设定了<code>timeout</code>参数，<code>co_poll_inne</code>还会将文件描述符相关的结构加入定时器队列，随后让出当前协程。当主协程中的<code>co_eventloop</code>触发监听事件时抑或是定时器队列触发超时，都会将对应协程切回来，此时会发起第二次<code>poll</code>，如果判断出是IO事件唤醒了协程，则会通过<code>g_sys_read_func</code>调用真实的<code>read</code>，如果判断出超时，则会重复之前的流程。</p>
+</code></pre></div><p>对于设置了<code>O_NONBLOCK</code>标志位的文件描述符，将直接通过<code>g_sys_read_func</code>调用真实的<code>read</code>，而对于阻塞的文件描述符，会加入poll轮询列表，等到poll返回后才通过<code>g_sys_read_func</code>调用真实的<code>read</code>，这里的<code>poll</code>也是经过了hook改造的，所有的hook后的函数的核心都在于这个<code>poll</code>，hook后的<code>poll</code>内部实现是<code>co_poll_inner</code>，<code>co_poll_inne</code>会为文件描述符注册epoll事件，且如果设定了<code>timeout</code>参数，<code>co_poll_inner</code>还会将文件描述符相关的结构加入定时器队列，随后让出当前协程。当主协程中的<code>co_eventloop</code>触发监听事件时抑或是定时器队列触发超时，都会将对应协程切回来，此时会发起第二次<code>poll</code>，如果判断出是IO事件唤醒了协程，则会通过<code>g_sys_read_func</code>调用真实的<code>read</code>，如果判断出超时，则会重复之前的流程。</p>
 <p><code>poll</code>背后的具体实现比较复杂，我也只理清了个大概，若是展开细讲，大概又是好几万字，只能像这样粗略地描述一下以作记录了。</p>
 <h2 id="tips">Tips</h2>
 <ul>

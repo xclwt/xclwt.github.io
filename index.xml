@@ -190,17 +190,13 @@ swapcontext(&amp;amp;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;
 
 swap_ctx:
     leaq (%rsp),%rax
-    movq %rax, 96(%rdi)
+    movq %rax, 64(%rdi)
 
-    movq %rbx, 88(%rdi)
+    movq %rbx, 56(%rdi)
 
     movq 0(%rax), %rax
-    movq %rax, 80(%rdi)
+    movq %rax, 48(%rdi)
 
-    movq %r9, 72(%rdi)
-    movq %r8, 64(%rdi)
-    movq %rdx, 56(%rdi)
-    movq %rcx, 48(%rdi)
     #movq %rdi, 40(%rdi)
     movq %rbp, 32(%rdi)
     movq %r12, 24(%rdi)
@@ -210,26 +206,22 @@ swap_ctx:
     xorq %rax, %rax
 
     movq 32(%rsi), %rbp
-    movq 96(%rsi), %rsp
+    movq 64(%rsi), %rsp
     movq (%rsi), %r15
     movq 8(%rsi), %r14
     movq 16(%rsi), %r13
     movq 24(%rsi), %r12
     movq 40(%rsi), %rdi
-    movq 48(%rsi), %rcx
-    movq 56(%rsi), %rdx
-    movq 64(%rsi), %r8
-    movq 72(%rsi), %r9
-    movq 88(%rsi), %rbx
+    movq 56(%rsi), %rbx
 
     leaq 8(%rsp), %rsp
-    pushq 80(%rsi)
+    pushq 48(%rsi)
 
     ret
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;保存以及恢复了参数寄存器rcx，rdx，r8，r9（rsi不用保存与恢复，rdi这个寄存器对应&lt;code&gt;start_func&lt;/code&gt;的参数&lt;code&gt;S&lt;/code&gt;，其实只需要保证第一次切入时能从上下文中取出来而已，也不需要保存操作），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;保存与恢复了参数寄存器rdi（rsi不用保存与恢复，rdi这个寄存器对应&lt;code&gt;start_func&lt;/code&gt;的参数&lt;code&gt;S&lt;/code&gt;，其实只需要保证第一次切入时能从上下文中取出来而已，也不需要保存操作，rcx，rdx，r8，r9理论上在本设计中无须保存），返回地址（每次切换上下文时保证能回到之前调用切换函数的地方继续运行），7个callee-saved寄存器：rbx，rsp，rbp，r12，r13，r14，r15。&lt;/p&gt;
 &lt;p&gt;用来取代的&lt;code&gt;ucontext_t&lt;/code&gt;的&lt;code&gt;coctx&lt;/code&gt;定义在&lt;code&gt;coctx.h&lt;/code&gt;中：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#eed;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-C++&#34; data-lang=&#34;C++&#34;&gt;&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;typedef&lt;/span&gt; &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;coctx&lt;/span&gt;{
-    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *regs[&lt;span style=&#34;color:#b452cd&#34;&gt;13&lt;/span&gt;];
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;void&lt;/span&gt; *regs[&lt;span style=&#34;color:#b452cd&#34;&gt;9&lt;/span&gt;];
     &lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#008b45;font-weight:bold&#34;&gt;coctx&lt;/span&gt; *uc_link;
     stack_t uc_stack;
 }coctx;
@@ -277,21 +269,16 @@ start_ctx:
 
 __set_ctx:
     movq 32(%rdi), %rbp
-    movq 96(%rdi), %rsp
+    movq 64(%rdi), %rsp
     movq (%rdi), %r15
     movq 8(%rdi), %r14
     movq 16(%rdi), %r13
     movq 24(%rdi), %r12
-    movq 48(%rdi), %rcx
-    movq 56(%rdi), %rdx
-    movq 64(%rdi), %r8
-    movq 72(%rdi), %r9
-    movq 88(%rdi), %rbx
+    movq 40(%rdi), %rdi
+    movq 56(%rdi), %rbx
 
     leaq 8(%rsp), %rsp
-    pushq 80(%rdi)
-	
-    #movq 40(%rdi), %rdi
+    pushq 48(%rdi)
 
     ret
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;将&lt;code&gt;uc_link&lt;/code&gt;取出至&lt;code&gt;rdi&lt;/code&gt;寄存器，然后调用&lt;code&gt;__set_ctx&lt;/code&gt;函数将上下文切换回主协程。&lt;/p&gt;
@@ -349,6 +336,7 @@ __set_ctx:
 &lt;/table&gt;
 &lt;p&gt;通过对比我们可以看出使用没有FPU信息和MXCSR信息的&lt;code&gt;coctx&lt;/code&gt;代替glibc提供的&lt;code&gt;ucontext_t&lt;/code&gt;进行上下文切换后，整体速度提升超过了10倍。且独立运行栈的上下文切换速度也明显优于共享运行栈的上下文切换速度（在实际应用中，共享运行栈中含有大量数据时，这种切换速度的差距会更明显）。&lt;/p&gt;
 &lt;h2 id=&#34;简略谈谈libco&#34;&gt;简略谈谈libco&lt;/h2&gt;
+&lt;p&gt;首先就是上面提到的libco的协程运行到结尾应该是没有任何回收措施的，很想找个鹅厂的前辈证实一下这个问题的答案。。&lt;/p&gt;
 &lt;p&gt;本来很想尝试像&lt;a href=&#34;https://github.com/Tencent/libco&#34;&gt;libco&lt;/a&gt;那样hook几个阻塞IO调用，但最近事情太多，暂时没那个精力去实现，这里简略地聊聊libco hook的大致思路吧。&lt;/p&gt;
 &lt;p&gt;libco通过&lt;code&gt;LD_PRELOAD&lt;/code&gt;（详见&lt;a href=&#34;https://man7.org/linux/man-pages/man8/ld-linux.so.8.html&#34;&gt;ld.so(8)&lt;/a&gt;）优先于系统的库函数加载进内存，运行时调用的将是libco hook后的IO调用，而真实的系统IO调用的函数指针则通过&lt;a href=&#34;https://man7.org/linux/man-pages/man3/dlsym.3.html&#34;&gt;dlsym(3)&lt;/a&gt;取得，比如真实的read调用的函数指针通过&lt;code&gt;static read_pfn_t g_sys_read_func = (read_pfn_t)dlsym(RTLD_NEXT,&amp;quot;read&amp;quot;);&lt;/code&gt;获得，现在&lt;code&gt;g_sys_read_func&lt;/code&gt;指向真正的&lt;code&gt;read&lt;/code&gt;调用。&lt;/p&gt;
 &lt;p&gt;我们来看看hook后的&lt;code&gt;read&lt;/code&gt;的实现：&lt;/p&gt;
@@ -388,7 +376,7 @@ __set_ctx:
 	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; readret;
 
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;对于设置了&lt;code&gt;O_NONBLOCK&lt;/code&gt;标志位的文件描述符，将直接通过&lt;code&gt;g_sys_read_func&lt;/code&gt;调用真实的&lt;code&gt;read&lt;/code&gt;，而对于阻塞的文件描述符，会加入poll轮询列表，等到poll返回后才通过&lt;code&gt;g_sys_read_func&lt;/code&gt;调用真实的&lt;code&gt;read&lt;/code&gt;，这里的&lt;code&gt;poll&lt;/code&gt;也是经过了hook改造的，所有的hook后的函数的核心都在于这个&lt;code&gt;poll&lt;/code&gt;，hook后的&lt;code&gt;poll&lt;/code&gt;内部实现是&lt;code&gt;co_poll_inner&lt;/code&gt;，&lt;code&gt;co_poll_inne&lt;/code&gt;会为文件描述符注册epoll事件，且如果设定了&lt;code&gt;timeout&lt;/code&gt;参数，&lt;code&gt;co_poll_inne&lt;/code&gt;还会将文件描述符相关的结构加入定时器队列，随后让出当前协程。当主协程中的&lt;code&gt;co_eventloop&lt;/code&gt;触发监听事件时抑或是定时器队列触发超时，都会将对应协程切回来，此时会发起第二次&lt;code&gt;poll&lt;/code&gt;，如果判断出是IO事件唤醒了协程，则会通过&lt;code&gt;g_sys_read_func&lt;/code&gt;调用真实的&lt;code&gt;read&lt;/code&gt;，如果判断出超时，则会重复之前的流程。&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;对于设置了&lt;code&gt;O_NONBLOCK&lt;/code&gt;标志位的文件描述符，将直接通过&lt;code&gt;g_sys_read_func&lt;/code&gt;调用真实的&lt;code&gt;read&lt;/code&gt;，而对于阻塞的文件描述符，会加入poll轮询列表，等到poll返回后才通过&lt;code&gt;g_sys_read_func&lt;/code&gt;调用真实的&lt;code&gt;read&lt;/code&gt;，这里的&lt;code&gt;poll&lt;/code&gt;也是经过了hook改造的，所有的hook后的函数的核心都在于这个&lt;code&gt;poll&lt;/code&gt;，hook后的&lt;code&gt;poll&lt;/code&gt;内部实现是&lt;code&gt;co_poll_inner&lt;/code&gt;，&lt;code&gt;co_poll_inne&lt;/code&gt;会为文件描述符注册epoll事件，且如果设定了&lt;code&gt;timeout&lt;/code&gt;参数，&lt;code&gt;co_poll_inner&lt;/code&gt;还会将文件描述符相关的结构加入定时器队列，随后让出当前协程。当主协程中的&lt;code&gt;co_eventloop&lt;/code&gt;触发监听事件时抑或是定时器队列触发超时，都会将对应协程切回来，此时会发起第二次&lt;code&gt;poll&lt;/code&gt;，如果判断出是IO事件唤醒了协程，则会通过&lt;code&gt;g_sys_read_func&lt;/code&gt;调用真实的&lt;code&gt;read&lt;/code&gt;，如果判断出超时，则会重复之前的流程。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;poll&lt;/code&gt;背后的具体实现比较复杂，我也只理清了个大概，若是展开细讲，大概又是好几万字，只能像这样粗略地描述一下以作记录了。&lt;/p&gt;
 &lt;h2 id=&#34;tips&#34;&gt;Tips&lt;/h2&gt;
 &lt;ul&gt;
@@ -449,11 +437,11 @@ __set_ctx:
 	assert( filefd &amp;gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt; );
 
 	&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;];
-        &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; ret = pipe( pipefd_stdout );
+    &lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; ret = pipe( pipefd_stdout );
 	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
 
 	&lt;span style=&#34;color:#00688b;font-weight:bold&#34;&gt;int&lt;/span&gt; pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;2&lt;/span&gt;];
-        ret = pipe( pipefd_file );
+    ret = pipe( pipefd_file );
 	assert( ret != -&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt; );
 
 	ret = splice( STDIN_FILENO, &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;], &lt;span style=&#34;color:#658b00&#34;&gt;NULL&lt;/span&gt;, &lt;span style=&#34;color:#b452cd&#34;&gt;32768&lt;/span&gt;, SPLICE_F_MORE | SPLICE_F_MOVE );
@@ -471,10 +459,10 @@ __set_ctx:
 
 
 	close( filefd );
-        close( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
-        close( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] );
-        close( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
-        close( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] );
+    close( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
+    close( pipefd_stdout[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] );
+    close( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;] );
+    close( pipefd_file[&lt;span style=&#34;color:#b452cd&#34;&gt;1&lt;/span&gt;] );
 	&lt;span style=&#34;color:#8b008b;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#b452cd&#34;&gt;0&lt;/span&gt;;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;该代码的第三次splice系统调用本应该将stdin的内容输出到stdout，但在我的terminal中运行时该系统调用失败了，错误码22。&lt;/p&gt;

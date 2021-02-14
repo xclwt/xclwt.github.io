@@ -10,7 +10,7 @@
 <meta name="google-site-verification" content="">
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 <meta content="telephone=no" name="format-detection">
-<meta name="description" content="总想着发现Linux的bug，怎么我明明这么普通却又辣么自信！">
+<meta name="description" content="总想着发现Linux的bug，明明十分普通却又辣么自信">
 <meta name="renderer" content="webkit">
 <meta name="theme-color" content="#ffffff">
 
@@ -460,7 +460,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                     关于splice调用中易出现的一个bug的记录
                     
                     <div class="post-subtitle">
-                        总想着发现Linux的bug，怎么我明明这么普通却又辣么自信！
+                        总想着发现Linux的bug，明明十分普通却又辣么自信
                     </div>
                     
                     <div class="post-meta">
@@ -509,11 +509,11 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 	assert( filefd &gt; <span style="color:#b452cd">0</span> );
 
 	<span style="color:#00688b;font-weight:bold">int</span> pipefd_stdout[<span style="color:#b452cd">2</span>];
-        <span style="color:#00688b;font-weight:bold">int</span> ret = pipe( pipefd_stdout );
+    <span style="color:#00688b;font-weight:bold">int</span> ret = pipe( pipefd_stdout );
 	assert( ret != -<span style="color:#b452cd">1</span> );
 
 	<span style="color:#00688b;font-weight:bold">int</span> pipefd_file[<span style="color:#b452cd">2</span>];
-        ret = pipe( pipefd_file );
+    ret = pipe( pipefd_file );
 	assert( ret != -<span style="color:#b452cd">1</span> );
 
 	ret = splice( STDIN_FILENO, <span style="color:#658b00">NULL</span>, pipefd_stdout[<span style="color:#b452cd">1</span>], <span style="color:#658b00">NULL</span>, <span style="color:#b452cd">32768</span>, SPLICE_F_MORE | SPLICE_F_MOVE );
@@ -531,10 +531,10 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
 
 
 	close( filefd );
-        close( pipefd_stdout[<span style="color:#b452cd">0</span>] );
-        close( pipefd_stdout[<span style="color:#b452cd">1</span>] );
-        close( pipefd_file[<span style="color:#b452cd">0</span>] );
-        close( pipefd_file[<span style="color:#b452cd">1</span>] );
+    close( pipefd_stdout[<span style="color:#b452cd">0</span>] );
+    close( pipefd_stdout[<span style="color:#b452cd">1</span>] );
+    close( pipefd_file[<span style="color:#b452cd">0</span>] );
+    close( pipefd_file[<span style="color:#b452cd">1</span>] );
 	<span style="color:#8b008b;font-weight:bold">return</span> <span style="color:#b452cd">0</span>;
 }
 </code></pre></div><p>该代码的第三次splice系统调用本应该将stdin的内容输出到stdout，但在我的terminal中运行时该系统调用失败了，错误码22。</p>
