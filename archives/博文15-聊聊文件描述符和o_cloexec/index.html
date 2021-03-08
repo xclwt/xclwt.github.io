@@ -525,7 +525,7 @@ Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopene
                 
                     <h2 id="引言">引言</h2>
 <p>本文只是记录了一次看上去意义不大的尝试与总结，如果看下去，可能会浪费您宝贵的5分钟时间。</p>
-<p>今日正为下周的分享会做准备，本打算讲讲当我们在终端键入<code>./helloworld</code>程序后都发生了什么事，理到<code>__start</code>初始化时，突然想起前不久研究的<a href="http://localhost:1313/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/">关于splice调用中易出现的一个bug</a>，在当初的测试中，一旦我在子进程中修改了<code>stdout</code>的<code>mode</code>后，即使我在terminal中运行没有修改过程序，也不会出bug了，子进程的文件描述符状态变化会影响到父进程shell吗？（事实证明是我这个菜鸡记性太差，该回头好好复习Linux系统编程了）</p>
+<p>今日正为下周的分享会做准备，本打算讲讲当我们在终端键入<code>./helloworld</code>程序后都发生了什么事，理到<code>__start</code>初始化时，突然想起前不久研究的<a href="https://blanca.world/archives/%E5%8D%9A%E6%96%8712-%E5%85%B3%E4%BA%8Esplice%E8%B0%83%E7%94%A8%E4%B8%AD%E6%98%93%E5%87%BA%E7%8E%B0%E7%9A%84%E4%B8%80%E4%B8%AAbug%E7%9A%84%E8%AE%B0%E5%BD%95/">关于splice调用中易出现的一个bug</a>，在当初的测试中，一旦我在子进程中修改了<code>stdout</code>的<code>mode</code>后，即使我在terminal中运行没有修改过的程序，也不会出bug了，子进程的文件描述符状态变化会影响到父进程shell吗？（事实证明是我这个菜鸡记性太差，该回头好好复习Linux系统编程了）</p>
 <h2 id="文件描述符与打开文件表">文件描述符与打开文件表</h2>
 <p>《Linux/Unix系统编程手册》的图5-2诠释了这种现象的本质原因，如图：</p>
 <p><img src="https://xclwt-blog-image.oss-cn-hangzhou.aliyuncs.com/21-02-07/fd.jpg" alt=""></p>
